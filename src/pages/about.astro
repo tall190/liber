@@ -1,63 +1,92 @@
 ---
-import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
-import Layout from '../layouts/BlogPost.astro';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
 ---
 
-<Layout
-	title="About Me"
-	description="Lorem ipsum dolor sit amet"
-	pubDate={new Date('August 08 2021')}
-	heroImage={AboutHeroImage}
->
-	<p>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-		labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo
-		viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam
-		adipiscing. In hac habitasse platea dictumst vestibulum. Sagittis purus sit amet volutpat. Netus
-		et malesuada fames ac turpis egestas. Eget magna fermentum iaculis eu non diam phasellus
-		vestibulum lorem. Varius sit amet mattis vulputate enim. Habitasse platea dictumst quisque
-		sagittis. Integer quis auctor elit sed vulputate mi. Dictumst quisque sagittis purus sit amet.
-	</p>
+<!doctype html>
+<html lang="ko">
+	<head>
+		<BaseHead title="About — Liber" description="AI-ready 인사이트 블로그 Liber에 대해서" />
+		<style>
+			main {
+				max-width: 720px;
+				margin: 0 auto;
+				padding: 3rem 1rem;
+			}
+			h1 {
+				font-size: 2rem;
+				margin-bottom: 0.5rem;
+			}
+			.subtitle {
+				color: rgb(var(--gray));
+				font-size: 1.1rem;
+				margin-bottom: 2.5rem;
+			}
+			section {
+				margin-bottom: 2.5rem;
+			}
+			section h2 {
+				font-size: 1.2rem;
+				border-bottom: 2px solid rgb(var(--accent));
+				padding-bottom: 0.4rem;
+				margin-bottom: 1rem;
+				display: inline-block;
+			}
+			p {
+				line-height: 1.8;
+				color: rgb(var(--gray-dark));
+			}
+			ul {
+				padding-left: 1.2rem;
+			}
+			ul li {
+				line-height: 1.8;
+				color: rgb(var(--gray-dark));
+				margin-bottom: 0.3rem;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>Liber</h1>
+			<p class="subtitle">AI-ready 인사이트 블로그</p>
 
-	<p>
-		Morbi tristique senectus et netus. Id semper risus in hendrerit gravida rutrum quisque non
-		tellus. Habitasse platea dictumst quisque sagittis purus sit amet. Tellus molestie nunc non
-		blandit massa. Cursus vitae congue mauris rhoncus. Accumsan tortor posuere ac ut. Fringilla urna
-		porttitor rhoncus dolor. Elit ullamcorper dignissim cras tincidunt lobortis. In cursus turpis
-		massa tincidunt dui ut ornare lectus. Integer feugiat scelerisque varius morbi enim nunc.
-		Bibendum neque egestas congue quisque egestas diam. Cras ornare arcu dui vivamus arcu felis
-		bibendum. Dignissim suspendisse in est ante in nibh mauris. Sed tempus urna et pharetra pharetra
-		massa massa ultricies mi.
-	</p>
+			<section>
+				<h2>이 블로그에 대해서</h2>
+				<p>
+					Liber는 AI가 일하는 방식을 바꾸고 있는 시대에,
+					실무자가 준비해야 할 것들을 이야기하는 블로그예요.
+				</p>
+				<p>
+					개발자, 마케터, 데이터 분석가, 기획자 — 역할은 다르지만
+					공통으로 만나는 질문이 있어요.
+					"AI를 어떻게 실무에 녹여야 할까?"
+				</p>
+				<p>
+					이 질문에 대한 구체적이고 실용적인 답을 찾아가고 있어요.
+				</p>
+			</section>
 
-	<p>
-		Mollis nunc sed id semper risus in. Convallis a cras semper auctor neque. Diam sit amet nisl
-		suscipit. Lacus viverra vitae congue eu consequat ac felis donec. Egestas integer eget aliquet
-		nibh praesent tristique magna sit amet. Eget magna fermentum iaculis eu non diam. In vitae
-		turpis massa sed elementum. Tristique et egestas quis ipsum suspendisse ultrices. Eget lorem
-		dolor sed viverra ipsum. Vel turpis nunc eget lorem dolor sed viverra. Posuere ac ut consequat
-		semper viverra nam. Laoreet suspendisse interdum consectetur libero id faucibus. Diam phasellus
-		vestibulum lorem sed risus ultricies tristique. Rhoncus dolor purus non enim praesent elementum
-		facilisis. Ultrices tincidunt arcu non sodales neque. Tempus egestas sed sed risus pretium quam
-		vulputate. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Fringilla
-		urna porttitor rhoncus dolor purus non. Amet dictum sit amet justo donec enim.
-	</p>
+			<section>
+				<h2>다루는 주제</h2>
+				<ul>
+					<li><strong>AI-ready UI</strong> — AI가 이해하는 서비스를 만드는 법</li>
+					<li><strong>AI-ready Marketing</strong> — 브랜드를 AI에게 설명하는 법 (GEO)</li>
+					<li><strong>AI-ready Tracking</strong> — GA4와 AI가 만드는 새로운 분석</li>
+					<li><strong>AI-ready Targeting</strong> — Cookieless 시대의 AI 페르소나 타겟팅</li>
+				</ul>
+			</section>
 
-	<p>
-		Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Tortor posuere ac ut consequat semper
-		viverra. Tellus mauris a diam maecenas sed enim ut sem viverra. Venenatis urna cursus eget nunc
-		scelerisque viverra mauris in. Arcu ac tortor dignissim convallis aenean et tortor at. Curabitur
-		gravida arcu ac tortor dignissim convallis aenean et tortor. Egestas tellus rutrum tellus
-		pellentesque eu. Fusce ut placerat orci nulla pellentesque dignissim enim sit amet. Ut enim
-		blandit volutpat maecenas volutpat blandit aliquam etiam. Id donec ultrices tincidunt arcu. Id
-		cursus metus aliquam eleifend mi.
-	</p>
-
-	<p>
-		Tempus quam pellentesque nec nam aliquam sem. Risus at ultrices mi tempus imperdiet. Id porta
-		nibh venenatis cras sed felis eget velit. Ipsum a arcu cursus vitae. Facilisis magna etiam
-		tempor orci eu lobortis elementum. Tincidunt dui ut ornare lectus sit. Quisque non tellus orci
-		ac. Blandit libero volutpat sed cras. Nec tincidunt praesent semper feugiat nibh sed pulvinar
-		proin gravida. Egestas integer eget aliquet nibh praesent tristique magna.
-	</p>
-</Layout>
+			<section>
+				<h2>글의 방향</h2>
+				<p>
+					논문과 사례를 찾아 인용하되, 어렵게 쓰지 않으려 해요.
+					실무에서 바로 써볼 수 있는 이야기, 변화를 이해하는 데 도움이 되는 이야기를 하고 싶어요.
+				</p>
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
