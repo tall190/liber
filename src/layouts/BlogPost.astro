@@ -6,14 +6,41 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = CollectionEntry<'blog'>['data'] & { id?: string };
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, id } = Astro.props;
+
+const pageUrl = Astro.url.href;
+const hitsUrl = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${encodeURIComponent(pageUrl)}&count_bg=%236366f1&title_bg=%23374151&title=views&edge_flat=true`;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": title,
+  "description": description,
+  "datePublished": pubDate.toISOString(),
+  "dateModified": (updatedDate ?? pubDate).toISOString(),
+  "url": pageUrl,
+  "inLanguage": "ko-KR",
+  "author": {
+    "@type": "Organization",
+    "name": "Liber",
+    "url": "https://tall190.github.io/liber"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Liber",
+    "url": "https://tall190.github.io/liber"
+  },
+  ...(heroImage ? { "image": new URL(heroImage.src, Astro.url).href } : {})
+};
 ---
 
-<html lang="en">
+<html lang="ko">
 	<head>
-		<BaseHead title={title} description={description} />
+		<BaseHead title={title} description={description} image={heroImage} />
+		<!-- Schema.org JSON-LD: AI가 이 글을 구조화된 데이터로 읽을 수 있어요 -->
+		<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 		<style>
 			main {
 				width: calc(100% - 2em);
@@ -52,6 +79,35 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			.last-updated-on {
 				font-style: italic;
 			}
+			.post-meta {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 0.75rem;
+				margin-top: 0.5rem;
+				flex-wrap: wrap;
+			}
+			.hits-badge {
+				display: inline-flex;
+				align-items: center;
+			}
+			.hits-badge img {
+				height: 20px;
+				border-radius: 4px;
+			}
+			.comments-section {
+				width: 720px;
+				max-width: calc(100% - 2em);
+				margin: 3rem auto 2rem;
+				padding: 0 1em;
+				border-top: 1px solid rgb(var(--gray-light));
+				padding-top: 2rem;
+			}
+			.comments-section h3 {
+				font-size: 1.1rem;
+				color: rgb(var(--gray-dark));
+				margin-bottom: 1.5rem;
+			}
 		</style>
 	</head>
 
@@ -66,21 +122,47 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 					<div class="title">
 						<div class="date">
 							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
+							{updatedDate && (
+								<div class="last-updated-on">
+									Last updated on <FormattedDate date={updatedDate} />
+								</div>
+							)}
 						</div>
 						<h1>{title}</h1>
+						<div class="post-meta">
+							<span class="hits-badge">
+								<img src={hitsUrl} alt="조회수" loading="lazy" />
+							</span>
+						</div>
 						<hr />
 					</div>
 					<slot />
 				</div>
 			</article>
 		</main>
+
+		<!-- 댓글 & 좋아요 (Giscus — GitHub Discussions 기반) -->
+		<!-- 설정 방법: https://giscus.app 에서 tall190/liber 입력 후 REPO_ID, CATEGORY_ID 교체 -->
+		<div class="comments-section">
+			<h3>댓글</h3>
+			<script
+				src="https://giscus.app/client.js"
+				data-repo="tall190/liber"
+				data-repo-id="REPLACE_WITH_REPO_ID"
+				data-category="General"
+				data-category-id="REPLACE_WITH_CATEGORY_ID"
+				data-mapping="pathname"
+				data-strict="0"
+				data-reactions-enabled="1"
+				data-emit-metadata="0"
+				data-input-position="bottom"
+				data-theme="light"
+				data-lang="ko"
+				crossorigin="anonymous"
+				async
+			></script>
+		</div>
+
 		<Footer />
 	</body>
 </html>
