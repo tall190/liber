@@ -98,6 +98,18 @@ AI는 `save-draft-button`을 찾고, 클릭하고, `draft-saved-toast`가 나타
 
 ---
 
+## 접근성 트리가 AI의 눈이다
+
+`data-testid`와 함께 주목해야 할 것이 하나 더 있다. **ARIA와 시맨틱 HTML**이 AI가 UI를 이해하는 또 다른 경로다.
+
+AI 브라우저 자동화를 연구한 [ProofSource.ai](https://proofsource.ai/2026/01/agent-browser-the-accessibility-first-approach-to-browser-automation/)에 따르면, AI 에이전트가 전체 DOM 대신 접근성 트리(Accessibility Tree)만 읽도록 했을 때 컨텍스트 토큰 사용량이 **93% 절감**됐다. AI는 DOM 전체를 파싱하는 것보다 의미 단위로 요약된 접근성 트리를 훨씬 잘 이해한다.
+
+스크린리더를 위해 작성한 ARIA 속성이 AI 에이전트에게 정확한 인터페이스가 된다. [BrowserStack의 Playwright MCP 리포트](https://www.browserstack.com/guide/modern-test-automation-with-ai-and-playwright)도 ARIA 속성이 AI 테스트 생성의 정확도에 직접 영향을 준다고 설명한다.
+
+접근성이 좋은 UI는 AI에게도 좋은 UI다. 이 두 목표는 같은 방향을 가리킨다.
+
+---
+
 ## AI-ready UI: 전 사이클의 공통 언어
 
 팀 내에서 네이밍 컨벤션을 정의하면, AI가 예측 가능한 방식으로 작동한다.
