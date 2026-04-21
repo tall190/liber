@@ -1,6 +1,6 @@
 ---
-title: '당신의 버튼, AI는 못 찾는다'
-description: 'AI와 함께 개발하려면 UI부터 바꿔야 한다. AI-Readable UI는 QA 기법이 아니라, AI가 소프트웨어 개발 전 사이클에 참여하기 위한 전제 조건이다.'
+title: 'AI-ready UI — 당신의 서비스는 AI와 함께 일할 준비가 되어있나요?'
+description: 'AI가 개발 속도를 높이고 QA까지 자동화하려면, UI가 먼저 AI에게 읽혀야 한다. AI-ready UI는 테스트 기법이 아니라 AI와 함께 일하기 위한 인프라다.'
 pubDate: '2026-04-21'
 heroImage: '../../assets/blog-placeholder-4.jpg'
 ---
@@ -125,4 +125,4 @@ AI가 읽기 좋은 UI는 사람도 읽기 좋은 UI다.
 
 ---
 
-*다음 글: [당신의 글, AI는 안 읽는다](/blog/geo-for-brands) — 같은 원리의 다른 이야기. 이번엔 개발자가 아닌 브랜드가 주인공이다.*
+*다음 글: [AI-ready Marketing — 당신의 브랜드를 AI에게 설명할 준비가 되었나요?](/blog/geo-for-brands) — 같은 원리의 다른 이야기. 이번엔 개발자가 아닌 브랜드가 주인공이다.*
