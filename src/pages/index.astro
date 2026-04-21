@@ -7,7 +7,7 @@ import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const base = import.meta.env.BASE_URL;
 
 const posts = (await getCollection('blog'))
 	.filter(p => !['first-post', 'second-post', 'third-post', 'using-mdx', 'markdown-style-guide'].includes(p.id))
@@ -129,7 +129,7 @@ const posts = (await getCollection('blog'))
 					AI가 개발, 마케팅, 트래킹, 타겟팅을 바꾸고 있어요.
 					변화에 앞서 준비하는 방법을 이야기해요.
 				</p>
-				<a class="cta" href={`${base}blog`}>글 보러가기</a>
+				<a class="cta" href={`${base}blog/`}>글 보러가기</a>
 			</section>
 
 			<p class="series-title">최근 글</p>
@@ -150,7 +150,7 @@ const posts = (await getCollection('blog'))
 			</ul>
 
 			<div class="view-all">
-				<a href={`${base}blog`}>모든 글 보기 →</a>
+				<a href={`${base}blog/`}>모든 글 보기 →</a>
 			</div>
 		</main>
 		<Footer />
