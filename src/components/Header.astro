@@ -1,5 +1,6 @@
 ---
-import { SITE_TITLE } from '../consts';
+import { Image } from 'astro:assets';
+import logoSrc from '../assets/liber-logo.png';
 import HeaderLink from './HeaderLink.astro';
 
 // Normalize BASE_URL: strip trailing slash so we can always append '/' explicitly
@@ -8,7 +9,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 <header>
 	<nav>
-		<h2><a href={`${base}/`}>{SITE_TITLE}</a></h2>
+		<h2><a href={`${base}/`}><Image src={logoSrc} alt="Liber" height={36} /></a></h2>
 		<div class="internal-links">
 			<HeaderLink href={`${base}/`}>Home</HeaderLink>
 			<HeaderLink href={`${base}/blog/`}>Blog</HeaderLink>
