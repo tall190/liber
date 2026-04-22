@@ -2,7 +2,7 @@
 title: 'AI-ready UI 실전편 — 동적 testid 설계, 계층 구조, aria-busy 배치 전략'
 description: '동적으로 생성되는 UI에서 testid를 어떻게 조합하는가. 텍스트가 아닌 위치를 특정하는 계층 구조 설계. aria-busy를 어디에 두어야 AI가 정확히 대기하는가. 3-4년차 FE 개발자를 위한 실전 패턴.'
 pubDate: '2026-04-22'
-heroImage: '../../assets/ai-ready-ui_ai_recommand_image.png'
+heroImage: '../../assets/ai-like-ui-2_hero_image.png'
 ---
 
 1편에서 `data-testid` 컨벤션을 잡고 나면, 실제 시나리오를 돌려보는 순간 세 가지 지점에서 막혀요.
@@ -129,7 +129,7 @@ await modal.getByTestId('modal-confirm-button').click();
 
 `campaign-42-row` 아래에서 `campaign-42-edit-button`을 찾는 건, 같은 이름의 요소가 몇 개 있어도 혼동이 없어요. 계층이 맥락을 담당하거든요.
 
-![계층 구조와 다이얼로그에 testid를 심는 패턴](../../assets/ai-ready-ui_testid_image.png)
+![계층 구조와 다이얼로그에 testid를 심는 패턴](../../assets/ai-like-ui-2_hierarchy_image.png)
 
 ## aria-busy — 상위 컨테이너 하나에만 두는 이유
 
@@ -171,6 +171,8 @@ await expect(page.getByTestId('campaign-42-row')).toBeVisible();
 ```
 
 어디에 `aria-busy`를 두어야 하는지 결정하는 기준은 간단해요. "이게 끝나면 AI가 다음 단계로 가도 된다"는 경계가 어디인지를 생각하면 돼요. 그 경계가 `aria-busy`를 두는 위치예요.
+
+![분산 배치(❌) vs 상위 컨테이너 단일 배치(✅) — aria-busy 위치에 따른 차이](../../assets/ai-like-ui-2_aria_busy_image.png)
 
 ## disabled의 이유를 DOM에 남기기
 
