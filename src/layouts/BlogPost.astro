@@ -11,7 +11,7 @@ type Props = CollectionEntry<'blog'>['data'] & { id?: string };
 const { title, description, pubDate, updatedDate, heroImage, id } = Astro.props;
 
 const pageUrl = Astro.url.href;
-const hitsUrl = `https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=${encodeURIComponent(pageUrl)}&count_bg=%236366f1&title_bg=%23374151&title=views&edge_flat=true`;
+const hitsUrl = `https://api.visitorbadge.io/api/visitors?path=${encodeURIComponent(pageUrl)}&label=views&labelColor=%23374151&countColor=%236366f1&style=flat`;
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -131,7 +131,7 @@ const jsonLd = {
 						<h1>{title}</h1>
 						<div class="post-meta">
 							<span class="hits-badge">
-								<img src={hitsUrl} alt="조회수" loading="lazy" />
+								<img src={hitsUrl} alt="조회수" loading="eager" />
 							</span>
 						</div>
 						<hr />
