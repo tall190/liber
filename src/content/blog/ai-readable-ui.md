@@ -312,6 +312,10 @@ AI가 코드를 잘 만들어주는 건 이미 됐어요. 다음 단계는 AI가
 
 testid는 "테스트를 위한 설정"이 아니에요. AI와 함께 일하는 FE 코드베이스의 기본 인프라예요. 지금 붙이지 않으면, 나중에 AI가 "왜 이 버튼을 못 찾냐"고 할 때 다시 돌아오게 돼요.
 
+컨벤션을 잡은 다음엔 실전 문제가 남아요. 동적으로 생성되는 항목엔 testid를 어떻게 조합하는지, 텍스트가 맞아도 잘못된 위치에서 매칭되는 문제, AI가 로딩 완료 시점을 정확히 잡게 하는 `aria-busy` 배치 전략까지 — 다음 글에서 다뤄요.
+
+[AI-ready UI 실전편 → 동적 testid 설계, 계층 구조, aria-busy 배치 전략](/liber/blog/ai-ready-ui-advanced)
+
 ---
 
-*다음 글: [AI-ready Marketing — 당신의 브랜드를 AI에게 설명할 준비가 되었나요?](/liber/blog/geo-for-brands) — 이번엔 개발팀이 아닌 브랜드가 주인공이에요.*
+*[AI-ready Marketing — 당신의 브랜드를 AI에게 설명할 준비가 되었나요?](/liber/blog/geo-for-brands) — 개발팀이 아닌 브랜드가 주인공인 이야기.*

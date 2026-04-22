@@ -1,85 +1,186 @@
 ---
-title: 'AI-ready UI 실전편 — 상태, 숨겨진 데이터, 동적 선택자까지'
-description: 'data-testid를 붙이고 나서 AI 에이전트가 진짜 막히는 지점들. aria-busy로 로딩 대기, hidden 검증 데이터, disabled 이유 명시, 디자인 시스템 prop forwarding, 하이브리드 선택자 전략, 애니메이션 제어까지.'
+title: 'AI-ready UI 실전편 — 동적 testid 설계, 계층 구조, aria-busy 배치 전략'
+description: '동적으로 생성되는 UI에서 testid를 어떻게 조합하는가. 텍스트가 아닌 위치를 특정하는 계층 구조 설계. aria-busy를 어디에 두어야 AI가 정확히 대기하는가. 3-4년차 FE 개발자를 위한 실전 패턴.'
 pubDate: '2026-04-22'
 heroImage: '../../assets/ai-ready-ui_ai_recommand_image.png'
 ---
 
-1편에서 `data-testid` 컨벤션을 정리하고 나면, 실제로 AI 에이전트를 붙여보는 순간 또 다른 문제들이 나와요. 버튼은 정확히 찾는데 클릭 후 다음 단계에서 실패하거나, 버튼이 왜 비활성화되어 있는지 AI가 판단 못해서 시나리오가 막히거나, 디자인 시스템 컴포넌트를 거치면 testid가 사라지거나.
+1편에서 `data-testid` 컨벤션을 잡고 나면, 실제 시나리오를 돌려보는 순간 세 가지 지점에서 막혀요.
 
-이 글은 그 지점들을 다뤄요. 1편이 "AI가 요소를 찾게 만들기"였다면, 실전편은 "AI가 상태를 이해하게 만들기"예요.
+첫째, 동적으로 생성된 항목에 testid를 어떻게 붙이냐. 둘째, 텍스트가 맞아도 엉뚱한 위치에서 매칭되는 문제. 셋째, 로딩 대기 시점을 AI가 정확히 잡지 못하는 문제. 이 세 가지를 순서대로 다룰게요.
 
-## aria-busy — AI에게 "지금 기다려"를 알려주는 방법
+## 동적 UI의 testid 설계 — "동적이라서 testid 못 쓴다"는 틀렸다
 
-가장 흔한 실패 패턴이에요. AI 에이전트가 버튼을 클릭하고 즉시 다음 요소를 찾으려는데, 데이터가 아직 로딩 중이라 요소가 없어요.
+동적으로 생성되는 항목에 testid를 못 쓴다는 건 잘못된 전제예요. 세 가지 패턴으로 대부분의 동적 케이스를 처리할 수 있어요.
 
-```typescript
-// AI가 자주 실패하는 시나리오
-await page.getByTestId('search-submit-button').click();
-await expect(page.getByTestId('result-list')).toBeVisible(); // 즉시 확인 → 실패
-```
+**패턴 1: API에서 받은 ID로 조합**
 
-사람은 "로딩 스피너가 보이니까 기다려야 해"를 시각적으로 판단하지만, AI 에이전트는 접근성 트리를 읽어요. 스피너는 시각 정보라 트리에 의미 있게 올라오지 않거든요.
-
-해결책은 컨테이너에 `aria-busy` 속성을 명시하는 거예요.
+생성 시 서버에서 ID를 리턴받으면, 그 ID를 testid에 조합하면 돼요. 인덱스와 달리 데이터가 추가·삭제·정렬돼도 안정적이에요.
 
 ```tsx
-// ❌ AI가 로딩 완료 시점을 모름
-const SearchResults = ({ isLoading, results }) => (
-  <section data-testid="search-results">
-    {isLoading ? <Spinner /> : <ResultList results={results} />}
-  </section>
-);
+{campaigns.map((campaign) => (
+  <tr data-testid={`campaign-${campaign.id}-row`}>
+    <td data-testid={`campaign-${campaign.id}-name`}>{campaign.name}</td>
+    <td data-testid={`campaign-${campaign.id}-status`}>{campaign.status}</td>
+    <button data-testid={`campaign-${campaign.id}-edit-button`}>수정</button>
+  </tr>
+))}
+```
 
-// ✅ aria-busy로 AI에게 대기 시점을 알려줌
-const SearchResults = ({ isLoading, results }) => (
-  <section
-    data-testid="search-results"
-    aria-busy={isLoading}
-    data-status={isLoading ? 'loading' : 'idle'}
+AI가 "ID 42번 캠페인의 상태가 ACTIVE인지 확인해줘"를 처리할 때 `campaign-42-status`를 정확히 찾아요.
+
+**패턴 2: 정렬 순서 기반 인덱스**
+
+"목록에서 첫 번째 항목"을 찾아야 할 때는 인덱스가 오히려 정확한 표현이에요. "최신순 정렬 후 첫 번째 캠페인"이라는 시나리오에서 `campaign-list-item-0`은 의미가 명확해요.
+
+```tsx
+{campaigns.map((campaign, idx) => (
+  <tr
+    data-testid={`campaign-${campaign.id}-row`}
+    data-list-index={idx}
   >
-    {isLoading ? <Spinner /> : <ResultList results={results} />}
-  </section>
+    ...
+  </tr>
+))}
+```
+
+`data-testid`는 ID 기반으로, `data-list-index`는 정렬 순서용으로 분리해서 두 목적 모두 처리할 수 있어요.
+
+**패턴 3: 화면 표시 + API 검증이 동시에 필요한 경우**
+
+화면엔 일부만 보여주고 (예: `#****89`), API 검증에는 전체 값이 필요한 경우 hidden 요소로 분리해요.
+
+```tsx
+const OrderRow = ({ order }) => (
+  <tr data-testid={`order-${order.id}-row`}>
+    {/* 화면 표시용 */}
+    <td data-testid={`order-${order.id}-number-display`}>
+      #{order.number.slice(-4)}
+    </td>
+
+    {/* AI 검증용 — 화면에 안 보이지만 DOM에 존재 */}
+    <span
+      style={{ display: 'none' }}
+      data-testid={`order-${order.id}-full-number`}
+      aria-hidden="true"
+    >
+      {order.number}
+    </span>
+  </tr>
 );
 ```
 
-AI가 작성하는 테스트가 이렇게 달라져요.
+화면 표시 값과 검증 값이 다를 때, 숨겨진 요소가 AI의 assertion 앵커가 돼요.
+
+## 텍스트 매칭의 진짜 문제 — 위치를 특정해야 한다
+
+"저장" 버튼을 클릭하는 테스트를 생각해보세요. 화면에 "저장"이라는 텍스트가 두 군데 있다면 어느 쪽이 실행될지 모르죠.
 
 ```typescript
-// aria-busy를 활용한 안정적인 대기 패턴
-await page.getByTestId('search-submit-button').click();
+// ❌ 텍스트로만 찾으면 의도하지 않은 요소 클릭 가능
+await page.getByText('저장').click();
 
-// aria-busy가 사라질 때까지 대기
-await expect(page.getByTestId('search-results'))
-  .not.toHaveAttribute('aria-busy', 'true');
-
-// 이제 결과 확인
-await expect(page.getByTestId('result-list')).toBeVisible();
+// ❌ testid를 붙였어도 계층 없이 쓰면 같은 문제
+await page.getByTestId('save-button').click();
+// → 모달 안의 save-button인지, 폼 아래 save-button인지 불명확
 ```
 
-`data-status`는 `aria-busy`와 다른 역할이에요. `aria-busy`는 "지금 처리 중"이라는 이진 상태고, `data-status`는 더 세분화된 상태를 나타내요. AI가 "loading", "error", "empty", "idle" 각각에 맞는 시나리오를 만들 수 있게 해줘요.
+텍스트 매칭에서 진짜 중요한 건 "이 텍스트가 내가 원하는 위치에 있는 텍스트인지"예요. 텍스트 자체가 아니라 **맥락** 이 기준이거든요. testid가 계층 구조를 덮고 있어야 AI가 정확한 위치를 알 수 있어요.
 
 ```tsx
+{/* 계층 구조에 testid를 심으면 위치 특정이 가능해짐 */}
+<dialog data-testid="confirm-delete-modal">
+  <section data-testid="modal-content">
+    <h2 data-testid="modal-title">삭제 확인</h2>
+    <p data-testid="modal-description">이 캠페인을 삭제하면 복구할 수 없어요.</p>
+    <div data-testid="modal-actions">
+      <button data-testid="modal-confirm-button">삭제</button>
+      <button data-testid="modal-cancel-button">취소</button>
+    </div>
+  </section>
+</dialog>
+```
+
+이 구조에서 AI는 "modal-actions 안에 있는 confirm-button"을 찾아요. 같은 이름의 버튼이 페이지 어딘가에 있어도 스코프가 잡혀 있어서 헷갈리지 않아요.
+
+```typescript
+// 계층으로 스코프를 잡은 탐색
+const modal = page.getByTestId('confirm-delete-modal');
+await modal.getByTestId('modal-confirm-button').click();
+```
+
+테이블도 마찬가지예요. 행 → 셀 → 버튼 계층이 있어야 "이 행의 수정 버튼"이라는 의미가 명확해져요.
+
+```tsx
+<table data-testid="campaign-table">
+  <tbody data-testid="campaign-table-body">
+    {campaigns.map((campaign) => (
+      <tr data-testid={`campaign-${campaign.id}-row`}>
+        <td data-testid={`campaign-${campaign.id}-name`}>{campaign.name}</td>
+        <td data-testid={`campaign-${campaign.id}-actions`}>
+          <button data-testid={`campaign-${campaign.id}-edit-button`}>수정</button>
+          <button data-testid={`campaign-${campaign.id}-delete-button`}>삭제</button>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+```
+
+`campaign-42-row` 아래에서 `campaign-42-edit-button`을 찾는 건, 같은 이름의 요소가 몇 개 있어도 혼동이 없어요. 계층이 맥락을 담당하거든요.
+
+![계층 구조와 다이얼로그에 testid를 심는 패턴](../../assets/ai-ready-ui_testid_image.png)
+
+## aria-busy — 상위 컨테이너 하나에만 두는 이유
+
+`aria-busy`를 잘못 배치하면 오히려 타이밍 잡기가 더 어려워져요. 흔한 실수는 로딩 중인 요소마다 붙이는 거예요.
+
+```tsx
+{/* ❌ 여러 곳에 분산 — AI가 어느 걸 기준으로 기다려야 할지 모름 */}
+<section>
+  <div aria-busy={isHeaderLoading} data-testid="header-section">...</div>
+  <table aria-busy={isTableLoading} data-testid="campaign-table">...</table>
+  <div aria-busy={isPaginationLoading} data-testid="pagination">...</div>
+</section>
+```
+
+여러 `aria-busy`가 각자 다른 타이밍에 해제되면, AI 에이전트는 "어느 것이 끝났을 때 다음 단계로 가야 하나"를 판단하기 어려워요.
+
+```tsx
+{/* ✅ 상위 컨테이너 하나에만 — 명확한 대기 기준점 */}
 <section
-  data-testid="dashboard-metrics"
-  aria-busy={isLoading}
-  data-status={isLoading ? 'loading' : error ? 'error' : data.length === 0 ? 'empty' : 'idle'}
+  data-testid="campaign-dashboard"
+  aria-busy={isHeaderLoading || isTableLoading || isPaginationLoading}
+  data-status={isLoading ? 'loading' : 'idle'}
 >
+  <div data-testid="header-section">...</div>
+  <table data-testid="campaign-table">...</table>
+  <div data-testid="pagination">...</div>
+</section>
 ```
 
-## data-reason — disabled의 이유를 DOM에 남기기
+AI 에이전트 입장에서 `campaign-dashboard`의 `aria-busy`가 `false`가 되는 순간이 "이 화면의 로딩이 완료됐다"는 신호예요. 명확한 대기 기준점이 하나 있어야 시나리오가 안정적이에요.
 
-버튼이 `disabled` 상태일 때, AI 에이전트는 "이걸 눌러야 하나 말아야 하나" 판단을 못해요.
+```typescript
+// 상위 컨테이너의 aria-busy를 기준으로 대기
+await page.getByTestId('campaign-dashboard').click(); // 탐색 트리거
+await expect(page.getByTestId('campaign-dashboard'))
+  .not.toHaveAttribute('aria-busy', 'true'); // 로딩 완료 대기
+// 이후 안전하게 내부 요소 탐색
+await expect(page.getByTestId('campaign-42-row')).toBeVisible();
+```
+
+어디에 `aria-busy`를 두어야 하는지 결정하는 기준은 간단해요. "이게 끝나면 AI가 다음 단계로 가도 된다"는 경계가 어디인지를 생각하면 돼요. 그 경계가 `aria-busy`를 두는 위치예요.
+
+## disabled의 이유를 DOM에 남기기
+
+버튼이 `disabled`일 때 AI는 왜 비활성인지 알 수 없어요. 기다려야 하는지, 다른 입력이 필요한지 판단이 안 되거든요.
 
 ```tsx
-// AI의 관점: 왜 disabled야? 기다려야 해? 뭔가 빠진 게 있어?
+{/* ❌ AI가 이유를 모름 */}
 <button disabled data-testid="submit-button">제출</button>
-```
 
-disabled인 이유가 "API 응답 대기"인지, "필수 항목 미입력"인지, "권한 없음"인지에 따라 AI가 취해야 할 다음 행동이 달라요. 이유를 DOM에 명시하면 AI가 조건 분기 시나리오를 스스로 만들 수 있어요.
-
-```tsx
-// ✅ 이유를 명시
+{/* ✅ 이유가 명시됨 */}
 <button
   disabled={isSubmitting || !isFormValid}
   data-testid="submit-button"
@@ -93,216 +194,56 @@ disabled인 이유가 "API 응답 대기"인지, "필수 항목 미입력"인지
 </button>
 ```
 
-AI가 이 구조를 보면 이런 시나리오를 만들어요.
+`data-reason="waiting-api"`를 보면 AI가 "API 응답을 기다렸다가 다시 시도"하는 시나리오를 만들어요. `data-reason="validation-error"`면 "필수 입력을 채운 후 재시도"라는 흐름을 잡을 수 있어요.
 
-```typescript
-// data-reason="validation-error"인 경우: 필수 항목 채우기
-const submitBtn = page.getByTestId('submit-button');
-const reason = await submitBtn.getAttribute('data-reason');
+## 애니메이션 — flaky test의 주범을 제거하는 방법
 
-if (reason === 'validation-error') {
-  // 폼 필수 항목 채우고 재시도
-  await page.getByTestId('title-input').fill('필수 제목');
-} else if (reason === 'waiting-api') {
-  // API 응답 대기
-  await expect(submitBtn).not.toHaveAttribute('data-reason', 'waiting-api');
-}
-```
-
-`data-reason`을 도입하면 AI 에이전트가 단순히 "버튼 클릭"이 아니라 "버튼이 활성화될 조건을 충족하고 클릭"하는 시나리오를 생성할 수 있어요.
-
-## hidden 검증 데이터 — 화면에 없지만 AI가 읽어야 하는 값
-
-실무에서 자주 마주치는 패턴이에요. 주문 번호나 내부 ID 같은 값을 화면에는 일부만 보여주는 경우예요.
-
-```tsx
-// 화면: "주문 #****89"로 표시
-// 실제 API 검증에 필요한 값: "ORDER-2026042201289"
-```
-
-AI 에이전트가 결제 완료 후 주문 상태를 API로 검증하려면 전체 주문 번호가 필요해요. 화면엔 없으니 AI가 찾지 못하는 상황이 생겨요.
-
-해결책은 검증용 데이터를 숨겨진 요소로 심어두는 거예요.
-
-```tsx
-const OrderConfirmation = ({ order }) => (
-  <section data-testid="order-confirmation">
-    {/* 사용자에게 보이는 표시 */}
-    <p>주문 번호: ****{order.id.slice(-2)}</p>
-
-    {/* AI 검증용 — 화면엔 없지만 접근성 트리에 존재 */}
-    <span
-      style={{ display: 'none' }}
-      data-testid="hidden-order-id"
-      aria-hidden="true"
-    >
-      {order.id}
-    </span>
-    <span
-      style={{ display: 'none' }}
-      data-testid="hidden-order-status"
-      aria-hidden="true"
-    >
-      {order.status}
-    </span>
-  </section>
-);
-```
-
-`aria-hidden="true"`를 같이 붙이는 게 중요해요. 스크린리더 사용자에게는 숨겨야 하지만, DOM과 접근성 트리에는 존재해서 AI 에이전트가 읽을 수 있어야 해요.
-
-비슷한 패턴으로 날짜, 시간, 임의 ID처럼 매번 바뀌는 값도 래퍼로 감싸두면 좋아요.
-
-```tsx
-{/* AI가 이 영역의 텍스트 변경을 '오류'로 오인하지 않도록 */}
-<div data-testid="dynamic-content" data-type="timestamp">
-  {formatDate(order.createdAt)}
-</div>
-```
-
-AI 에이전트가 `data-type="timestamp"` 영역은 변동 가능한 값으로 인식하고, assertion 대상에서 제외할 수 있어요.
-
-## Prop Forwarding — 디자인 시스템이 testid를 삼키는 문제
-
-공통 컴포넌트를 쓰다 보면 testid가 중간에 사라지는 문제가 자주 생겨요.
-
-```tsx
-// 이렇게 쓰면...
-<Button data-testid="submit-creative-button">등록</Button>
-
-// 실제 DOM에서 testid가 없어요
-<button class="btn btn-primary">등록</button>
-```
-
-`Button` 내부에서 `data-testid`를 명시적으로 전달하지 않으면 사라지거든요. 이게 대형 코드베이스에서 생각보다 자주 발생해요.
-
-가장 간단한 해결책은 나머지 props를 펼쳐서 DOM 요소에 그대로 전달하는 거예요.
-
-```tsx
-// ✅ 방법 1: Rest props 전달 (권장)
-const Button = ({ children, className, ...rest }) => (
-  <button className={`btn ${className ?? ''}`} {...rest}>
-    {children}
-  </button>
-);
-
-// ✅ 방법 2: data-* 속성을 명시적으로 필터링해서 전달
-const Button = ({ children, className, ...props }) => {
-  const dataProps = Object.fromEntries(
-    Object.entries(props).filter(([key]) => key.startsWith('data-'))
-  );
-  return (
-    <button className={`btn ${className ?? ''}`} {...dataProps}>
-      {children}
-    </button>
-  );
-};
-```
-
-방법 1이 더 간단하지만, 의도하지 않은 props가 DOM에 전달될 수 있어요. 방법 2는 `data-*` 속성만 선별해서 전달해서 더 명시적이에요.
-
-공통 컴포넌트 수정 시 원칙은 하나예요. **P0 테스트에 영향을 줄 수 있는 공통 컴포넌트 마크업 변경은 QA와 사전 공유.** 공통 컴포넌트 하나가 수십 개 테스트에 영향을 주거든요.
-
-## 하이브리드 선택자 전략 — testid가 항상 정답은 아니다
-
-1편에서 "testid를 쓰세요"라고 했는데, 실무에서는 예외가 있어요. 특히 **동적으로 생성되는 항목 + 다국어** 조합일 때요.
-
-실제 사례로 설명할게요. 대시보드의 지표 선택 드롭다운에 "노출", "클릭" 같은 기본 지표와 "CPC", "CTR" 같은 사용자 KPI가 섞여 있는 경우예요.
-
-기본 지표의 testid는 `metric-node-impression`, `metric-node-click` 처럼 언어 독립적으로 만들 수 있어요. 그런데 사용자가 추가한 KPI는 DB에서 동적으로 생성되다 보니 `metric-node-kpi-1`, `metric-node-kpi-2` 같이 번호가 붙어요. 사용자가 KPI를 추가하거나 순서를 바꾸면 번호가 달라지고, testid가 불안정해져요.
-
-```
-기본 지표: metric-node-impression → 안정적
-사용자 KPI: metric-node-kpi-1 → 사용자 설정에 따라 변동
-```
-
-이 경우에는 지표별로 다른 선택 전략이 더 안정적이에요.
-
-| 지표 유형 | 선택 전략 | 이유 |
-|---|---|---|
-| 기본 지표 (노출/클릭) | testid 사용 | 언어가 바뀌면 텍스트도 바뀜 ("클릭" → "Click") |
-| 사용자 KPI (CPC/CTR) | 텍스트 검색 | 약어라 언어 불변. testid가 동적으로 불안정 |
-
-```typescript
-// 기본 지표: testid로 안정적으로 선택
-await page.getByTestId('metric-node-impression').click();
-
-// 사용자 KPI: 검색창에 텍스트 입력 후 선택
-await page.getByTestId('metric-search-input').fill('CPC');
-await page.getByRole('option', { name: 'CPC' }).click();
-```
-
-선택 전략 결정 기준은 두 가지예요.
-
-- **다국어 환경에서 텍스트가 바뀌는가?** → testid 사용
-- **ID가 동적이고 텍스트는 언어 불변인가?** → 텍스트 검색 사용
-
-무조건 testid가 정답이 아니에요. testid가 불안정한 경우엔 오히려 더 나쁜 선택이에요.
-
-## 애니메이션 제거 — E2E flakiness의 주범
-
-CSS 트랜지션 300ms가 E2E 테스트에서 timing 문제를 일으켜요. AI 에이전트가 요소가 이미 화면에 있는데 트랜지션 중이라 클릭이 안 되거나, 사라지는 중인 요소에 접근하려다 실패하거나.
-
-두 군데에서 동시에 처리해야 해요.
-
-**FE: prefers-reduced-motion 전역 CSS**
+E2E 간헐적 실패의 주요 원인 중 하나가 CSS 트랜지션이에요. FE와 테스트 설정 두 곳에서 동시에 제어해야 해요.
 
 ```css
 /* global.css */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
-    animation-delay: -1ms !important;
     animation-duration: 1ms !important;
-    animation-iteration-count: 1 !important;
     transition-duration: 1ms !important;
-    transition-delay: -1ms !important;
-    scroll-behavior: auto !important;
   }
 }
 ```
-
-**Playwright: 브라우저 컨텍스트에서 강제 적용**
 
 ```typescript
 // playwright.config.ts
 export default defineConfig({
   use: {
-    // prefers-reduced-motion: reduce 강제 적용
-    contextOptions: {
-      reducedMotion: 'reduce',
-    },
-    launchOptions: {
-      args: ['--force-prefers-reduced-motion'],
-    },
+    contextOptions: { reducedMotion: 'reduce' },
+    launchOptions: { args: ['--force-prefers-reduced-motion'] },
   },
 });
 ```
 
-이 둘을 같이 적용해야 해요. CSS만 있으면 Playwright가 `reducedMotion` 설정을 안 넘겨주면 무의미하고, Playwright config만 있으면 FE에서 CSS로 애니메이션을 제어하지 않으면 효과가 없어요.
+CSS만 있으면 Playwright가 `reducedMotion` 설정을 전달하지 않아서 무의미하고, config만 있으면 CSS에서 애니메이션을 제어하지 않으면 효과가 없어요. 두 곳이 함께 작동해야 해요.
 
-이 설정 하나로 timing 관련 flaky test가 절반 이상 줄어요. 경험적으로 E2E 간헐적 실패의 주요 원인 중 하나가 애니메이션이거든요.
-
-## 실전 적용 체크리스트
-
-이 글에서 다룬 패턴을 컴포넌트 작성 시 체크하는 기준으로 요약하면 이래요.
+## 실전 의사결정 체크리스트
 
 ```
-비동기 컨테이너
-  ├─ aria-busy={isLoading}
-  └─ data-status="loading | idle | error | empty"
+동적 리스트 항목
+  ├─ 서버에서 ID를 받는가?
+  │    └─ YES → data-testid={`entity-${id}-row`}
+  ├─ 정렬 순서가 중요한가?
+  │    └─ YES → data-list-index={idx} 병행
+  └─ 화면 표시값 ≠ API 검증값?
+       └─ YES → 숨겨진 span에 전체값 + aria-hidden="true"
 
-버튼 disabled
+계층 / 위치 특정
+  ├─ Dialog, Modal → data-testid 필수
+  ├─ Section, Sidebar → data-testid 필수
+  └─ Table row → entity-{id}-row로 스코프
+
+aria-busy 배치
+  └─ 상위 컨테이너 하나에만
+       "이게 끝나면 다음 단계로 가도 된다"는 경계
+
+disabled 상태
   └─ data-reason="waiting-api | validation-error | no-permission"
-
-API 검증이 필요한 숨겨진 값
-  └─ <span style={{ display: 'none' }} data-testid="hidden-{field}" aria-hidden="true">
-
-공통 컴포넌트
-  └─ {...rest} 또는 data-* 필터링으로 prop forwarding
-
-동적 리스트 선택자
-  ├─ 언어 변경되는 텍스트 → testid
-  └─ 언어 불변 약어 + 동적 ID → 텍스트 검색
 
 E2E 환경
   ├─ prefers-reduced-motion CSS 전역 적용
@@ -311,7 +252,7 @@ E2E 환경
 
 ---
 
-data-testid를 도입하고 나서 AI 에이전트 자동화가 잘 안 된다면, 대부분 여기서 다룬 패턴 중 하나가 빠져 있는 거예요. 요소를 찾는 건 1편, 상태를 이해하게 만드는 건 실전편 — 두 가지가 함께 있어야 AI 에이전트가 사람처럼 화면을 다룰 수 있어요.
+testid를 도입했는데 AI 에이전트 자동화가 불안정하다면, 대부분 계층 구조 누락이거나 `aria-busy` 배치 문제예요. 요소를 찾는 건 1편, 정확한 위치와 타이밍을 잡는 건 이 글 — 두 가지가 함께 있어야 AI 에이전트가 사람처럼 화면을 다뤄요.
 
 ---
 
