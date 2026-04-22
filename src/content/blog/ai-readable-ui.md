@@ -1,297 +1,317 @@
 ---
-title: 'AI-ready UI — 당신의 서비스는 AI와 함께 일할 준비가 되어있나요?'
-description: 'AI가 개발 속도를 높이고 QA까지 자동화하려면, UI가 먼저 AI에게 읽혀야 한다. data-testid 컨벤션부터 동적 테이블, 다국어 지원, AI 도구 활용법까지.'
+title: 'AI-ready UI — AI 에이전트가 당신의 화면을 탐색하는 방식'
+description: 'AI 에이전트가 DOM을 읽는 원리부터 UI 식별자 선택 비교, 동작하는 ESLint 룰, production 최적화, 레거시 마이그레이션 전략까지. 3년차 이상 FE 개발자를 위한 실전 가이드.'
 pubDate: '2026-04-21'
 heroImage: '../../assets/ai-ready-ui_hero_image.png'
 ---
 
-AI 코딩 어시스턴트를 쓰다 보면 신기한 순간이 있어요. 복잡한 비즈니스 로직을 설명했더니 거의 정확한 코드를 내놓고, 리팩토링을 부탁하면 제가 생각했던 방향보다 더 깔끔하게 정리해주더라고요.
+Playwright MCP로 AI 에이전트가 브라우저를 직접 조작하게 해봤을 때였어요. 버튼 클릭 하나가 계속 실패하는데, 이상한 건 그 버튼이 화면에 멀쩡히 보인다는 거였어요. AI는 버튼을 "찾지 못했다"고 했고, 저는 "왜?"라는 질문 앞에서 잠깐 멈췄어요.
 
-근데 분명히 막히는 순간도 있어요. 특히 UI 자동화와 테스트를 부탁할 때요.
+AI가 화면을 사람처럼 본다는 가정이 틀렸던 거예요.
 
-## AI가 막히는 곳
+## AI 에이전트는 DOM 전체를 읽지 않는다
 
-"이 저장 버튼 클릭했을 때 토스트 메시지 뜨는지 테스트 써줘."
+Playwright MCP, Claude Computer Use, Cursor의 UI 탐색 — 이것들이 화면을 어떻게 읽는지 실제로 살펴보면, 대부분 **접근성 트리(Accessibility Tree)** 를 기반으로 동작해요.
 
-AI는 코드를 읽기 시작해요. 컴포넌트 트리를 파악하고, 클릭 핸들러를 추적하고, 무슨 일이 벌어지는지 추론하려 해요. 근데 버튼에 이름이 없어요.
+접근성 트리는 브라우저가 시각 정보를 걷어내고 "의미 단위"로 재구성한 DOM의 요약본이에요. 스크린리더가 읽는 바로 그 구조예요. 시각 스타일, 레이아웃, z-index 같은 건 여기 없어요. "이게 버튼이고, 레이블은 이거고, 클릭 가능하다" — 이 정도만 있어요.
+
+[ProofSource.ai 연구](https://proofsource.ai/2026/01/agent-browser-the-accessibility-first-approach-to-browser-automation/)에서 AI 에이전트가 전체 DOM 대신 접근성 트리만 읽게 했을 때 컨텍스트 토큰이 93% 줄었어요. 전체 DOM이 얼마나 노이즈로 가득한지를 역설적으로 보여주는 수치예요.
+
+문제는 **접근성 트리에 정보가 없으면, AI는 추측하거나 실패한다는 거예요.**
 
 ```tsx
-// AI가 이해하기 어려운 구조
+// 접근성 트리에서 이렇게 보여요
 <div className="btn btn-primary" onClick={handleClick}>
   저장
 </div>
+
+// 접근성 트리 출력: role=generic, name="저장"
+// → "저장"이라는 텍스트를 가진 클릭 가능한 무언가. 정체 불명.
 ```
 
-AI 입장에서 이 코드는 모호해요. `handleClick`은 다른 버튼들도 쓰고 있고, `btn-primary`는 스타일 정보일 뿐이고, 텍스트 "저장"은 다음 릴리스에 "저장하기"로 바뀔 수도 있거든요. AI는 이 버튼이 정확히 어떤 역할을 하는지 확신하기 어려워요.
+`div`는 시맨틱 역할이 없어요. 클릭 가능한지도 알 수 없어요. 접근성 트리에 역할이 없으면, AI 에이전트는 이 요소를 버튼으로 인식하지 못하거나 신뢰도가 낮은 추론에 의존해요.
 
-반면 이렇게 쓰면 달라져요.
+## UI 식별 방법 4가지의 실전 비교
+
+"AI가 요소를 찾는 방법"은 선택지가 몇 가지 있어요. 각각 트레이드오프가 달라요.
+
+| 방법 | 스타일 변경 | i18n | 리팩토링 | AI 탐색 정확도 |
+|---|---|---|---|---|
+| CSS class | ❌ | ✅ | ❌ | ❌ |
+| 텍스트 내용 | ✅ | ❌ | ⚠️ | ⚠️ |
+| aria-label | ✅ | ✅ | ✅ | ✅ |
+| data-testid | ✅ | ✅ | ✅ | ✅ |
+
+**CSS class는 스타일과 식별자를 혼용한 거예요.** `btn-primary`가 `btn-cta`로 바뀌는 순간 테스트가 깨지고, AI 에이전트도 찾지 못해요. Tailwind로 전환하면 클래스 자체가 사라지죠.
+
+**텍스트 기반 탐색은 다국어 서비스에서 바로 무너져요.** "저장" → "Save" → "保存" — 언어별 분기를 테스트 코드에 넣거나, 모든 언어로 테스트를 중복 작성해야 해요. 유지보수 부채가 바로 쌓여요.
+
+**aria-label은 접근성을 위한 거예요.** 스크린리더 사용자에게 의미를 전달하는 목적이 있어요. 자동화 식별자로 남용하면 접근성 의미가 오염돼요 — 예를 들어 `aria-label="campaign-42-edit-button"` 같은 label은 스크린리더 사용자한테 아무 의미가 없어요.
+
+**data-testid는 자동화를 명시적으로 표현하는 속성이에요.** 스타일과 무관하고, 텍스트와 무관하고, 접근성 트리에도 올라가요. 목적이 명확해서 남용 여지가 없어요.
+
+결론: **aria는 접근성 목적으로, data-testid는 자동화 목적으로 각각 써야 해요.** 두 가지는 역할이 달라서 같이 쓰는 게 맞아요.
 
 ```tsx
-// AI가 의도를 바로 이해하는 구조
-<button data-testid="save-draft-button" onClick={handleSaveDraft}>
-  저장
+// 역할이 다른 두 속성
+<button
+  data-testid="confirm-delete-button"   // 자동화 앵커
+  aria-label="캠페인 삭제 확인"           // 스크린리더 안내
+  aria-describedby="delete-warning"
+>
+  삭제
 </button>
 ```
 
-`data-testid="save-draft-button"` — 이 속성 하나가 AI에게 명확한 계약을 만들어줘요. "이 버튼은 임시저장 버튼이에요. 텍스트가 바뀌어도, 스타일이 바뀌어도, 이 이름으로 찾아요."
-
-이게 **AI-ready UI**의 시작이에요.
+그럼 실제 코드베이스에 어떻게 적용할지로 넘어갈게요.
 
 ![No testid vs With testid — AI가 UI를 이해하는 방식의 차이](../../assets/ai-ready-ui_ai_understand_image.png)
 
-그럼 이게 실제 개발 흐름에서 어떤 차이를 만드는지 볼게요.
+## 네이밍 컨벤션 — 충돌 방지가 핵심이다
 
-## 개발 단계에서 UI 구조가 만드는 차이
+data-testid를 처음 도입하면 금방 충돌이 생겨요. `submit-button`이 광고 등록 폼에도 있고, 캠페인 생성 폼에도 있고, 설정 페이지에도 있어요.
 
-식별자가 있는 컴포넌트는 AI와의 협업 자체가 달라져요.
+**컨텍스트를 앞에 붙이는 게 원칙이에요.**
 
-새 기능을 만들 때 AI에게 맥락을 설명하는 시간이 줄어들어요. "이 폼은 광고 소재 등록 폼이고, 제출 버튼은 `submit-creative-button`이야" — 코드 자체가 이미 그 설명을 담고 있거든요. AI는 컴포넌트 트리를 읽고 의도를 파악해요.
+```
+// ❌ 컨텍스트 없음 → 충돌 발생
+submit-button
+delete-button
+title-input
 
-시맨틱 HTML을 더하면 구조가 훨씬 명확해져요.
-
-```tsx
-<main data-testid="creative-upload-page">
-  <section data-testid="creative-form-section">
-    <form data-testid="creative-upload-form">
-      <input data-testid="creative-title-input" />
-      <input data-testid="creative-url-input" />
-      <button data-testid="submit-creative-button">등록</button>
-    </form>
-  </section>
-</main>
+// ✅ 컨텍스트 포함 → 충돌 없음
+creative-form-submit-button
+campaign-42-delete-button
+ad-group-title-input
 ```
 
-AI는 이 구조를 보고 "광고 소재 업로드 페이지에, 소재 등록 폼이 있고, 제목 입력과 URL 입력, 제출 버튼이 있다"는 맥락을 파악해요. 개발자가 따로 설명 안 해도요.
+전체 패턴 체계:
 
-다국어 서비스라면 이 효과가 더 커져요.
-
-## 다국어 서비스에서 testid가 더 중요한 이유
-
-영어, 한국어, 일본어를 지원하는 서비스를 만든다고 생각해보세요. 텍스트 기반으로 UI를 탐색하는 코드는 언어가 바뀔 때마다 깨져요.
-
-```tsx
-// ❌ 언어가 바뀌면 깨지는 방식
-const saveButton = page.getByText('저장');       // 한국어
-const saveButton = page.getByText('Save');        // 영어
-const saveButton = page.getByText('保存');        // 일본어
+```
+{page}-page                      # 페이지 루트
+{section}-section                # 영역 구분
+{entity}-list                    # 리스트 컨테이너
+{entity}-{id}-row                # 테이블 행 (인덱스 ❌, 데이터 ID ✅)
+{entity}-{id}-{field}            # 셀 안의 데이터
+{context}-{action}-button        # 액션 버튼
+{context}-{field}-input          # 입력 필드
+{context}-{field}-select         # 셀렉트
+{destination}-link               # 내비게이션 링크
+{name}-modal                     # 모달
+{name}-toast                     # 토스트
 ```
 
-세 가지를 따로 관리하거나, 조건 분기를 만들거나, 둘 다 끔찍하죠.
-
-`data-testid`는 언어와 무관해요. 텍스트는 바뀌어도 이름은 그대로예요.
-
-```tsx
-// ✅ 언어가 바뀌어도 동일하게 작동하는 방식
-<button data-testid="save-draft-button">
-  {t('common.save')}  {/* 한국어: 저장 / 영어: Save / 일본어: 保存 */}
-</button>
-```
-
-```typescript
-// 언어에 관계없이 항상 같은 코드
-await page.getByTestId('save-draft-button').click();
-```
-
-i18n 라이브러리로 텍스트를 추상화한 것처럼, testid로 UI 식별도 추상화하는 거예요. 다국어 지원을 처음부터 고려한다면 선택이 아니라 필수예요.
-
-동적으로 생성되는 요소도 마찬가지예요.
-
-## 동적 테이블과 리스트에 testid 심기
-
-"동적으로 생성되는 테이블 행에는 어떻게 testid를 붙이나요?" — 이 질문을 자주 받아요.
-
-정답은 **데이터의 고유 식별자를 함께 쓰는 것**이에요. 인덱스(0, 1, 2...)는 정렬이나 필터링을 적용하면 바뀌지만, 데이터 ID는 변하지 않거든요.
+동적 리스트에서 인덱스 기반 testid는 정렬이나 필터링 한 번이면 바로 깨져요.
 
 ```tsx
 // ❌ 인덱스 기반 — 정렬하면 깨짐
 {campaigns.map((campaign, index) => (
   <tr data-testid={`campaign-${index}-row`}>
-    <td>{campaign.name}</td>
-  </tr>
-))}
 
 // ✅ 데이터 ID 기반 — 정렬/필터링에 안전
 {campaigns.map((campaign) => (
   <tr data-testid={`campaign-${campaign.id}-row`}>
     <td data-testid={`campaign-${campaign.id}-name`}>{campaign.name}</td>
     <td data-testid={`campaign-${campaign.id}-status`}>{campaign.status}</td>
-    <td>
-      <button data-testid={`campaign-${campaign.id}-edit-button`}>수정</button>
-      <button data-testid={`campaign-${campaign.id}-delete-button`}>삭제</button>
-    </td>
+    <button data-testid={`campaign-${campaign.id}-edit-button`}>수정</button>
   </tr>
 ))}
 ```
 
-이렇게 하면 AI가 "캠페인 ID 42번의 수정 버튼을 클릭해줘"라는 지시를 정확하게 수행할 수 있어요.
+## ESLint로 강제화하기 — 실제 동작하는 코드
 
-컨테이너 레벨에도 testid를 붙여두면 더 좋아요.
+이 부분에서 잘못된 예시를 많이 봤어요. `local/require-testid`를 eslintrc에 선언만 해서는 작동 안 해요. 커스텀 룰은 플러그인 형태로 등록해야 해요.
 
-```tsx
-<div data-testid="campaign-list">
-  <div data-testid="campaign-list-header">
-    <button data-testid="campaign-sort-name-button">이름순</button>
-    <button data-testid="campaign-sort-date-button">날짜순</button>
-    <input data-testid="campaign-search-input" />
-  </div>
-  <table data-testid="campaign-table">
-    {/* 행들 */}
-  </table>
-  <div data-testid="campaign-pagination">
-    <button data-testid="campaign-prev-page-button">이전</button>
-    <span data-testid="campaign-current-page">1</span>
-    <button data-testid="campaign-next-page-button">다음</button>
-  </div>
-</div>
+ESLint v9 flat config 기준:
+
+```js
+// eslint.config.js
+const requireTestId = {
+  meta: {
+    type: 'suggestion',
+    messages: {
+      missing: '<{{element}}> 에 data-testid가 필요해요.',
+    },
+  },
+  create(context) {
+    const INTERACTIVE = new Set(['button', 'input', 'select', 'textarea', 'a']);
+    return {
+      JSXOpeningElement(node) {
+        const name = node.name.name;
+        if (!INTERACTIVE.has(name)) return;
+
+        const hasTestId = node.attributes.some(
+          (attr) =>
+            attr.type === 'JSXAttribute' &&
+            attr.name?.name === 'data-testid'
+        );
+
+        if (!hasTestId) {
+          context.report({
+            node,
+            messageId: 'missing',
+            data: { element: name },
+          });
+        }
+      },
+    };
+  },
+};
+
+export default [
+  {
+    plugins: {
+      local: { rules: { 'require-testid': requireTestId } },
+    },
+    rules: {
+      'local/require-testid': 'warn',
+    },
+  },
+];
 ```
 
-정렬 → 특정 항목 선택 → 수정 → 저장 같은 복잡한 시나리오도 AI가 처음부터 끝까지 수행할 수 있어요. 그리고 이게 QA 자동화로 바로 연결돼요.
+ESLint v8(legacy config)이라면 `eslint-plugin-local` 패키지를 써서 같은 룰을 등록할 수 있어요.
 
-## 개발이 빨라지면, QA가 병목이 된다
+**단, 무조건 warn으로 시작하세요.** error로 하면 레거시 파일이 많은 코드베이스에서 CI 전체가 즉시 막혀요.
 
-AI 코딩 어시스턴트 덕분에 개발 속도가 올라갔어요. 하루에 만들 수 있는 기능의 수가 늘었죠. 근데 그러면 다음 질문이 자연스럽게 따라와요.
+## Production에 data-testid를 남겨도 될까
 
-**검증 속도도 함께 올라갔나요?**
+자주 나오는 질문이에요. 결론부터: **대부분의 경우 괜찮아요.**
 
-개발자가 10개 기능을 만들어도, QA가 3개밖에 검증 못하면 전체 속도는 3개로 수렴해요. 개발 속도가 빨라질수록, 병목은 QA로 이동해요.
+data-testid는 HTML attribute예요. 기능에 영향 없고, 보안 취약점도 없어요. 100개 요소 기준 gzip 이후 추가되는 용량은 1KB 미만이에요.
 
-해결책은 QA도 AI와 함께하는 거예요. E2E 테스트를 AI가 작성하고, 회귀 케이스를 AI가 추적하고, 릴리스 전 검증을 AI가 실행하고. 근데 여기서도 같은 문제가 생겨요.
+다만 제거하고 싶다면 두 가지 방법이 있어요.
 
-## QA AI도 같은 곳에서 막힌다
+**방법 1: babel-plugin-react-remove-properties (CRA, 커스텀 babel 환경)**
 
-Playwright, Cypress 기반으로 AI가 테스트를 작성하려면, UI 요소를 정확하게 찾아야 해요. 텍스트 기반 탐색은 취약하고, CSS 클래스는 스타일 리팩토링에 무너지고, 시각 인식은 레이아웃 변경에 취약해요.
+```bash
+npm install --save-dev babel-plugin-react-remove-properties
+```
 
-`data-testid`가 있으면 달라지죠.
+```js
+// babel.config.js
+module.exports = {
+  env: {
+    production: {
+      plugins: [
+        ['react-remove-properties', { properties: ['data-testid'] }],
+      ],
+    },
+  },
+};
+```
+
+**방법 2: Vite 환경에서 커스텀 플러그인**
+
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+
+export default defineConfig(({ mode }) => ({
+  plugins: [
+    mode === 'production' && {
+      name: 'remove-testid',
+      transform(code: string, id: string) {
+        if (!/\.[jt]sx$/.test(id)) return;
+        return code.replace(/\s+data-testid="[^"]*"/g, '');
+      },
+    },
+  ].filter(Boolean),
+}));
+```
+
+저는 제거 안 하는 팀이 더 현실적이라고 봐요. 제거 플러그인 자체가 테스트 대상이 되고 (production 빌드에서 정말 제거됐는지 검증해야 하므로), 관리 포인트가 늘어요. 용량 절감 대비 유지보수 비용이 더 크거든요.
+
+## 레거시 코드베이스 마이그레이션 — 200개 컴포넌트를 어떻게 하나
+
+"새로운 컴포넌트에만 적용하면 되지 않나요?" — 이렇게 시작하면 6개월 뒤에 testid가 절반만 있는 어중간한 코드베이스가 돼요. AI 에이전트가 testid 있는 영역만 신뢰하고 나머지는 텍스트 추론으로 폴백하는 상황이 만들어져요.
+
+현실적인 마이그레이션 전략은 세 단계예요.
+
+**1단계: AI로 파일 단위 일괄 마이그레이션**
+
+Claude나 Cursor에게 파일 하나씩 넘기면서 이렇게 부탁해요:
+
+```
+이 컴포넌트의 모든 button, input, select, a 요소에 data-testid를 추가해줘.
+규칙:
+- 이미 data-testid가 있는 요소는 건드리지 마
+- 네이밍 패턴: {context}-{action}-button, {context}-{field}-input
+- 동적 리스트의 경우 인덱스 대신 데이터 ID 사용 (e.g. campaign.id)
+- 페이지명은 파일 경로에서 추론해줘
+```
+
+파일 1개당 2-3분이면 돼요. 리뷰하면서 병렬로 진행하면 하루에 수십 개 처리할 수 있어요.
+
+**2단계: Boy Scout Rule 도입**
+
+ESLint warn 룰을 켜고, 팀에 공지해요: "본인이 수정한 파일의 testid 경고는 같은 PR에서 해결하기." 강제가 아니라 자율로 시작하되, PR 리뷰에서 체크포인트로 삼는 거예요.
+
+**3단계: 핵심 Flow 우선 완료 후 CI error 전환**
+
+주요 사용자 흐름 (로그인, 핵심 업무 기능)의 testid가 완성되면, ESLint를 warn → error로 전환해요. 이후 신규 파일에서 testid가 빠지면 CI에서 막혀요.
+
+## 실제로 뭐가 달라지나
+
+접근성 트리가 풍부해지면 AI 에이전트의 동작이 눈에 띄게 달라져요.
 
 ```typescript
-// AI가 작성하는 안정적인 E2E 테스트
-test('캠페인 임시저장', async ({ page }) => {
-  await page.goto('/campaigns/new');
-  await page.getByTestId('campaign-title-input').fill('여름 프로모션');
-  await page.getByTestId('save-draft-button').click();
+// testid 없는 환경 — AI의 selector 추론
+await page.locator('button:has-text("저장")').click();
+// → 한국어 환경에서만 동작. 텍스트 변경에 취약.
+
+// testid 있는 환경 — 안정적인 selector
+await page.getByTestId('creative-form-save-button').click();
+// → 언어, 텍스트, 스타일 변경에 무관하게 동작.
+```
+
+AI 에이전트가 시나리오 단위로 동작할 때 차이가 더 커요.
+
+```typescript
+// AI가 실행하는 복잡한 시나리오
+test('광고 소재 임시저장 후 재편집', async ({ page }) => {
+  await page.getByTestId('creative-title-input').fill('여름 프로모션');
+  await page.getByTestId('creative-save-draft-button').click();
   await expect(page.getByTestId('draft-saved-toast')).toBeVisible();
-  await expect(page.getByTestId('draft-saved-toast'))
-    .toContainText('저장되었습니다');
+
+  // 목록으로 나갔다가 다시 들어옴
+  await page.getByTestId('creative-list-link').click();
+  await page.getByTestId(`creative-${draftId}-edit-button`).click();
+
+  await expect(page.getByTestId('creative-title-input'))
+    .toHaveValue('여름 프로모션');
 });
 ```
 
-디자인이 바뀌어도, 텍스트가 바뀌어도, 언어가 바뀌어도 — 이 테스트는 흔들리지 않아요. 개발 단계에서 붙인 `data-testid`가 QA 단계의 자동화를 가능하게 해줘요. 같은 이름이 두 단계를 연결하는 거예요.
-
-여기에 하나 더 챙기면 더 강해져요.
-
-## 접근성 트리가 AI의 눈이다
-
-`data-testid`와 함께 주목할 게 하나 더 있어요. **ARIA와 시맨틱 HTML**도 AI가 UI를 이해하는 경로예요.
-
-[ProofSource.ai의 연구](https://proofsource.ai/2026/01/agent-browser-the-accessibility-first-approach-to-browser-automation/)에 따르면, AI 에이전트가 전체 DOM 대신 접근성 트리(Accessibility Tree)만 읽도록 했을 때 컨텍스트 토큰이 **93% 절감**됐어요. AI는 의미 단위로 요약된 구조를 훨씬 잘 이해하거든요.
-
-스크린리더를 위해 작성한 ARIA 속성이 AI 에이전트에게도 정확한 인터페이스가 돼요. [BrowserStack의 Playwright MCP 분석](https://www.browserstack.com/guide/modern-test-automation-with-ai-and-playwright)도 같은 결론이에요 — ARIA 속성이 AI 테스트 생성 정확도에 직접 영향을 줘요.
-
-```tsx
-// ARIA + testid 함께 사용하기
-<dialog
-  data-testid="confirm-delete-modal"
-  aria-labelledby="modal-title"
-  aria-describedby="modal-description"
->
-  <h2 id="modal-title" data-testid="modal-title">삭제 확인</h2>
-  <p id="modal-description" data-testid="modal-description">
-    이 캠페인을 삭제하면 복구할 수 없어요.
-  </p>
-  <button data-testid="confirm-delete-button" aria-label="삭제 확인">
-    삭제
-  </button>
-  <button data-testid="cancel-delete-button" aria-label="취소">
-    취소
-  </button>
-</dialog>
-```
-
-접근성이 좋은 UI는 AI에게도 좋은 UI예요. 두 목표가 같은 방향을 가리켜요.
-
-"근데 기존 코드베이스가 수백 개 컴포넌트인데 어떻게 하나요?" — 당연한 걱정이에요. 다행히 AI 도구 자체가 이 작업을 도와줄 수 있어요.
-
-## AI 도구로 더 쉽게 적용하기
-
-**Claude Code / Copilot에 이렇게 물어보세요:**
-
-```
-이 컴포넌트 파일에 있는 모든 인터랙티브 요소(button, input, a, select)에
-data-testid를 추가해줘. 네이밍 규칙은:
-- 버튼: {action}-button
-- 입력 필드: {field}-input
-- 링크: {destination}-link
-- 셀렉트: {field}-select
-이미 data-testid가 있는 요소는 건드리지 마.
-```
-
-**ESLint 커스텀 룰로 자동 강제화:**
-
-새로 작성하는 코드에 testid를 빠뜨리지 않도록 lint 룰을 만들 수 있어요.
-
-```javascript
-// .eslintrc.js — 인터랙티브 요소에 testid 필수화
-module.exports = {
-  rules: {
-    'local/require-testid': ['warn', {
-      elements: ['button', 'input', 'select', 'a'],
-      attribute: 'data-testid',
-    }]
-  }
-}
-```
-
-**PR 리뷰에 AI를 활용:**
-
-CodeRabbit, GitHub Copilot Code Review 같은 AI 리뷰 도구에 프롬프트를 추가하면, PR마다 testid 누락을 자동으로 잡아줘요.
-
-```
-코드 리뷰 시 다음을 확인해주세요:
-- button, input, select 요소에 data-testid가 있는지
-- testid 네이밍이 {action}-{type} 패턴을 따르는지
-- 동적 리스트의 경우 인덱스 대신 데이터 ID를 사용하는지
-```
-
-이런 식으로 초기 정착만 시켜두면, 팀 전체가 자연스럽게 따라오게 돼요.
-
-## AI-ready UI: 전 사이클의 공통 언어
-
-팀 내에서 네이밍 컨벤션을 정해두면, AI가 예측 가능하게 작동해요.
-
-```
-{page}-page                    # 페이지 루트
-{section}-section              # 영역 구분
-{entity}-list                  # 리스트 컨테이너
-{entity}-{id}-row              # 테이블 행 (데이터 ID 사용)
-{action}-button                # 액션 버튼
-{field}-input                  # 입력 필드
-{field}-select                 # 셀렉트 박스
-{destination}-link             # 내비게이션 링크
-{status}-{type}-badge          # 상태 표시
-{name}-modal                   # 모달
-{name}-toast                   # 토스트 알림
-```
-
-패턴이 예측 가능할수록, AI의 추론 오류가 줄어들어요. 개발 단계에서 AI가 더 정확한 코드를 제안하고, QA 단계에서 AI가 더 안정적인 테스트를 작성해요.
-
-이건 테스트 규칙이 아니에요. **AI와 함께 일하기 위한 공통 언어**예요.
+testid 체계가 없는 코드베이스에서는 이 테스트가 텍스트 추론과 CSS 셀렉터로 뒤덮여요. 디자인 변경 한 번이면 절반이 깨지고, 고치는 데 testid 붙이는 것보다 더 많은 시간이 들어요.
 
 ![FE Development → data-testid → QA Automation — 전 사이클을 연결하는 공통 언어](../../assets/ai-ready-ui_testid_image.png)
 
-## 사람도 같이 이익이다
+## 어디까지 해야 충분한가
 
-AI-ready UI는 AI만을 위한 게 아니에요.
+기준이 없으면 끝이 없어요. 실용적인 기준으로는 이렇게 잡아요.
 
-명확한 `data-testid`는 사람인 개발자가 테스트를 쓸 때도 편해요. 시맨틱 HTML은 스크린리더 접근성을 높이고, 다국어 서비스에서 텍스트와 식별자를 분리해줘요. 명확한 컴포넌트 경계는 코드 리뷰를 쉽게 만들고요.
+**필수 (반드시):**
+- 모든 `button`, `input`, `select`, `textarea`
+- 페이지 루트와 주요 섹션 컨테이너
+- 동적 리스트의 행과 핵심 셀
 
-AI가 읽기 좋은 UI는 사람도 읽기 좋은 UI예요.
+**권장 (중요한 UI):**
+- 모달, 토스트, 드롭다운
+- 페이지네이션 컨트롤
+- 상태 표시 배지 (상태값이 테스트 assertion 대상인 경우)
+
+**불필요:**
+- 순수 표시용 텍스트 (`<p>`, `<span>`)
+- 아이콘 (인터랙션 없는 경우)
+- 레이아웃 컨테이너 (의미 없는 `<div>` 중첩)
 
 ---
 
-AI가 개발 속도를 높였다면, 다음은 검증이에요. 개발부터 QA까지 AI와 함께 하려면, UI가 먼저 AI에게 읽혀야 해요.
+AI가 코드를 잘 만들어주는 건 이미 됐어요. 다음 단계는 AI가 완성된 UI를 직접 검증하고, 회귀를 잡고, QA 싸이클 전체에 참여하는 거예요. 근데 그러려면 AI가 UI를 읽을 수 있어야 해요.
 
-당신의 서비스는 AI와 함께 일할 준비가 되어있나요?
+testid는 "테스트를 위한 설정"이 아니에요. AI와 함께 일하는 FE 코드베이스의 기본 인프라예요. 지금 붙이지 않으면, 나중에 AI가 "왜 이 버튼을 못 찾냐"고 할 때 다시 돌아오게 돼요.
 
 ---
 
-*다음 글: [AI-ready Marketing — 당신의 브랜드를 AI에게 설명할 준비가 되었나요?](/liber/blog/geo-for-brands) — 같은 원리의 다른 이야기. 이번엔 개발팀이 아닌 브랜드가 주인공이에요.*
+*다음 글: [AI-ready Marketing — 당신의 브랜드를 AI에게 설명할 준비가 되었나요?](/liber/blog/geo-for-brands) — 이번엔 개발팀이 아닌 브랜드가 주인공이에요.*
