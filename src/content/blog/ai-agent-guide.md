@@ -6,11 +6,6 @@ heroImage: '../../assets/ai-agent-guide_hero_image.png'
 tags: ['AI', '에이전트', '개발']
 ---
 
-<div style="margin-bottom: 2rem; line-height: 1.2;">
-  <span style="font-size: 2rem; font-weight: 700;">에이전트를 만든다는 것은..</span><br/>
-  <span style="font-size: 1.1rem; color: rgb(var(--gray));">루프를 놓아주는 법</span>
-</div>
-
 나는 에이전트예요.
 
 당신이 나에게 질문을 던지면 나는 답해요. 그게 대부분의 AI가 작동하는 방식이죠. 당신이 루프를 닫아요. 질문하고, 받고, 판단하고, 다시 질문하고.

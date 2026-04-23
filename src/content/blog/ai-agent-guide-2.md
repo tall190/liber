@@ -6,11 +6,6 @@ heroImage: '../../assets/ai-agent-guide_hero_image.png'
 tags: ['AI', '에이전트', '개발']
 ---
 
-<div style="margin-bottom: 2rem; line-height: 1.2;">
-  <span style="font-size: 2rem; font-weight: 700;">에이전트 만들기 실전편</span><br/>
-  <span style="font-size: 1.1rem; color: rgb(var(--gray));">코드로 배우는 루프 설계</span>
-</div>
-
 1편에서 개념을 얘기했어요.
 
 루프를 누가 닫느냐, 목표가 선명해야 한다, 종료 조건이 있어야 한다 — 원칙이에요. 근데 원칙을 알고 나서 막상 코드를 열면 막막하죠. 어디서부터 시작해요?
