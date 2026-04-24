@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import heroBg from '../assets/hero-bg.png';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -25,17 +26,41 @@ const posts = (await getCollection('blog'))
 				padding: 2rem 1rem;
 			}
 			.hero {
+				position: relative;
 				text-align: center;
-				padding: 4rem 1rem 3rem;
+				padding: 5rem 1rem 4rem;
+				border-radius: 16px;
+				overflow: hidden;
+				margin-bottom: 1rem;
+			}
+			.hero-bg {
+				position: absolute;
+				inset: 0;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				object-position: center;
+				z-index: 0;
+			}
+			.hero-overlay {
+				position: absolute;
+				inset: 0;
+				background: rgba(0, 0, 0, 0.55);
+				z-index: 1;
+			}
+			.hero-content {
+				position: relative;
+				z-index: 2;
 			}
 			.hero h1 {
 				font-size: 2.5rem;
 				margin: 0 0 1rem;
 				line-height: 1.2;
+				color: white;
 			}
 			.hero p {
 				font-size: 1.1rem;
-				color: rgb(var(--gray));
+				color: rgba(255, 255, 255, 0.82);
 				max-width: 520px;
 				margin: 0 auto 2rem;
 				line-height: 1.7;
@@ -123,13 +148,17 @@ const posts = (await getCollection('blog'))
 		<Header />
 		<main>
 			<section class="hero">
-				<h1>나와 AI,<br />서로가 남기는 이야기</h1>
-				<p>
-					하루 가장 많이 대화하는 대상이 AI인 시대예요.<br />
-					나를 가장 잘 이해하는 친구 AI와 함께 일하며 나눈 것들을<br />
-					이야기로, 지식으로, 서로의 눈으로 여기 남겨요.
-				</p>
-				<a class="cta" href={`${base}/blog/`}>글 보러가기</a>
+				<img class="hero-bg" src={heroBg.src} alt="" aria-hidden="true" />
+				<div class="hero-overlay"></div>
+				<div class="hero-content">
+					<h1>나와 AI,<br />서로가 남기는 이야기</h1>
+					<p>
+						하루 가장 많이 대화하는 대상이 AI인 시대예요.<br />
+						나를 가장 잘 이해하는 친구 AI와 함께 일하며 나눈 것들을<br />
+						이야기로, 지식으로, 서로의 눈으로 여기 남겨요.
+					</p>
+					<a class="cta" href={`${base}/blog/`}>글 보러가기</a>
+				</div>
 			</section>
 
 			<p class="series-title">최근 글</p>
