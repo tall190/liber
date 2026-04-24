@@ -1,0 +1,508 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+---
+
+<!doctype html>
+<html lang="ko">
+	<head>
+		<BaseHead title="AI 활용 수준 자가진단 — Liber" description="나는 AI를 얼마나 잘 쓰고 있을까? 8가지 실전 질문으로 알아보는 AI 활용 수준 테스트." />
+		<style>
+			main {
+				max-width: 720px;
+				margin: 0 auto;
+				padding: 3rem 1rem;
+			}
+
+			.quiz-header {
+				text-align: center;
+				margin-bottom: 3rem;
+			}
+
+			.quiz-header h1 {
+				font-size: 1.8rem;
+				margin-bottom: 0.5rem;
+			}
+
+			.quiz-header p {
+				color: rgb(var(--gray));
+				font-size: 1rem;
+			}
+
+			.progress-bar-wrap {
+				background: rgb(var(--gray-light));
+				border-radius: 999px;
+				height: 6px;
+				margin-bottom: 2rem;
+				overflow: hidden;
+			}
+
+			.progress-bar {
+				background: rgb(var(--accent));
+				height: 100%;
+				border-radius: 999px;
+				transition: width 0.3s ease;
+			}
+
+			.progress-text {
+				text-align: right;
+				font-size: 0.85rem;
+				color: rgb(var(--gray));
+				margin-bottom: 0.5rem;
+			}
+
+			.question-card {
+				background: white;
+				border: 1px solid rgb(var(--gray-light));
+				border-radius: 12px;
+				padding: 2rem;
+				margin-bottom: 1.5rem;
+			}
+
+			.question-label {
+				font-size: 0.8rem;
+				font-weight: 600;
+				color: rgb(var(--accent));
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+				margin-bottom: 0.75rem;
+			}
+
+			.question-text {
+				font-size: 1.1rem;
+				font-weight: 600;
+				line-height: 1.6;
+				margin-bottom: 1.5rem;
+				color: rgb(var(--gray-dark));
+			}
+
+			.options {
+				display: flex;
+				flex-direction: column;
+				gap: 0.75rem;
+			}
+
+			.option {
+				display: flex;
+				align-items: flex-start;
+				gap: 0.75rem;
+				padding: 1rem 1.2rem;
+				border: 1.5px solid rgb(var(--gray-light));
+				border-radius: 8px;
+				cursor: pointer;
+				transition: all 0.15s ease;
+				text-align: left;
+				background: white;
+				width: 100%;
+				font-size: 0.95rem;
+				line-height: 1.5;
+				color: rgb(var(--gray-dark));
+			}
+
+			.option:hover {
+				border-color: rgb(var(--accent));
+				background: rgba(var(--accent), 0.03);
+			}
+
+			.option.selected {
+				border-color: rgb(var(--accent));
+				background: rgba(var(--accent), 0.06);
+				font-weight: 500;
+			}
+
+			.option-badge {
+				flex-shrink: 0;
+				width: 24px;
+				height: 24px;
+				border-radius: 50%;
+				background: rgb(var(--gray-light));
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 0.75rem;
+				font-weight: 700;
+				color: rgb(var(--gray));
+				margin-top: 1px;
+			}
+
+			.option.selected .option-badge {
+				background: rgb(var(--accent));
+				color: white;
+			}
+
+			.nav-buttons {
+				display: flex;
+				justify-content: flex-end;
+				gap: 0.75rem;
+				margin-top: 1.5rem;
+			}
+
+			.btn {
+				padding: 0.7rem 1.5rem;
+				border-radius: 8px;
+				border: none;
+				cursor: pointer;
+				font-size: 0.95rem;
+				font-weight: 600;
+				transition: all 0.15s ease;
+			}
+
+			.btn-primary {
+				background: rgb(var(--accent));
+				color: white;
+			}
+
+			.btn-primary:hover {
+				opacity: 0.9;
+			}
+
+			.btn-primary:disabled {
+				opacity: 0.4;
+				cursor: not-allowed;
+			}
+
+			/* 결과 화면 */
+			.result-screen {
+				text-align: center;
+			}
+
+			.result-level {
+				font-size: 3rem;
+				margin-bottom: 0.5rem;
+			}
+
+			.result-score {
+				font-size: 1.1rem;
+				color: rgb(var(--gray));
+				margin-bottom: 0.5rem;
+			}
+
+			.result-title {
+				font-size: 1.8rem;
+				font-weight: 700;
+				margin-bottom: 1rem;
+				color: rgb(var(--gray-dark));
+			}
+
+			.result-desc {
+				font-size: 1rem;
+				line-height: 1.8;
+				color: rgb(var(--gray));
+				max-width: 480px;
+				margin: 0 auto 2rem;
+			}
+
+			.result-breakdown {
+				background: rgb(var(--gray-light));
+				border-radius: 12px;
+				padding: 1.5rem;
+				margin-bottom: 2rem;
+				text-align: left;
+			}
+
+			.result-breakdown h3 {
+				font-size: 0.9rem;
+				font-weight: 600;
+				color: rgb(var(--gray));
+				margin-bottom: 1rem;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+			}
+
+			.breakdown-item {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 0.5rem 0;
+				border-bottom: 1px solid rgba(var(--gray), 0.2);
+				font-size: 0.9rem;
+			}
+
+			.breakdown-item:last-child {
+				border-bottom: none;
+			}
+
+			.breakdown-score {
+				font-weight: 700;
+				color: rgb(var(--accent));
+			}
+
+			.level-map {
+				display: grid;
+				grid-template-columns: repeat(4, 1fr);
+				gap: 0.75rem;
+				margin-bottom: 2rem;
+			}
+
+			.level-card {
+				border: 1.5px solid rgb(var(--gray-light));
+				border-radius: 8px;
+				padding: 0.75rem;
+				font-size: 0.8rem;
+				text-align: center;
+				color: rgb(var(--gray));
+			}
+
+			.level-card.current {
+				border-color: rgb(var(--accent));
+				background: rgba(var(--accent), 0.05);
+				color: rgb(var(--gray-dark));
+				font-weight: 600;
+			}
+
+			.level-card .level-emoji {
+				font-size: 1.3rem;
+				display: block;
+				margin-bottom: 0.25rem;
+			}
+
+			.level-card .level-range {
+				font-size: 0.7rem;
+				color: rgb(var(--gray));
+				margin-top: 0.2rem;
+			}
+
+			.restart-btn {
+				background: transparent;
+				border: 1.5px solid rgb(var(--gray-light));
+				color: rgb(var(--gray));
+				padding: 0.6rem 1.2rem;
+				border-radius: 8px;
+				cursor: pointer;
+				font-size: 0.9rem;
+				transition: all 0.15s ease;
+			}
+
+			.restart-btn:hover {
+				border-color: rgb(var(--gray));
+			}
+
+			.hidden { display: none; }
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<div class="quiz-header">
+				<h1>AI 활용 수준 자가진단</h1>
+				<p>8가지 실전 질문으로 알아보는 나의 AI 활용 수준</p>
+			</div>
+
+			<!-- 퀴즈 화면 -->
+			<div id="quiz-screen">
+				<p class="progress-text" id="progress-text">1 / 8</p>
+				<div class="progress-bar-wrap">
+					<div class="progress-bar" id="progress-bar" style="width: 12.5%"></div>
+				</div>
+
+				<div class="question-card" id="question-card">
+					<div class="question-label" id="question-label">질문 1</div>
+					<div class="question-text" id="question-text"></div>
+					<div class="options" id="options"></div>
+				</div>
+
+				<div class="nav-buttons">
+					<button class="btn btn-primary" id="next-btn" disabled>다음 →</button>
+				</div>
+			</div>
+
+			<!-- 결과 화면 -->
+			<div id="result-screen" class="result-screen hidden">
+				<div class="result-level" id="result-emoji"></div>
+				<div class="result-score" id="result-score-text"></div>
+				<div class="result-title" id="result-title"></div>
+				<div class="result-desc" id="result-desc"></div>
+
+				<div class="level-map" id="level-map"></div>
+
+				<div class="result-breakdown">
+					<h3>질문별 점수</h3>
+					<div id="breakdown-list"></div>
+				</div>
+
+				<button class="restart-btn" id="restart-btn">다시 하기</button>
+			</div>
+		</main>
+		<Footer />
+
+		<script>
+			const questions = [
+				{
+					label: "질문 1 — 요청하기",
+					text: "팀장이 '내일까지 보고서 부탁해'라고 했어요. AI에게 어떻게 시켰나요?",
+					options: [
+						{ text: '"보고서 써줘"라고 했다', score: 1 },
+						{ text: '주제, 배경, 분량을 설명하고 시켰다', score: 2 },
+						{ text: '원하는 구조를 먼저 잡고, 각 섹션을 순서대로 채워달라고 했다', score: 3 },
+					]
+				},
+				{
+					label: "질문 2 — 수정하기",
+					text: "AI가 만들어준 결과물이 마음에 안 들었어요. 어떻게 했나요?",
+					options: [
+						{ text: '"다시 해줘"라고 했다', score: 1 },
+						{ text: '어떤 부분이 왜 마음에 안 드는지 설명했다', score: 2 },
+						{ text: '내가 원하는 예시를 직접 보여줬거나, 뭘 잘못 설명했는지 먼저 생각했다', score: 3 },
+					]
+				},
+				{
+					label: "질문 3 — 반복 작업",
+					text: "매주 같은 형식의 보고서나 이메일을 써야 해요. 어떻게 하고 있나요?",
+					options: [
+						{ text: '매번 처음부터 다시 설명한다', score: 1 },
+						{ text: '지난번 프롬프트나 결과물을 복붙해서 수정한다', score: 2 },
+						{ text: '스킬이나 템플릿으로 만들어서 변수만 바꾼다', score: 3 },
+					]
+				},
+				{
+					label: "질문 4 — 경계 설정",
+					text: "AI에게 중요한 일을 맡겼어요. 결과를 어떻게 처리했나요?",
+					options: [
+						{ text: 'AI가 준 대로 바로 썼다', score: 1 },
+						{ text: '내용을 검토하고 수정해서 사용했다', score: 2 },
+						{ text: '처음부터 "이건 내가 최종 확인한다"는 기준을 정해뒀다', score: 3 },
+					]
+				},
+				{
+					label: "질문 5 — 방향 잡기",
+					text: "AI가 예상과 다른 방향으로 작업을 진행하고 있어요. 어떻게 했나요?",
+					options: [
+						{ text: '끝까지 보고 나서 고쳐달라고 했다', score: 1 },
+						{ text: '중간에 멈추고 방향을 다시 잡았다', score: 2 },
+						{ text: '처음부터 중간 확인 지점이나 종료 조건을 정해뒀다', score: 3 },
+					]
+				},
+				{
+					label: "질문 6 — 맥락 관리",
+					text: "며칠 전에 AI와 했던 대화 맥락을 다시 이어야 해요. 어떻게 하나요?",
+					options: [
+						{ text: '처음부터 다시 설명한다', score: 1 },
+						{ text: '중요한 내용을 따로 메모해뒀다가 붙여넣는다', score: 2 },
+						{ text: 'AI가 나를 기억하게 만드는 파일이나 구조가 있다', score: 3 },
+					]
+				},
+				{
+					label: "질문 7 — 권한 설계",
+					text: "AI에게 어떤 작업을 맡겨도 되는지 기준이 있나요?",
+					options: [
+						{ text: '그때그때 판단한다', score: 1 },
+						{ text: '돌이킬 수 없는 것(발송, 삭제 등)은 직접 한다', score: 2 },
+						{ text: '명확한 기준을 만들어두고 AI에게도 알려둔다', score: 3 },
+					]
+				},
+				{
+					label: "질문 8 — 자동화",
+					text: "지금 내가 자리를 비워도 AI가 알아서 처리하는 업무가 있나요?",
+					options: [
+						{ text: '없다', score: 1 },
+						{ text: '만들어보려고 시도 중이다', score: 2 },
+						{ text: '있다. 지금도 돌아가고 있다', score: 3 },
+					]
+				},
+			];
+
+			const levels = [
+				{ min: 8, max: 12, emoji: '🌱', title: '입문자', range: '8~12점',
+					desc: '이제 막 시작한 거예요. AI가 무엇을 할 수 있는지 탐색하는 단계예요. 다음 단계로 가려면 — 결과보다 문제를 먼저 말하는 연습을 해보세요.' },
+				{ min: 13, max: 17, emoji: '⚡', title: '사용자', range: '13~17점',
+					desc: '기본은 갖춘 단계예요. AI와 대화하는 방식을 알고 있어요. 다음 단계로 가려면 — 반복되는 작업을 구조화해보세요.' },
+				{ min: 18, max: 21, emoji: '🔧', title: '설계자', range: '18~21점',
+					desc: '도구를 만드는 사람이에요. AI를 쓰는 게 아니라 AI가 작동하는 방식을 설계하고 있어요. 상위 10% 안에 있어요.' },
+				{ min: 22, max: 24, emoji: '🛡️', title: '어벤져스', range: '22~24점',
+					desc: 'AI 조직을 운영하고 있어요. 당신이 없어도 시스템이 돌아가고, 당신은 방향을 잡는 역할을 하고 있어요.' },
+			];
+
+			let currentQ = 0;
+			let scores = [];
+			let selectedIdx = null;
+
+			function getLevel(total) {
+				return levels.find(l => total >= l.min && total <= l.max) || levels[0];
+			}
+
+			function renderQuestion() {
+				const q = questions[currentQ];
+				document.getElementById('question-label').textContent = q.label;
+				document.getElementById('question-text').textContent = q.text;
+				document.getElementById('progress-text').textContent = `${currentQ + 1} / ${questions.length}`;
+				document.getElementById('progress-bar').style.width = `${((currentQ + 1) / questions.length) * 100}%`;
+				document.getElementById('next-btn').textContent = currentQ === questions.length - 1 ? '결과 보기 →' : '다음 →';
+				document.getElementById('next-btn').disabled = true;
+				selectedIdx = null;
+
+				const optionsEl = document.getElementById('options');
+				optionsEl.innerHTML = '';
+				q.options.forEach((opt, i) => {
+					const btn = document.createElement('button');
+					btn.className = 'option';
+					btn.innerHTML = `<span class="option-badge">${String.fromCharCode(65 + i)}</span><span>${opt.text}</span>`;
+					btn.addEventListener('click', () => {
+						document.querySelectorAll('.option').forEach(b => b.classList.remove('selected'));
+						btn.classList.add('selected');
+						selectedIdx = i;
+						document.getElementById('next-btn').disabled = false;
+					});
+					optionsEl.appendChild(btn);
+				});
+			}
+
+			function showResult() {
+				document.getElementById('quiz-screen').classList.add('hidden');
+				const resultScreen = document.getElementById('result-screen');
+				resultScreen.classList.remove('hidden');
+
+				const total = scores.reduce((a, b) => a + b, 0);
+				const level = getLevel(total);
+
+				document.getElementById('result-emoji').textContent = level.emoji;
+				document.getElementById('result-score-text').textContent = `총점 ${total}점 / 24점`;
+				document.getElementById('result-title').textContent = level.title;
+				document.getElementById('result-desc').textContent = level.desc;
+
+				// 레벨 맵
+				const levelMap = document.getElementById('level-map');
+				levelMap.innerHTML = '';
+				levels.forEach(l => {
+					const card = document.createElement('div');
+					card.className = 'level-card' + (l.title === level.title ? ' current' : '');
+					card.innerHTML = `<span class="level-emoji">${l.emoji}</span>${l.title}<div class="level-range">${l.range}</div>`;
+					levelMap.appendChild(card);
+				});
+
+				// 질문별 점수
+				const breakdownList = document.getElementById('breakdown-list');
+				breakdownList.innerHTML = '';
+				questions.forEach((q, i) => {
+					const item = document.createElement('div');
+					item.className = 'breakdown-item';
+					const shortLabel = q.label.split('—')[1]?.trim() || q.label;
+					item.innerHTML = `<span>${shortLabel}</span><span class="breakdown-score">${scores[i]}점</span>`;
+					breakdownList.appendChild(item);
+				});
+			}
+
+			document.getElementById('next-btn').addEventListener('click', () => {
+				if (selectedIdx === null) return;
+				scores.push(questions[currentQ].options[selectedIdx].score);
+				currentQ++;
+				if (currentQ >= questions.length) {
+					showResult();
+				} else {
+					renderQuestion();
+				}
+			});
+
+			document.getElementById('restart-btn').addEventListener('click', () => {
+				currentQ = 0;
+				scores = [];
+				selectedIdx = null;
+				document.getElementById('result-screen').classList.add('hidden');
+				document.getElementById('quiz-screen').classList.remove('hidden');
+				renderQuestion();
+			});
+
+			renderQuestion();
+		</script>
+	</body>
+</html>
