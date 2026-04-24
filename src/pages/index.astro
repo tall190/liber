@@ -27,55 +27,35 @@ const posts = (await getCollection('blog'))
 			}
 			.hero {
 				position: relative;
-				text-align: center;
-				padding: 6rem 1rem 5rem;
+				margin: 0 -1rem 2.5rem;
 				overflow: hidden;
-				margin: 0 -1rem 2rem;
 			}
 			.hero-bg {
-				position: absolute;
-				inset: 0;
+				display: block;
 				width: 100%;
-				height: 100%;
+				height: auto;
+				max-height: 480px;
 				object-fit: cover;
 				object-position: center 40%;
-				z-index: 0;
-			}
-			.hero-overlay {
-				position: absolute;
-				inset: 0;
-				background: rgba(0, 0, 0, 0.52);
-				z-index: 1;
 			}
 			.hero-content {
-				position: relative;
-				z-index: 2;
+				background: #0d0d0d;
+				text-align: center;
+				padding: 1.8rem 1rem 2rem;
 			}
 			.hero h1 {
-				font-size: 2.5rem;
-				margin: 0 0 1rem;
-				line-height: 1.2;
+				font-size: 2rem;
+				margin: 0 0 0.7rem;
+				line-height: 1.3;
 				color: white;
+				font-weight: 700;
 			}
 			.hero p {
-				font-size: 1.1rem;
-				color: rgba(255, 255, 255, 0.82);
-				max-width: 520px;
-				margin: 0 auto 2rem;
-				line-height: 1.7;
-			}
-			.hero a.cta {
-				display: inline-block;
-				background: white;
-				color: #111;
-				padding: 0.75rem 2rem;
-				border-radius: 8px;
-				text-decoration: none;
-				font-weight: 600;
-				transition: opacity 0.2s;
-			}
-			.hero a.cta:hover {
-				opacity: 0.85;
+				font-size: 1rem;
+				color: rgba(255, 255, 255, 0.65);
+				max-width: 480px;
+				margin: 0 auto;
+				line-height: 1.8;
 			}
 			.series-title {
 				font-size: 1.1rem;
@@ -148,7 +128,6 @@ const posts = (await getCollection('blog'))
 		<main>
 			<section class="hero">
 				<img class="hero-bg" src={heroBg.src} alt="" aria-hidden="true" />
-				<div class="hero-overlay"></div>
 				<div class="hero-content">
 					<h1>나와 AI,<br />서로가 남기는 이야기</h1>
 					<p>
