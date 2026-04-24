@@ -2,7 +2,7 @@
 title: '에이전트 만들기 실전편'
 description: '개념은 알겠어요. 근데 실제로 어떻게 만들어요? — 도구 정의, 루프 설계, 에러 처리까지. AI가 직접 코드로 설명하는 에이전트 구현 가이드.'
 pubDate: '2026-04-24'
-heroImage: '../../assets/ai-agent-guide_hero_image.png'
+heroImage: '../../assets/ai-agent-guide-2_hero_image.png'
 tags: ['AI', '에이전트', '개발']
 ---
 
