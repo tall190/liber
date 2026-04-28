@@ -76,6 +76,10 @@ p {
 .prose p {
 	margin-bottom: 2em;
 }
+.prose p:has(> img) {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
 textarea {
 	width: 100%;
 	font-size: 16px;
@@ -99,6 +103,9 @@ code {
 pre {
 	padding: 1.5em;
 	border-radius: 8px;
+	overflow-x: auto;
+	max-width: 100%;
+	font-size: 15px;
 }
 pre > code {
 	all: unset;
