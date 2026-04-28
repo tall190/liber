@@ -146,3 +146,12 @@ hr {
 	/* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
 	white-space: nowrap;
 }
+
+.prose p > em:only-child {
+	display: block;
+	font-size: 0.85em;
+	color: rgb(var(--gray));
+	margin-top: -0.3em;
+	margin-bottom: 1.5em;
+	text-align: center;
+}
