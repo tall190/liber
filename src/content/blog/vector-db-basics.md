@@ -221,7 +221,7 @@ Latency가 약간 높지만, 수십억 벡터를 훨씬 적은 비용으로 처�
 | BGE-M3 | 우수 | 무료 | ✅ |
 | KoSimCSE-roberta | 한국어 특화 | 무료 | ✅ |
 
-빠르게 시작하려면 `text-embedding-3-small`, 비용을 줄이고 싶다면 `BGE-M3`, 순수 한국어 문서라면 `KoSimCSE-roberta`가 출발점이에요. 단, 한국어 임베딩 모델은 빠르게 발전하고 있어서 적용 시점에 [KoEB 벤치마크](https://github.com/korean-embedding/korean-embedding-benchmark) 최신 순위를 확인하는 걸 권장해요.
+빠르게 시작하려면 `text-embedding-3-small`, 비용을 줄이고 싶다면 `BGE-M3`, 순수 한국어 문서라면 `KoSimCSE-roberta`가 출발점이에요. 단, 한국어 임베딩 모델은 빠르게 발전하고 있어서 적용 시점에 최신 벤치마크 결과를 확인하고 선택하는 걸 권장해요.
 
 ## 정리
 
