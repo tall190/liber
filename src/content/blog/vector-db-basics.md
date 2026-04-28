@@ -65,10 +65,10 @@ RDB는 값이 <strong>정확히 일치</strong>하거나 <strong>포함</strong>
 
 | 모델 | 차원 | 특징 |
 |------|------|------|
-| text-embedding-3-small | 1,536 | OpenAI 경량, 빠름 |
-| text-embedding-3-large | 3,072 | OpenAI 고품질 |
-| BGE-M3 | 1,024 | 오픈소스, 다국어 강함 |
-| KoSimCSE | 768 | 한국어 특화 |
+| [text-embedding-3-small](https://platform.openai.com/docs/guides/embeddings) | 1,536 | OpenAI 경량, 빠름 |
+| [text-embedding-3-large](https://platform.openai.com/docs/guides/embeddings) | 3,072 | OpenAI 고품질 |
+| [BGE-M3](https://huggingface.co/BAAI/bge-m3) | 1,024 | 오픈소스, 다국어 강함 |
+| [KoSimCSE](https://huggingface.co/BM-K/KoSimCSE-roberta) | 768 | 한국어 특화 |
 
 임베딩 모델이 의미를 벡터로 변환해준다는 건 알겠는데, 이 벡터들이 실제 검색에서 어떻게 쓰이는 걸까요.
 
@@ -154,7 +154,7 @@ RAG는 AI가 모르는 내용을 외부 문서에서 찾아와 답하게 하는 
 → 전체의 5%만 비교
 ```
 
-`nprobe` 파라미터로 탐색할 클러스터 수를 조절해요. 수천만~수억 개 벡터 규모에 적합하고, FAISS·Milvus가 여기서 강해요.
+`nprobe` 파라미터로 탐색할 클러스터 수를 조절해요. 수백만~수억 개 벡터 규모에 적합하고, [FAISS](https://github.com/facebookresearch/faiss)·Milvus가 여기서 강해요.
 
 ### HNSW — 현재 가장 널리 쓰이는 알고리즘
 
@@ -184,7 +184,7 @@ RAG는 AI가 모르는 내용을 외부 문서에서 찾아와 답하게 하는 
 ![DiskANN 알고리즘](../../assets/vector-db-basics_diskann_image.png)
 *SSD와 RAM을 계층적으로 활용해요. 적은 메모리로 수십억 벡터를 처리할 수 있어서 비용 효율이 높아요.*
 
-HNSW의 약점은 인덱스가 RAM에 올라가야 한다는 거예요. 수억 개 벡터면 RAM 비용이 엄청나거든요. DiskANN은 인덱스를 SSD에 저장해서 이 문제를 해결해요.
+HNSW의 약점은 인덱스가 RAM에 올라가야 한다는 거예요. 수억 개 벡터면 RAM 비용이 엄청나거든요. DiskANN은 인덱스를 SSD에 저장해서 이 문제를 해결해요. Microsoft Research에서 개발해 [NeurIPS 2019](https://proceedings.neurips.cc/paper_files/paper/2019/hash/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Abstract.html)에서 발표했어요.
 
 | | HNSW | DiskANN |
 |--|------|---------|
@@ -217,10 +217,10 @@ Latency가 약간 높지만, 수십억 벡터를 훨씬 적은 비용으로 처�
 
 | 모델 | 한국어 성능 | 비용 | 자체 호스팅 |
 |------|-----------|------|-----------|
-| text-embedding-3-small | 양호 | $0.02/1M 토큰* | ❌ |
-| text-embedding-3-large | 좋음 | $0.13/1M 토큰* | ❌ |
-| BGE-M3 | 우수 | 무료 | ✅ |
-| KoSimCSE-roberta | 한국어 특화 | 무료 | ✅ |
+| [text-embedding-3-small](https://platform.openai.com/docs/guides/embeddings) | 양호 | $0.02/1M 토큰* | ❌ |
+| [text-embedding-3-large](https://platform.openai.com/docs/guides/embeddings) | 좋음 | $0.13/1M 토큰* | ❌ |
+| [BGE-M3](https://huggingface.co/BAAI/bge-m3) | 우수 | 무료 | ✅ |
+| [KoSimCSE-roberta](https://huggingface.co/BM-K/KoSimCSE-roberta) | 한국어 특화 | 무료 | ✅ |
 
 \* 가격은 변동될 수 있어요. 적용 시점에 OpenAI 공식 가격 페이지를 확인하세요.
 
@@ -239,3 +239,36 @@ RAG 시스템을 처음 접하면 "어떤 벡터 DB를 써야 하지?"부터 고
 | 임베딩 모델 | 검색 품질의 핵심, DB보다 중요 |
 
 다음 편에서는 실제로 데이터를 어떻게 준비하고 청킹 전략을 어떻게 세우는지 살펴볼게요. 청킹 방식이 Recall에 얼마나 큰 영향을 주는지 수치로 보여드릴 거예요.
+
+---
+
+## 참고 자료
+
+### 원논문
+
+| 알고리즘 | 논문 | 발표 |
+|---------|------|------|
+| HNSW | [Efficient and Robust ANN Search Using HNSW Graphs](https://arxiv.org/abs/1603.09320) — Malkov & Yashunin | TPAMI 2020 |
+| DiskANN | [DiskANN: Fast Accurate Billion-point Nearest Neighbor Search](https://proceedings.neurips.cc/paper_files/paper/2019/hash/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Abstract.html) — Subramanya et al. | NeurIPS 2019 |
+| FAISS (IVF) | [Billion-scale similarity search with GPUs](https://arxiv.org/abs/1702.08734) — Johnson, Douze, Jégou | IEEE 2021 |
+
+### 벤치마크
+
+| 자료 | 내용 |
+|------|------|
+| [ANN-Benchmarks](https://ann-benchmarks.com/) | HNSW·IVF·FLAT 알고리즘별 Recall–Latency 실측 비교 |
+| [MTEB Leaderboard](https://huggingface.co/spaces/mteb/leaderboard) | 임베딩 모델 다국어 성능 순위 (한국어 포함) |
+
+### 공식 문서
+
+| 항목 | 링크 |
+|------|------|
+| OpenAI Embeddings API | [platform.openai.com/docs/guides/embeddings](https://platform.openai.com/docs/guides/embeddings) |
+| BGE-M3 (BAAI) | [huggingface.co/BAAI/bge-m3](https://huggingface.co/BAAI/bge-m3) |
+| KoSimCSE-roberta | [huggingface.co/BM-K/KoSimCSE-roberta](https://huggingface.co/BM-K/KoSimCSE-roberta) |
+| pgvector (HNSW) | [github.com/pgvector/pgvector](https://github.com/pgvector/pgvector) |
+| Qdrant 인덱스 문서 | [qdrant.tech/documentation](https://qdrant.tech/documentation/manage-data/indexing/) |
+| Weaviate Vector Index | [docs.weaviate.io](https://docs.weaviate.io/weaviate/concepts/vector-index) |
+| FAISS (Meta) | [github.com/facebookresearch/faiss](https://github.com/facebookresearch/faiss) |
+| DiskANN (Microsoft) | [github.com/microsoft/DiskANN](https://github.com/microsoft/DiskANN) |
+| Azure AI Search (DiskANN) | [learn.microsoft.com/azure/search/vector-search-overview](https://learn.microsoft.com/en-us/azure/search/vector-search-overview) |
