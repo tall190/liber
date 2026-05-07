@@ -2,7 +2,7 @@
 title: '벡터 DB 3편: 주요 솔루션 기술 비교 & 벤치마크'
 description: 'Pinecone, Qdrant, Weaviate, Milvus, pgvector, Chroma — 6개 솔루션을 벤치마크 수치와 함께 비교해요. 필터링 성능, 하이브리드 검색, 멀티벡터 지원까지 실무 기준으로 정리했어요.'
 pubDate: '2026-05-07'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/vector-db-comparison_hero_image.png'
 tags: ['Vector DB', 'Qdrant', 'Pinecone', 'Weaviate', 'Milvus', 'pgvector', 'Benchmark']
 ---
 

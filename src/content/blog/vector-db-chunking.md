@@ -2,7 +2,7 @@
 title: '벡터 DB 2편: 청킹과 임베딩 전략 — RAG 품질을 결정하는 것들'
 description: '같은 벡터 DB를 써도 검색 정확도가 60%와 92%로 갈리는 이유가 있어요. DB 선택보다 더 중요한 것 — 데이터를 어떻게 준비하느냐를 다뤄요.'
 pubDate: '2026-05-06'
-heroImage: '../../assets/blog-placeholder-2.jpg'
+heroImage: '../../assets/vector-db-chunking_hero_image.png'
 tags: ['Vector DB', 'RAG', 'Chunking', 'Embedding', 'AI-Ready']
 ---
 

@@ -2,7 +2,7 @@
 title: '벡터 DB 4편: 내 상황에 맞는 DB 선택 가이드'
 description: '의사결정 트리, 규모별 추천, 비용 시뮬레이션까지 — "그래서 나는 뭘 써야 해?"에 직접 답하는 가이드예요. 벡터 DB 시리즈 마지막 편이에요.'
 pubDate: '2026-05-08'
-heroImage: '../../assets/blog-placeholder-4.jpg'
+heroImage: '../../assets/vector-db-selection_hero_image.png'
 tags: ['Vector DB', 'RAG', 'Pinecone', 'Qdrant', 'Chroma', 'pgvector', 'AI-Ready']
 ---
 
