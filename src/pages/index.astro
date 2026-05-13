@@ -95,6 +95,10 @@ const posts = (await getCollection('blog'))
 			.post-info {
 				padding: 1rem;
 			}
+			.posts li a {
+				background: var(--bg);
+				transition: box-shadow 0.2s, transform 0.2s, background-color 0.3s;
+			}
 			.post-info h4 {
 				margin: 0 0 0.4rem;
 				font-size: 1rem;

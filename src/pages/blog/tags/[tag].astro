@@ -1,0 +1,159 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import BaseHead from '../../../components/BaseHead.astro';
+import Footer from '../../../components/Footer.astro';
+import FormattedDate from '../../../components/FormattedDate.astro';
+import Header from '../../../components/Header.astro';
+import { SITE_TITLE } from '../../../consts';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
+	const tags = [...new Set(posts.flatMap((post) => post.data.tags ?? []))];
+	return tags.map((tag) => ({
+		params: { tag },
+		props: {
+			tag,
+			posts: posts
+				.filter((post) => post.data.tags?.includes(tag))
+				.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+		},
+	}));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ko">
+	<head>
+		<BaseHead title={`${tag} — ${SITE_TITLE}`} description={`${tag} 태그가 달린 글 모음`} />
+		<style>
+			main {
+				width: 960px;
+			}
+			.tag-header {
+				margin-bottom: 2rem;
+			}
+			.tag-header h1 {
+				font-size: 1.8rem;
+				margin: 0;
+			}
+			.tag-header p {
+				color: rgb(var(--gray));
+				margin: 0.3rem 0 0;
+			}
+			.back-link {
+				display: inline-block;
+				margin-bottom: 1rem;
+				font-size: 0.9rem;
+			}
+			ul {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 2rem;
+				list-style-type: none;
+				margin: 0;
+				padding: 0;
+			}
+			ul li {
+				width: calc(50% - 1rem);
+			}
+			ul li * {
+				text-decoration: none;
+				transition: 0.2s ease;
+			}
+			ul li img {
+				margin-bottom: 0.5rem;
+				border-radius: 12px;
+			}
+			ul li a {
+				display: block;
+			}
+			.title {
+				margin: 0;
+				color: rgb(var(--black));
+				line-height: 1;
+			}
+			.date {
+				margin: 0;
+				color: rgb(var(--gray));
+			}
+			.tags {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.3rem;
+				margin: 0.4rem 0 0;
+			}
+			.tag {
+				display: inline-block;
+				font-size: 0.7rem;
+				font-weight: 600;
+				padding: 0.15rem 0.5rem;
+				border-radius: 999px;
+				background: rgb(var(--accent));
+				color: #fff;
+				letter-spacing: 0.02em;
+				text-decoration: none;
+			}
+			.tag.current {
+				background: rgb(var(--gray-dark));
+			}
+			ul li a:hover h4,
+			ul li a:hover .date {
+				color: rgb(var(--accent));
+			}
+			ul a:hover img {
+				box-shadow: var(--box-shadow);
+			}
+			@media (max-width: 720px) {
+				ul {
+					gap: 0.5em;
+				}
+				ul li {
+					width: 100%;
+					text-align: center;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<a class="back-link" href={`${base}/blog/`}>&larr; 모든 글</a>
+			<div class="tag-header">
+				<h1>#{tag}</h1>
+				<p>{posts.length}개의 글</p>
+			</div>
+			<section>
+				<ul>
+					{
+						posts.map((post) => (
+							<li>
+								<a href={`${base}/blog/${post.id}/`}>
+									{post.data.heroImage && (
+										<Image width={720} height={360} src={post.data.heroImage} alt="" />
+									)}
+									<h4 class="title">{post.data.title}</h4>
+									<p class="date">
+										<FormattedDate date={post.data.pubDate} />
+									</p>
+									{post.data.tags && post.data.tags.length > 0 && (
+										<div class="tags">
+											{post.data.tags.map((t) => (
+												<span class:list={['tag', { current: t === tag }]}>{t}</span>
+											))}
+										</div>
+									)}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
