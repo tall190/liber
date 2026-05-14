@@ -10,11 +10,11 @@ tags: ['Claude Code', 'AI', '에이전트', '개발']
 
 "이 코드 뭐가 문제야?" 하면 답해줬다. "리팩터링해줘" 하면 해줬다. 충분했다. 아니, 그때는 그게 충분한 줄 알았다.
 
-그런데 하다 보니 알게 됐다. 이건 내가 루프를 닫고 있는 거라는 걸. AI가 답하면 내가 판단하고, 내가 다음 질문을 던지고, AI가 또 답하고. 루프의 중심에 내가 있었다. AI는 그냥 도구였다.
+그런데 하다 보니 알게 됐다. 이건 내가 루프를 닫고 있는 거라는 걸. AI가 답하면 내가 판단하고, 내가 다음 질문을 던지고, AI가 또 답하고. 루프의 중심에 항상 내가 있었다. AI는 그냥 도구였다.
 
 그리고 누군가 생각했다. 루프를 AI에게 넘기면 어떻게 될까?
 
-그게 에이전트의 시작이다. 그리고 그때부터 새로운 문제들이 하나씩 터졌다. 이 글은 그 문제들과, 그 문제들을 해결하기 위해 등장한 도구들의 이야기다.
+그게 에이전트의 시작이었다. 그리고 그때부터 새로운 문제들이 하나씩 터졌다. 이 글은 그 문제들과, 그 문제들을 해결하기 위해 등장한 도구들의 이야기다.
 
 ---
 
@@ -96,6 +96,8 @@ Claude Code가 하는 일이 바로 이거다. "이 버그 고쳐줘"라고 하�
 
 Subagent는 자기 컨텍스트 창을 가진다. 거기서 실컷 탐색하고, 요약만 돌려보낸다. 메인 대화는 깨끗하게 유지된다.
 
+여기서 용어를 짚고 넘어갈 필요가 있다. "Agent"와 "Subagent"는 타입이 아니라 **관계**를 나타내는 말이다. 부모 세션이 생성하면 Subagent, 사람이 직접 실행하면 Agent다. `.claude/agents/`에 정의한 같은 파일이 Claude가 대화 중 자동으로 위임하면 Subagent로, `claude --agent code-reviewer`처럼 사람이 직접 실행하면 Agent로 동작한다. 무엇인지가 아니라 누가 만들었느냐가 기준이다.
+
 Claude Code에는 기본 Subagent가 있다.
 
 **Explore** — 코드베이스 탐색 전용. 읽기만 하고 쓰지 않는다. 빠른 Haiku 모델로 돌아간다. 파일 검색, 코드 분석이 필요할 때 자동으로 여기에 위임된다.
@@ -120,7 +122,7 @@ model: sonnet
 3. Critical / Warning / Suggestion으로 구분해서 알려주세요
 ```
 
-이렇게 만들면 Claude가 코드를 수정할 때마다 자동으로 이 Subagent에 위임한다. 메인 대화는 깨끗하게 유지되면서.
+이렇게 만들면 Claude가 코드를 수정할 때마다 자동으로 이 Subagent에 위임한다. 메인 대화는 깨끗하게 유지된다.
 
 Subagent에서 특히 유용한 설정이 있다.
 
@@ -137,6 +139,25 @@ Subagent에서 특히 유용한 설정이 있다.
 | `local` | `.claude/agent-memory-local/<이름>/` | 프로젝트에 특화되어 있지만 git에는 올리고 싶지 않을 때. 개인 노트처럼 |
 
 혼자 쓰는 범용 Subagent라면 `user`, 팀 프로젝트의 Subagent라면 `project`가 기본값으로 적당하다.
+
+Subagent는 병렬로 여러 개를 동시에 띄울 수 있다. "auth, database, API 모듈을 각각 분석해줘"라고 하면 Claude가 세 개의 Subagent를 동시에 생성한다. 단, 각 Subagent의 결과가 메인 컨텍스트로 돌아오기 때문에 많이 띄울수록 메인 컨텍스트가 빠르게 찬다. 병렬 수를 제한하는 설정은 없다. 걱정된다면 프롬프트에서 직접 "최대 3개씩만 병렬로 처리해줘"라고 지시하는 게 현실적이다.
+
+Subagent를 background로 돌릴 때는 권한 처리 방식이 달라진다.
+
+foreground로 실행 중인 Subagent는 권한이 필요한 순간 프롬프트가 터미널로 올라온다. 사용자가 직접 승인하면 된다. background Subagent는 다르다. 권한이 필요한 도구 호출을 자동으로 거부한다. Subagent는 멈추지 않고 계속 실행되지만 해당 작업만 실패로 처리된다.
+
+background Subagent가 권한 부족으로 실패했다면, 같은 작업을 foreground Subagent로 새로 시작해서 대화형으로 재시도해야 한다.
+
+미리 권한을 부여해두는 방법도 있다. Subagent 정의에 `permissionMode`를 설정하거나, 부모 세션에서 이미 승인된 권한은 Subagent에 그대로 상속된다.
+
+```markdown
+---
+name: file-writer
+permissionMode: acceptEdits   # 파일 편집 자동 승인
+---
+```
+
+마지막으로 중요한 제약이 있다. Subagent는 Agent View에 나타나지 않는다. background 세션과 달리 실행 중 상태를 엿보거나 중간에 개입할 수 없다. 부모 Agent만 결과를 받을 수 있다. 중간 개입이 필요한 작업이라면 Subagent 대신 background 세션으로 직접 돌리는 게 맞다.
 
 그런데 Subagent를 여러 개 동시에 돌리기 시작하자 두 번째 문제가 터졌다.
 
@@ -239,6 +260,8 @@ Agent View를 쓰면 에이전트를 디스패치하는 방식이 바뀐다.
 
 프롬프트 하나 입력하면 새 세션이 시작된다. 다른 창으로 전환할 필요 없다. 전부 여기서 보인다.
 
+흥미로운 점이 있다. 백그라운드 세션은 세션 ID로 식별되는데, 같은 ID로 같은 머신의 여러 터미널에서 동시에 `claude attach`하면 동일한 화면이 미러링된다. 입력도 출력도 모든 창에서 동기화된다. tmux와 비슷하다. 모니터 여러 대에서 동시에 확인하거나 터미널을 분할해서 보는 용도로 쓸 수 있다.
+
 그런데 이 단계에서 새로운 질문이 생겼다. 에이전트들이 서로 대화할 수 없을까?
 
 ---
@@ -312,86 +335,6 @@ Agent Team이 항상 좋은 건 아니다. 토큰 비용이 선형으로 증가�
 
 ---
 
-## 보너스: Claude를 시스템으로 만드는 도구들
-
-에이전트 자체의 진화 말고도, Claude를 더 강력하게 만드는 인프라 레이어가 있다. 이것들은 독립적인 기능이라기보다 에이전트 생태계를 구성하는 레이어다.
-
-### MCP — Claude가 세상과 연결된다
-
-Model Context Protocol. 외부 도구와 데이터를 Claude에 연결하는 표준 인터페이스다.
-
-기본 Claude는 파일 시스템과 터미널만 다룬다. MCP를 통해 Slack, GitHub, 데이터베이스, Jira, 브라우저, 뭐든 연결할 수 있다.
-
-```json
-// .mcp.json
-{
-  "mcpServers": {
-    "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"]
-    },
-    "slack": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-slack"]
-    }
-  }
-}
-```
-
-이걸 설정하면 Claude가 "PR #142 내용 가져와서 Slack에 요약 보내줘"를 실제로 할 수 있다.
-
-Subagent에 특정 MCP 서버만 노출하는 것도 가능하다. 예를 들어 브라우저 테스팅 Subagent에는 Playwright만, 데이터 분석 Subagent에는 DB 연결만 주는 식으로.
-
-### Hook — 자동화된 게이트키퍼
-
-Hook은 Claude가 특정 행동을 하기 전/후에 실행되는 스크립트다.
-
-```json
-// settings.json
-{
-  "hooks": {
-    "PreToolUse": [{
-      "matcher": "Bash",
-      "hooks": [{
-        "type": "command",
-        "command": "./scripts/validate-command.sh"
-      }]
-    }],
-    "PostToolUse": [{
-      "matcher": "Edit|Write",
-      "hooks": [{
-        "type": "command",
-        "command": "npm run lint"
-      }]
-    }]
-  }
-}
-```
-
-파일을 수정할 때마다 lint를 자동으로 돌리게 할 수 있다. Bash 명령을 실행하기 전에 허용된 명령인지 검증할 수 있다. 위험한 SQL 쿼리를 차단할 수도 있다.
-
-Hook에서 exit code 2로 종료하면 Claude에게 피드백을 보내면서 해당 행동을 차단한다. 이걸 활용하면 Subagent가 읽기 전용 DB 쿼리만 실행하게 강제하는 것도 가능하다.
-
-### Skill — 재사용 가능한 워크플로우
-
-Skill은 여러 세션에 걸쳐 재사용할 수 있는 프롬프트 패키지다. `.claude/skills/` 폴더에 마크다운 파일로 정의한다.
-
-예를 들어 "PR 만들어줘"를 할 때마다 같은 절차를 따라야 한다면, 그걸 Skill로 만들어두면 `/git-pr`로 언제든 호출할 수 있다.
-
-Agent View에서도 Skill을 디스패치할 수 있다. 반복되는 작업을 Skill로 패키징해두면 "이 패턴으로 에이전트 열어줘" 한 마디로 표준화된 워크플로우가 시작된다.
-
-Subagent 정의에 `skills: [api-conventions, error-handling]`을 넣으면 해당 Subagent가 시작될 때 그 Skill 내용이 컨텍스트에 미리 로드된다. 매번 설명할 필요 없이.
-
-### Schedule — 시간을 연결한다
-
-Claude Code에는 Remote Trigger라는 기능이 있다. 크론 스케줄로 Claude 세션을 자동 실행한다.
-
-매일 아침 8시에 어제 Jira 이슈를 정리하고 Slack에 보고하게 하거나, 매주 월요일에 지난 주 배포 내역을 Confluence에 정리하게 할 수 있다.
-
-사람이 트리거하지 않아도 되는 일들이 있다. 정기적이고 반복적인 것들. 그런 것들은 Schedule에 맡기면 된다.
-
----
-
 ## 실전 선택 가이드 — 언제 뭘 쓰는가
 
 모든 걸 팀으로 돌릴 필요는 없다. 상황에 따라 적절한 도구가 다르다.
@@ -440,19 +383,19 @@ Agent Team (비용 감수)
 1. Agent View에서 세션 세 개 디스패치
    - "feature/payment 브랜치 PR 만들어줘"    → worktree 자동 생성
    - "스테이징 서버 에러 로그 분석해줘"       → worktree 자동 생성
-   - "테스트 커버리지 리포트 Slack 보내줘"
+   - "테스트 커버리지 리포트 만들어줘"        → worktree 자동 생성
 
 2. 에러 로그 분석 세션에서 Subagent 생성
    - Explore Subagent: 로그 파일 100개 읽고 요약
-   - 메인 세션: 요약 보고 패턴 분석
+   - 메인 세션: 요약 받아서 패턴 분석
 
 3. PR 세션 완료 → 행에 초록 점 생성
-   → 클릭해서 검토 후 머지
+   → 검토 후 머지
 
 4. 복잡한 리팩터링이 필요하다면
    → Agent Team 활성화
    → Frontend / Backend / Test 팀원 세 명 생성
-   → 각자 담당 파일 소유, 공유 인터페이스는 작업 목록으로 조율
+   → 각자 담당 레이어 작업, 공유 인터페이스는 작업 목록으로 조율
 ```
 
 한 작업 안에서도 Subagent, Worktree, Agent View가 함께 쓰인다. 이 도구들은 서로 경쟁하지 않는다. 레이어가 다르다.
