@@ -128,7 +128,15 @@ Subagent에서 특히 유용한 설정이 있다.
 
 **도구 제한**: `tools: Read, Grep, Glob`처럼 읽기 전용으로 제한하면, Subagent가 실수로 파일을 수정하는 일이 없다.
 
-**메모리**: `memory: project`를 설정하면 Subagent가 대화 간에 학습한 내용을 유지한다. 코드베이스 패턴, 반복되는 이슈 같은 것들을.
+**메모리**: `memory` 필드를 설정하면 Subagent가 대화 간에 학습한 내용을 유지한다. 코드베이스 패턴, 반복되는 이슈 같은 것들을. 저장 범위에 따라 세 가지 옵션이 있다.
+
+| 옵션 | 저장 위치 | 언제 쓰나 |
+|---|---|---|
+| `user` | `~/.claude/agent-memory/<이름>/` | 여러 프로젝트에 걸쳐 같은 Subagent를 쓸 때. 예: 모든 프로젝트에서 쓰는 코드 리뷰어 |
+| `project` | `.claude/agent-memory/<이름>/` | 이 프로젝트에 특화된 지식을 팀과 공유할 때. git에 커밋되어 팀원 모두가 같은 메모리를 쓴다 |
+| `local` | `.claude/agent-memory-local/<이름>/` | 프로젝트에 특화되어 있지만 git에는 올리고 싶지 않을 때. 개인 노트처럼 |
+
+혼자 쓰는 범용 Subagent라면 `user`, 팀 프로젝트의 Subagent라면 `project`가 기본값으로 적당하다.
 
 그런데 Subagent를 여러 개 동시에 돌리기 시작하자 두 번째 문제가 터졌다.
 
@@ -193,7 +201,7 @@ config/secrets.json
 
 이건 불편하다.
 
-Claude Code는 `claude agents` 명령으로 Agent View를 열어준다.
+Claude Code는 `claude agents` 명령으로 Agent View를 열어준다. 백그라운드로 실행 중인 세션들을 한 화면에서 모니터링하고, 필요할 때만 개입할 수 있는 관제탑 같은 역할이다. 세션을 백그라운드로 보내려면 대화 안에서 `/bg`를 입력하면 된다.
 
 ```
 [Agent View]
@@ -214,7 +222,7 @@ Claude Code는 `claude agents` 명령으로 Agent View를 열어준다.
   ✻ docs-update        result: README 업데이트 완료              20m
 ```
 
-한 화면에서 모든 세션의 상태를 본다. 어느 게 일하고 있는지, 어느 게 막혔는지, 어느 게 끝났는지.
+한 화면에서 백그라운드 세션들의 상태를 본다. 어느 게 일하고 있는지, 어느 게 막혔는지, 어느 게 끝났는지.
 
 `Space`를 누르면 해당 세션의 최근 출력을 엿볼 수 있다. 전체 대화를 열지 않아도. 거기서 바로 답변도 할 수 있다.
 
