@@ -1,0 +1,385 @@
+<!DOCTYPE html><html lang="ko" data-astro-cid-bvzihdzo> <head><!-- Dark mode: apply before render to prevent flash --><script>
+	(function() {
+		const theme = localStorage.getItem('theme');
+		if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark');
+		}
+	})();
+</script> <!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="/liber/favicon.png"><link rel="icon" type="image/svg+xml" href="/liber/favicon.svg"><link rel="icon" href="/liber/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Liber" href="https://tall190.github.io/rss.xml"><meta name="generator" content="Astro v6.1.8"><style>@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/fd137eb932fcc611.woff") format("woff");font-display:swap;font-weight:400;font-style:normal;}@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/5c86995be98976a1.woff") format("woff");font-display:swap;font-weight:700;font-style:normal;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}:root{--font-atkinson:Atkinson-c7f4c4e8b285552f,"Atkinson-c7f4c4e8b285552f fallback: Arial",sans-serif;}</style><link rel="preload" href="/liber/_astro/fonts/fd137eb932fcc611.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/liber/_astro/fonts/5c86995be98976a1.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://tall190.github.io/liber/blog/claude-code-agent-evolution/"><!-- Primary Meta Tags --><title>LLM에서 에이전트 팀까지 — Claude Code가 진화한 이유</title><meta name="title" content="LLM에서 에이전트 팀까지 — Claude Code가 진화한 이유"><meta name="description" content="왜 Subagent가 필요해졌는가, 왜 Worktree가 나왔는가, 왜 Agent Team이 탄생했는가. 필요가 기술을 만든 과정을 따라가며 Claude Code의 병렬화 도구들을 이해한다."><meta name="author" content="Liber"><meta name="keywords" content="Claude Code, AI, 에이전트, 개발"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://tall190.github.io/liber/blog/claude-code-agent-evolution/"><meta property="og:title" content="LLM에서 에이전트 팀까지 — Claude Code가 진화한 이유"><meta property="og:description" content="왜 Subagent가 필요해졌는가, 왜 Worktree가 나왔는가, 왜 Agent Team이 탄생했는가. 필요가 기술을 만든 과정을 따라가며 Claude Code의 병렬화 도구들을 이해한다."><meta property="og:image" content="https://tall190.github.io/liber/_astro/claude-code-agent-evolution_hero_image.ClVHWOPp.png"><meta property="og:locale" content="ko_KR"><meta property="article:published_time" content="2026-05-14T00:00:00.000Z"><meta property="article:tag" content="Claude Code"><meta property="article:tag" content="AI"><meta property="article:tag" content="에이전트"><meta property="article:tag" content="개발"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://tall190.github.io/liber/blog/claude-code-agent-evolution/"><meta property="twitter:title" content="LLM에서 에이전트 팀까지 — Claude Code가 진화한 이유"><meta property="twitter:description" content="왜 Subagent가 필요해졌는가, 왜 Worktree가 나왔는가, 왜 Agent Team이 탄생했는가. 필요가 기술을 만든 과정을 따라가며 Claude Code의 병렬화 도구들을 이해한다."><meta property="twitter:image" content="https://tall190.github.io/liber/_astro/claude-code-agent-evolution_hero_image.ClVHWOPp.png"><!-- Theme toggle script --><script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const toggle = document.getElementById('theme-toggle');
+		if (!toggle) return;
+		toggle.addEventListener('click', function() {
+			const isDark = document.documentElement.classList.toggle('dark');
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
+			// Sync Giscus theme
+			const giscus = document.querySelector('iframe.giscus-frame');
+			if (giscus) {
+				giscus.contentWindow.postMessage(
+					{ giscus: { setConfig: { theme: isDark ? 'dark' : 'light' } } },
+					'https://giscus.app'
+				);
+			}
+		});
+	});
+</script><!-- Schema.org JSON-LD: AI가 이 글을 구조화된 데이터로 읽을 수 있어요 --><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"LLM에서 에이전트 팀까지 — Claude Code가 진화한 이유","description":"왜 Subagent가 필요해졌는가, 왜 Worktree가 나왔는가, 왜 Agent Team이 탄생했는가. 필요가 기술을 만든 과정을 따라가며 Claude Code의 병렬화 도구들을 이해한다.","datePublished":"2026-05-14T00:00:00.000Z","dateModified":"2026-05-14T00:00:00.000Z","url":"https://tall190.github.io/liber/blog/claude-code-agent-evolution/","inLanguage":"ko-KR","mainEntityOfPage":{"@type":"WebPage","@id":"https://tall190.github.io/liber/blog/claude-code-agent-evolution/"},"author":{"@type":"Person","name":"Jayden","url":"https://tall190.github.io/liber/about/","sameAs":["https://github.com/tall190"]},"publisher":{"@type":"Organization","name":"Liber","url":"https://tall190.github.io/liber","logo":{"@type":"ImageObject","url":"https://tall190.github.io/liber/favicon.png"}},"keywords":"Claude Code, AI, 에이전트, 개발","image":"https://tall190.github.io/liber/_astro/claude-code-agent-evolution_hero_image.ClVHWOPp.png"}</script><style>:root{--accent: #2337ff;--accent-dark: #000d8a;--black: 15, 18, 25;--gray: 96, 115, 159;--gray-light: 229, 233, 240;--gray-dark: 34, 41, 57;--gray-gradient: rgba(var(--gray-light), 50%), #fff;--box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);--bg: #fff;--bg-secondary: #f9fafb;--header-bg: white;--code-bg: rgb(var(--gray-light));color-scheme:light}:root.dark{--accent: #6b7cff;--accent-dark: #8b9aff;--black: 230, 230, 230;--gray: 155, 165, 190;--gray-light: 50, 55, 65;--gray-dark: 210, 215, 225;--gray-gradient: rgba(var(--gray-light), 50%), #1a1a2e;--box-shadow: 0 2px 6px rgba(0, 0, 0, 40%), 0 8px 24px rgba(0, 0, 0, 50%), 0 16px 32px rgba(0, 0, 0, 50%);--bg: #1a1a2e;--bg-secondary: #16162a;--header-bg: #16162a;--code-bg: rgba(var(--gray-light), .6);color-scheme:dark}body{font-family:var(--font-atkinson);margin:0;padding:0;text-align:left;background:var(--bg);background-image:linear-gradient(var(--gray-gradient));background-repeat:no-repeat;background-size:100% 600px;word-wrap:break-word;overflow-wrap:break-word;color:rgb(var(--gray-dark));font-size:20px;line-height:1.7;transition:background-color .3s,color .3s}main{width:720px;max-width:calc(100% - 2em);margin:auto;padding:3em 1em}h1,h2,h3,h4,h5,h6{margin:0 0 .5rem;color:rgb(var(--black));line-height:1.2}h1{font-size:3.052em}h2{font-size:2.441em}h3{font-size:1.953em}h4{font-size:1.563em}h5{font-size:1.25em}strong,b{font-weight:700}a,a:hover{color:var(--accent)}p{margin-bottom:1em}.prose p{margin-bottom:2em}.prose p:has(>img){margin-top:.5em;margin-bottom:.5em}textarea{width:100%;font-size:16px}input{font-size:16px}table{width:100%}img{max-width:100%;height:auto;border-radius:8px}code{padding:2px 5px;background-color:var(--code-bg);border-radius:2px}pre{padding:1.5em;border-radius:8px;overflow-x:auto;max-width:100%;font-size:15px}pre>code{all:unset}blockquote{border-left:4px solid var(--accent);padding:0 0 0 20px;margin:0;font-size:1.333em}hr{border:none;border-top:1px solid rgb(var(--gray-light))}@media(max-width:720px){body{font-size:18px}main{padding:1em}}.sr-only{border:0;padding:0;margin:0;position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px 1px 1px 1px);clip:rect(1px,1px,1px,1px);clip-path:inset(50%);white-space:nowrap}.prose p>em:only-child{display:block;font-size:.85em;color:rgb(var(--gray));margin-top:-.3em;margin-bottom:1.5em;text-align:center}footer[data-astro-cid-sz7xmlte]{padding:2em 1em 6em;background:linear-gradient(var(--gray-gradient)) no-repeat;color:rgb(var(--gray));text-align:center;transition:background-color .3s,color .3s}a[data-astro-cid-eimmu3lg]{display:inline-block;text-decoration:none}a[data-astro-cid-eimmu3lg].active{font-weight:bolder;text-decoration:underline}header[data-astro-cid-3ef6ksr2]{margin:0;padding:0 1em;background:var(--header-bg);box-shadow:0 2px 8px rgba(var(--black),5%);transition:background-color .3s}h2[data-astro-cid-3ef6ksr2]{margin:0;font-size:1em}h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2],h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none}nav[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;justify-content:space-between}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{padding:1em .5em;color:var(--black);border-bottom:4px solid transparent;text-decoration:none}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none;border-bottom-color:var(--accent)}.theme-toggle[data-astro-cid-3ef6ksr2]{background:none;border:none;cursor:pointer;padding:.5em;color:rgb(var(--black));display:flex;align-items:center;transition:color .3s}.theme-toggle[data-astro-cid-3ef6ksr2]:hover{color:var(--accent)}.dark .icon-sun[data-astro-cid-3ef6ksr2]{display:inline}.dark .icon-moon[data-astro-cid-3ef6ksr2],.icon-sun[data-astro-cid-3ef6ksr2]{display:none}.icon-moon[data-astro-cid-3ef6ksr2]{display:inline}
+main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.post-meta[data-astro-cid-bvzihdzo]{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:.5rem;flex-wrap:wrap}.hits-badge[data-astro-cid-bvzihdzo]{display:inline-flex;align-items:center}.hits-badge[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{height:20px;border-radius:4px}.post-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.8rem}.tag[data-astro-cid-bvzihdzo]{display:inline-block;font-size:.75rem;font-weight:600;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--accent));color:#fff;text-decoration:none;letter-spacing:.02em}.tag[data-astro-cid-bvzihdzo]:hover{background:var(--accent-dark)}.comments-section[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:3rem auto 2rem;padding:0 1em;border-top:1px solid rgb(var(--gray-light));padding-top:2rem}.comments-section[data-astro-cid-bvzihdzo] h3[data-astro-cid-bvzihdzo]{font-size:1.1rem;color:rgb(var(--gray-dark));margin-bottom:1.5rem}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/liber/" data-astro-cid-3ef6ksr2><img src="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp" srcset="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp 1x, /liber/_astro/liber-logo.DqNb0q2U_Z1NhCXk.webp 2x, /liber/_astro/liber-logo.DqNb0q2U_16RKps.webp 3x" alt="Liber" data-astro-cid-3ef6ksr2="true" loading="lazy" decoding="async" width="121" height="40"></a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/liber/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Home </a> <a href="/liber/blog/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Blog </a> <a href="/liber/about/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> About </a> <button class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환" data-astro-cid-3ef6ksr2> <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle><line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line><line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line><line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line><line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line></svg> <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path></svg> </button> </div> </nav> </header> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo> <img src="/liber/_astro/claude-code-agent-evolution_hero_image.ClVHWOPp_1EDgWE.webp" alt data-astro-cid-bvzihdzo="true" loading="lazy" decoding="async" width="1020" height="510"> </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-05-14T00:00:00.000Z"> May 14, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>LLM에서 에이전트 팀까지 — Claude Code가 진화한 이유</h1> <div class="post-meta" data-astro-cid-bvzihdzo> <span class="hits-badge" data-astro-cid-bvzihdzo> <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Ftall190.github.io%2Fliber%2Fblog%2Fclaude-code-agent-evolution%2F&#38;label=views&#38;labelColor=%23374151&#38;countColor=%236366f1&#38;style=flat" alt="조회수" loading="eager" data-astro-cid-bvzihdzo> </span> </div> <div class="post-tags" data-astro-cid-bvzihdzo> <a class="tag" href="/liber/blog/tags/Claude Code/" data-astro-cid-bvzihdzo>Claude Code</a><a class="tag" href="/liber/blog/tags/AI/" data-astro-cid-bvzihdzo>AI</a><a class="tag" href="/liber/blog/tags/에이전트/" data-astro-cid-bvzihdzo>에이전트</a><a class="tag" href="/liber/blog/tags/개발/" data-astro-cid-bvzihdzo>개발</a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>처음에는 그냥 물어보면 됐다.</p>
+<p>“이 코드 뭐가 문제야?” 하면 답해줬다. “리팩터링해줘” 하면 해줬다. 충분했다. 아니, 그때는 그게 충분한 줄 알았다.</p>
+<p>그런데 하다 보니 알게 됐다. 이건 내가 루프를 닫고 있는 거라는 걸. AI가 답하면 내가 판단하고, 내가 다음 질문을 던지고, AI가 또 답하고. 루프의 중심에 항상 내가 있었다. AI는 그냥 도구였다.</p>
+<p>그리고 누군가 생각했다. 루프를 AI에게 넘기면 어떻게 될까?</p>
+<p>그게 에이전트의 시작이었다. 그리고 그때부터 새로운 문제들이 하나씩 터졌다. 이 글은 그 문제들과, 그 문제들을 해결하기 위해 등장한 도구들의 이야기다.</p>
+<hr>
+<h2 id="1단계-llm--내가-루프를-닫는다">1단계: LLM — 내가 루프를 닫는다</h2>
+<p>LLM은 질문에 답하는 기계다. 정확하게는, 다음 토큰을 예측하는 기계인데, 그 예측이 너무 잘 되다 보니 대화처럼 보인다.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[LLM 시대]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>나 → 질문 → LLM → 답 → 나 → 판단 → 나 → 다음 질문 → ...</span></span></code></pre>
+<p>내가 루프를 닫는다. 이게 핵심이다. AI는 내가 물어볼 때만 일한다. 내가 없으면 아무것도 안 한다.</p>
+<p>이 구조의 장점은 명확하다. 내가 모든 걸 본다. 내가 모든 걸 통제한다. AI가 이상한 방향으로 가면 내가 잡는다.</p>
+<p>단점도 명확하다. 나는 항상 거기 있어야 한다.</p>
+<hr>
+<h2 id="2단계-agent--루프를-위임한다">2단계: Agent — 루프를 위임한다</h2>
+<p>어느 시점에, 이런 생각이 생겼다. “내가 목표만 주면, AI가 알아서 계획하고 실행하면 안 되나?”</p>
+<p>그게 에이전트다.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[Agent 시대]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>나 → 목표 → Agent → 계획 → 실행 → 관찰 → 다음 행동 → ...</span></span>
+<span class="line"><span>                      ↑__________________________________|</span></span>
+<span class="line"><span>                      (루프를 Agent가 닫는다)</span></span></code></pre>
+<p>루프가 AI 안으로 들어갔다. 나는 목표를 주고 결과를 받는다. 중간 과정은 AI가 처리한다.</p>
+<p>LLM과 Agent의 차이는 여기에 있다.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th></th><th>LLM</th><th>Agent</th></tr></thead><tbody><tr><td>루프 주체</td><td>사람</td><td>AI</td></tr><tr><td>입력</td><td>질문</td><td>목표</td></tr><tr><td>출력</td><td>답</td><td>결과</td></tr><tr><td>도구</td><td>없음</td><td>있음 (파일 읽기, 코드 실행…)</td></tr><tr><td>내 역할</td><td>판단자</td><td>목표 설정자</td></tr></tbody></table>
+<p>Claude Code가 하는 일이 바로 이거다. “이 버그 고쳐줘”라고 하면, 파일을 읽고, 문제를 분석하고, 코드를 수정하고, 테스트를 돌리고, 결과를 알려준다. 내가 중간에 개입하지 않아도.</p>
+<p>그런데 에이전트를 쓰기 시작하자마자 첫 번째 문제가 터졌다.</p>
+<hr>
+<h2 id="3단계-subagent--컨텍스트가-넘친다">3단계: Subagent — 컨텍스트가 넘친다</h2>
+<p>에이전트가 일을 하면 대화가 길어진다. 파일 내용, 검색 결과, 에러 로그, 실행 결과… 이게 다 컨텍스트 창에 쌓인다.</p>
+<p>컨텍스트 창은 유한하다. Claude Sonnet도, Opus도, 결국 한계가 있다. 그리고 컨텍스트가 길어질수록 성능이 떨어진다. 초반에 했던 맥락을 잊어버린다. 비용도 늘어난다.</p>
+<p>더 큰 문제가 있다. 조사하는 일과 실행하는 일이 섞인다. “이 모듈 전체를 분석해줘” 하면, 수백 개 파일을 읽은 결과가 메인 대화에 다 쌓인다. 나는 그 상세한 내용이 필요 없는데. 요약만 보면 되는데.</p>
+<p>그래서 나온 것이 Subagent다.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[Subagent 구조]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>메인 대화</span></span>
+<span class="line"><span>├── Claude (메인)</span></span>
+<span class="line"><span>│   └── "이 모듈 분석해줘"</span></span>
+<span class="line"><span>│       ↓</span></span>
+<span class="line"><span>│   [Subagent 생성]</span></span>
+<span class="line"><span>│       └── Subagent (자기 컨텍스트 창)</span></span>
+<span class="line"><span>│               ├── 파일 100개 읽음</span></span>
+<span class="line"><span>│               ├── 분석 수행</span></span>
+<span class="line"><span>│               └── → "핵심 문제 3가지 발견" (요약만 반환)</span></span>
+<span class="line"><span>│       ↓</span></span>
+<span class="line"><span>│   메인 대화에는 요약만 남음</span></span></code></pre>
+<p>Subagent는 자기 컨텍스트 창을 가진다. 거기서 실컷 탐색하고, 요약만 돌려보낸다. 메인 대화는 깨끗하게 유지된다.</p>
+<p>여기서 용어를 짚고 넘어갈 필요가 있다. “Agent”와 “Subagent”는 타입이 아니라 <strong>관계</strong>를 나타내는 말이다. 부모 세션이 생성하면 Subagent, 사람이 직접 실행하면 Agent다. <code>.claude/agents/</code>에 정의한 같은 파일이 Claude가 대화 중 자동으로 위임하면 Subagent로, <code>claude --agent code-reviewer</code>처럼 사람이 직접 실행하면 Agent로 동작한다. 무엇인지가 아니라 누가 만들었느냐가 기준이다.</p>
+<p>Claude Code에는 기본 Subagent가 있다.</p>
+<p><strong>Explore</strong> — 코드베이스 탐색 전용. 읽기만 하고 쓰지 않는다. 빠른 Haiku 모델로 돌아간다. 파일 검색, 코드 분석이 필요할 때 자동으로 여기에 위임된다.</p>
+<p><strong>Plan</strong> — Plan 모드에서 계획 전에 코드베이스를 조사하는 에이전트. 읽기 전용.</p>
+<p><strong>General-purpose</strong> — 탐색과 수정이 모두 필요한 복잡한 작업.</p>
+<p>직접 Subagent를 만들 수도 있다. <code>.claude/agents/</code> 폴더에 마크다운 파일을 하나 만들면 된다.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="markdown"><code><span class="line"><span style="color:#79B8FF;font-weight:bold">---</span></span>
+<span class="line"><span style="color:#E1E4E8">name: code-reviewer</span></span>
+<span class="line"><span style="color:#E1E4E8">description: 코드 품질과 보안을 검토하는 전문가. 코드 변경 후 자동으로 사용하세요.</span></span>
+<span class="line"><span style="color:#E1E4E8">tools: Read, Grep, Glob</span></span>
+<span class="line"><span style="color:#E1E4E8">model: sonnet</span></span>
+<span class="line"><span style="color:#79B8FF;font-weight:bold">---</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">당신은 시니어 코드 리뷰어입니다. 코드를 검토할 때:</span></span>
+<span class="line"><span style="color:#FFAB70">1.</span><span style="color:#E1E4E8"> git diff로 변경 사항을 먼저 확인하세요</span></span>
+<span class="line"><span style="color:#FFAB70">2.</span><span style="color:#E1E4E8"> 보안 취약점, 성능 문제, 가독성 순서로 피드백하세요</span></span>
+<span class="line"><span style="color:#FFAB70">3.</span><span style="color:#E1E4E8"> Critical / Warning / Suggestion으로 구분해서 알려주세요</span></span></code></pre>
+<p>이렇게 만들면 Claude가 코드를 수정할 때마다 자동으로 이 Subagent에 위임한다. 메인 대화는 깨끗하게 유지된다.</p>
+<p>Subagent에서 특히 유용한 설정이 있다.</p>
+<p><strong>모델 선택</strong>: Subagent별로 다른 모델을 쓸 수 있다. 단순 탐색은 Haiku, 복잡한 판단은 Sonnet이나 Opus. 비용을 많이 아낄 수 있다.</p>
+<p><strong>도구 제한</strong>: <code>tools: Read, Grep, Glob</code>처럼 읽기 전용으로 제한하면, Subagent가 실수로 파일을 수정하는 일이 없다.</p>
+<p><strong>메모리</strong>: <code>memory</code> 필드를 설정하면 Subagent가 대화 간에 학습한 내용을 유지한다. 코드베이스 패턴, 반복되는 이슈 같은 것들을. 저장 범위에 따라 세 가지 옵션이 있다.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>옵션</th><th>저장 위치</th><th>언제 쓰나</th></tr></thead><tbody><tr><td><code>user</code></td><td><code>~/.claude/agent-memory/&#x3C;이름>/</code></td><td>여러 프로젝트에 걸쳐 같은 Subagent를 쓸 때. 예: 모든 프로젝트에서 쓰는 코드 리뷰어</td></tr><tr><td><code>project</code></td><td><code>.claude/agent-memory/&#x3C;이름>/</code></td><td>이 프로젝트에 특화된 지식을 팀과 공유할 때. git에 커밋되어 팀원 모두가 같은 메모리를 쓴다</td></tr><tr><td><code>local</code></td><td><code>.claude/agent-memory-local/&#x3C;이름>/</code></td><td>프로젝트에 특화되어 있지만 git에는 올리고 싶지 않을 때. 개인 노트처럼</td></tr></tbody></table>
+<p>혼자 쓰는 범용 Subagent라면 <code>user</code>, 팀 프로젝트의 Subagent라면 <code>project</code>가 기본값으로 적당하다.</p>
+<p>Subagent는 병렬로 여러 개를 동시에 띄울 수 있다. “auth, database, API 모듈을 각각 분석해줘”라고 하면 Claude가 세 개의 Subagent를 동시에 생성한다. 단, 각 Subagent의 결과가 메인 컨텍스트로 돌아오기 때문에 많이 띄울수록 메인 컨텍스트가 빠르게 찬다. 병렬 수를 제한하는 설정은 없다. 걱정된다면 프롬프트에서 직접 “최대 3개씩만 병렬로 처리해줘”라고 지시하는 게 현실적이다.</p>
+<p>Subagent를 background로 돌릴 때는 권한 처리 방식이 달라진다.</p>
+<p>foreground로 실행 중인 Subagent는 권한이 필요한 순간 프롬프트가 터미널로 올라온다. 사용자가 직접 승인하면 된다. background Subagent는 다르다. 권한이 필요한 도구 호출을 자동으로 거부한다. Subagent는 멈추지 않고 계속 실행되지만 해당 작업만 실패로 처리된다.</p>
+<p>background Subagent가 권한 부족으로 실패했다면, 같은 작업을 foreground Subagent로 새로 시작해서 대화형으로 재시도해야 한다.</p>
+<p>미리 권한을 부여해두는 방법도 있다. Subagent 정의에 <code>permissionMode</code>를 설정하거나, 부모 세션에서 이미 승인된 권한은 Subagent에 그대로 상속된다.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="markdown"><code><span class="line"><span style="color:#79B8FF;font-weight:bold">---</span></span>
+<span class="line"><span style="color:#E1E4E8">name: file-writer</span></span>
+<span class="line"><span style="color:#E1E4E8">permissionMode: acceptEdits   # 파일 편집 자동 승인</span></span>
+<span class="line"><span style="color:#79B8FF;font-weight:bold">---</span></span></code></pre>
+<p>마지막으로 중요한 제약이 있다. Subagent는 Agent View에 나타나지 않는다. background 세션과 달리 실행 중 상태를 엿보거나 중간에 개입할 수 없다. 부모 Agent만 결과를 받을 수 있다. 중간 개입이 필요한 작업이라면 Subagent 대신 background 세션으로 직접 돌리는 게 맞다.</p>
+<p>그런데 Subagent를 여러 개 동시에 돌리기 시작하자 두 번째 문제가 터졌다.</p>
+<hr>
+<h2 id="4단계-worktree--파일이-충돌한다">4단계: Worktree — 파일이 충돌한다</h2>
+<p>Subagent 여러 개를 병렬로 돌리면 어떤 일이 생길까?</p>
+<p>Agent A가 <code>src/auth.ts</code>를 수정하고 있다. 동시에 Agent B도 <code>src/auth.ts</code>를 수정한다. 나중에 저장한 쪽이 이긴다. 한 쪽 작업이 사라진다.</p>
+<p>실제로 이런 일이 일어난다.</p>
+<p>Git worktree는 원래 Git 기능이다. 같은 저장소를 여러 디렉토리에 동시에 체크아웃할 수 있다. 각 체크아웃은 자기 브랜치를 갖는다. 파일이 완전히 분리된다.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[Worktree 구조]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>저장소</span></span>
+<span class="line"><span>├── main (현재 작업 중)</span></span>
+<span class="line"><span>├── .claude/worktrees/feature-auth (Agent A가 여기서 작업)</span></span>
+<span class="line"><span>└── .claude/worktrees/bugfix-123  (Agent B가 여기서 작업)</span></span></code></pre>
+<p><code>--worktree</code> 플래그로 Claude를 시작하면 자동으로 새 worktree를 만들고 거기서 시작한다.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 터미널 1</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#79B8FF"> --worktree</span><span style="color:#9ECBFF"> feature-auth</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 터미널 2</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#79B8FF"> --worktree</span><span style="color:#9ECBFF"> bugfix-123</span></span></code></pre>
+<p>두 세션이 완전히 다른 파일 공간에서 일한다. 충돌 없이.</p>
+<p>Subagent에도 적용할 수 있다. Subagent 정의에 <code>isolation: worktree</code>를 추가하면, 그 Subagent는 항상 자기 worktree에서 실행된다.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="markdown"><code><span class="line"><span style="color:#79B8FF;font-weight:bold">---</span></span>
+<span class="line"><span style="color:#E1E4E8">name: feature-implementer</span></span>
+<span class="line"><span style="color:#E1E4E8">description: 새 기능을 구현하는 에이전트</span></span>
+<span class="line"><span style="color:#E1E4E8">isolation: worktree</span></span>
+<span class="line"><span style="color:#79B8FF;font-weight:bold">---</span></span></code></pre>
+<p><code>.env</code>나 <code>.env.local</code> 같은 gitignore된 파일도 자동으로 복사하고 싶다면 <code>.worktreeinclude</code> 파일을 만들면 된다.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>.env</span></span>
+<span class="line"><span>.env.local</span></span>
+<span class="line"><span>config/secrets.json</span></span></code></pre>
+<p>그런데 이제 에이전트가 여러 개가 됐다. 각자 worktree에서 일하고 있다. 어떻게 다 보지?</p>
+<hr>
+<h2 id="5단계-agent-view--한눈에-보고-싶다">5단계: Agent View — 한눈에 보고 싶다</h2>
+<p>여러 에이전트가 병렬로 일하고 있다. 터미널이 여러 개다. 각 에이전트가 어디까지 했는지 확인하려면 각 터미널을 열어봐야 한다.</p>
+<p>이건 불편하다.</p>
+<p>Claude Code는 <code>claude agents</code> 명령으로 Agent View를 열어준다. 백그라운드로 실행 중인 세션들을 한 화면에서 모니터링하고, 필요할 때만 개입할 수 있는 관제탑 같은 역할이다. 세션을 백그라운드로 보내려면 대화 안에서 <code>/bg</code>를 입력하면 된다.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[Agent View]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>고정됨</span></span>
+<span class="line"><span>  ✽ auth-refactor      Edit src/auth/TokenService.ts          2m</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>검토 준비 완료</span></span>
+<span class="line"><span>  ∙ payment-module     github.com/project/pull/142        ●   1h</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>입력 필요</span></span>
+<span class="line"><span>  ✻ test-fix           needs input: mock 어디서 가져와?         30s</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>작업 중</span></span>
+<span class="line"><span>  ✽ api-cleanup        Grep src/**/*.ts                        5m</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>완료됨</span></span>
+<span class="line"><span>  ✻ docs-update        result: README 업데이트 완료              20m</span></span></code></pre>
+<p>한 화면에서 백그라운드 세션들의 상태를 본다. 어느 게 일하고 있는지, 어느 게 막혔는지, 어느 게 끝났는지.</p>
+<p><code>Space</code>를 누르면 해당 세션의 최근 출력을 엿볼 수 있다. 전체 대화를 열지 않아도. 거기서 바로 답변도 할 수 있다.</p>
+<p>PR을 열었으면 행 옆에 점이 생긴다. 노란색이면 리뷰 대기, 초록색이면 통과. 점이 초록이 되면 그 에이전트 작업이 끝난 거다.</p>
+<p>Agent View를 쓰면 에이전트를 디스패치하는 방식이 바뀐다.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 에이전트 뷰에서 바로 새 세션 디스패치</span></span>
+<span class="line"><span style="color:#F97583">></span><span style="color:#E1E4E8"> auth 모듈 리팩터링하고 PR 올려줘</span></span>
+<span class="line"><span style="color:#F97583">></span><span style="color:#E1E4E8"> payment 모듈 버그 조사해줘</span></span>
+<span class="line"><span style="color:#F97583">></span><span style="color:#E1E4E8"> 테스트 커버리지 높여줘</span></span></code></pre>
+<p>프롬프트 하나 입력하면 새 세션이 시작된다. 다른 창으로 전환할 필요 없다. 전부 여기서 보인다.</p>
+<p>흥미로운 점이 있다. 백그라운드 세션은 세션 ID로 식별되는데, 같은 ID로 같은 머신의 여러 터미널에서 동시에 <code>claude attach</code>하면 동일한 화면이 미러링된다. 입력도 출력도 모든 창에서 동기화된다. tmux와 비슷하다. 모니터 여러 대에서 동시에 확인하거나 터미널을 분할해서 보는 용도로 쓸 수 있다.</p>
+<p>그런데 이 단계에서 새로운 질문이 생겼다. 에이전트들이 서로 대화할 수 없을까?</p>
+<hr>
+<h2 id="6단계-agent-team--에이전트들이-협업한다">6단계: Agent Team — 에이전트들이 협업한다</h2>
+<p>지금까지의 구조를 정리해보면 이렇다.</p>
+<ul>
+<li>Subagent: 메인 에이전트가 보조 에이전트에게 위임. 보조는 메인에게만 보고.</li>
+<li>Agent View: 사람이 여러 독립 세션을 감시.</li>
+</ul>
+<p>둘 다 에이전트 간 직접 소통이 없다. 항상 사람이나 메인 에이전트를 통해야 한다.</p>
+<p>복잡한 작업을 생각해보자. 프론트엔드, 백엔드, 테스트를 동시에 바꿔야 하는 기능 개발. 세 에이전트가 각자 일하는데, 백엔드 API 스펙이 바뀌면 프론트엔드 에이전트가 알아야 한다. 테스트 에이전트도 알아야 한다.</p>
+<p>지금 구조로는 사람이 중간에서 다 중계해야 한다.</p>
+<p>Agent Team은 이걸 해결한다.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[Agent Team 구조]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>          리더 (나와 대화)</span></span>
+<span class="line"><span>         /      |       \</span></span>
+<span class="line"><span>    Frontend  Backend  Testing</span></span>
+<span class="line"><span>    에이전트   에이전트   에이전트</span></span>
+<span class="line"><span>         \      |       /</span></span>
+<span class="line"><span>          공유 작업 목록</span></span>
+<span class="line"><span>          (서로 메시지 가능)</span></span></code></pre>
+<p>팀원들은 공유 작업 목록을 가진다. 작업이 생기면 하나씩 가져간다. 다 끝나면 리더에게 보고하거나, 다른 팀원에게 직접 메시지를 보낸다.</p>
+<p>쓰는 방법은 간단하다. 환경 변수를 켜고 Claude에게 자연어로 말하면 된다.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#6A737D">// settings.json</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "env"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"1"</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>나: PR #142를 세 가지 관점에서 동시에 검토해줘.</span></span>
+<span class="line"><span>    보안 리뷰어, 성능 분석가, 테스트 커버리지 검토자로 팀을 구성해.</span></span></code></pre>
+<p>Claude가 팀을 만들고, 팀원들이 병렬로 리뷰를 진행하고, 서로 발견한 것을 공유하고, 리더가 종합한다.</p>
+<p>Subagent와 Agent Team의 차이를 직접 보면 이렇다.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th></th><th>Subagent</th><th>Agent Team</th></tr></thead><tbody><tr><td>통신</td><td>메인에게만 보고</td><td>팀원끼리 직접 메시지</td></tr><tr><td>컨텍스트</td><td>자기 창에서 시작</td><td>자기 창에서 시작</td></tr><tr><td>조율</td><td>메인이 전부 관리</td><td>공유 작업 목록 + 자율 조율</td></tr><tr><td>비용</td><td>낮음</td><td>높음 (팀원마다 토큰)</td></tr><tr><td>언제 써야 하나</td><td>결과만 필요한 집중된 작업</td><td>토론과 협업이 필요한 복잡한 작업</td></tr></tbody></table>
+<p>Agent Team이 특히 빛나는 상황이 있다.</p>
+<p><strong>경쟁하는 가설 테스트</strong>: 버그 원인이 불명확할 때 5명이 각각 다른 이론을 동시에 테스트하고 서로 반박한다. 마지막까지 살아남은 이론이 진짜 원인일 가능성이 높다.</p>
+<p><strong>교차 계층 기능 개발</strong>: 프론트엔드, 백엔드, DB, 테스트가 동시에 바뀌어야 할 때. 각 팀원이 자기 레이어를 담당하면서 API 스펙 같은 공유 계약을 공유 작업 목록으로 맞춰나간다.</p>
+<p><strong>다각도 연구</strong>: 새 라이브러리 도입을 검토할 때. 성능, 생태계, 마이그레이션 비용, 보안을 각자 조사하고 종합.</p>
+<p>Agent Team이 항상 좋은 건 아니다. 토큰 비용이 선형으로 증가한다. 팀원 10명이면 단일 세션 대비 약 10배 토큰을 쓴다. 순차적 작업이나 단순한 작업에는 오버킬이다.</p>
+<hr>
+<h2 id="실전-선택-가이드--언제-뭘-쓰는가">실전 선택 가이드 — 언제 뭘 쓰는가</h2>
+<p>모든 걸 팀으로 돌릴 필요는 없다. 상황에 따라 적절한 도구가 다르다.</p>
+<h3 id="나는-지금-뭘-써야-하나">”나는 지금 뭘 써야 하나?”</h3>
+<p><strong>일반적인 코딩 작업</strong> → 그냥 Claude와 대화하면 된다. Subagent가 필요하면 Claude가 알아서 Explore에 위임한다.</p>
+<p><strong>컨텍스트가 너무 길어진다</strong> → 커스텀 Subagent를 만들어라. 탐색 작업을 격리하고 요약만 받아라.</p>
+<p><strong>같은 저장소에서 두 작업을 동시에</strong> → <code>--worktree</code>로 각 작업을 격리하라. 파일 충돌을 막는다.</p>
+<p><strong>독립적인 여러 작업을 감시하고 싶다</strong> → Agent View(<code>claude agents</code>). 디스패치하고 한 화면에서 본다.</p>
+<p><strong>여러 에이전트가 결과를 공유해야 한다</strong> → Agent Team. 단, 토큰 비용이 크게 증가한다는 걸 감수해야 한다.</p>
+<p>정리하면 이렇다.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>단순한 작업</span></span>
+<span class="line"><span>    ↓</span></span>
+<span class="line"><span>혼자 Claude와 대화</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>컨텍스트 폭발</span></span>
+<span class="line"><span>    ↓</span></span>
+<span class="line"><span>Subagent로 격리</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>병렬 작업, 파일 충돌 우려</span></span>
+<span class="line"><span>    ↓</span></span>
+<span class="line"><span>Worktree로 분리</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>여러 독립 세션, 감시 필요</span></span>
+<span class="line"><span>    ↓</span></span>
+<span class="line"><span>Agent View로 통제</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>에이전트 간 소통, 협업 필요</span></span>
+<span class="line"><span>    ↓</span></span>
+<span class="line"><span>Agent Team (비용 감수)</span></span></code></pre>
+<h3 id="실제로-이걸-조합하면">실제로 이걸 조합하면</h3>
+<p>현실적인 개발 시나리오를 하나 그려보면 이렇다.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>1. Agent View에서 세션 세 개 디스패치</span></span>
+<span class="line"><span>   - "feature/payment 브랜치 PR 만들어줘"    → worktree 자동 생성</span></span>
+<span class="line"><span>   - "스테이징 서버 에러 로그 분석해줘"       → worktree 자동 생성</span></span>
+<span class="line"><span>   - "테스트 커버리지 리포트 만들어줘"        → worktree 자동 생성</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>2. 에러 로그 분석 세션에서 Subagent 생성</span></span>
+<span class="line"><span>   - Explore Subagent: 로그 파일 100개 읽고 요약</span></span>
+<span class="line"><span>   - 메인 세션: 요약 받아서 패턴 분석</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>3. PR 세션 완료 → 행에 초록 점 생성</span></span>
+<span class="line"><span>   → 검토 후 머지</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>4. 복잡한 리팩터링이 필요하다면</span></span>
+<span class="line"><span>   → Agent Team 활성화</span></span>
+<span class="line"><span>   → Frontend / Backend / Test 팀원 세 명 생성</span></span>
+<span class="line"><span>   → 각자 담당 레이어 작업, 공유 인터페이스는 작업 목록으로 조율</span></span></code></pre>
+<p>한 작업 안에서도 Subagent, Worktree, Agent View가 함께 쓰인다. 이 도구들은 서로 경쟁하지 않는다. 레이어가 다르다.</p>
+<hr>
+<h2 id="정리-진화의-방향">정리: 진화의 방향</h2>
+<p>돌아보면 패턴이 보인다.</p>
+<p>처음에는 사람이 루프를 닫았다. 그게 불편해서 에이전트가 나왔다. 에이전트가 컨텍스트를 먹자 Subagent가 나왔다. 병렬로 돌리니 파일이 충돌해서 Worktree가 나왔다. 여러 세션을 보기 힘드니 Agent View가 나왔다. 에이전트들이 서로 대화해야 하니 Agent Team이 나왔다.</p>
+<p>이 진화의 방향은 하나다. <strong>사람의 개입을 최소화하는 방향으로.</strong></p>
+<p>처음엔 내가 루프의 중심에 있었다. 지금은 목표를 주면 에이전트 팀이 알아서 계획하고, 협업하고, 조율한다. 나는 결과를 검토하고 방향을 잡는다.</p>
+<p>아직 모든 게 완성된 건 아니다. Agent Team은 아직 실험적이다. 토큰 비용도 많이 든다. 세션 재개가 완벽하지 않다.</p>
+<p>그래도 방향은 분명하다.</p>
+<p>루프를 위임하는 것. 그게 에이전트를 쓴다는 것의 핵심이고, 앞으로 이 도구들이 계속 진화하는 이유다.</p>
+<hr>
+<p><em>공식 문서: <a href="https://code.claude.com/docs/ko/agents">code.claude.com/docs/ko/agents</a></em></p>  </div> </article> </main> <!-- 댓글 & 좋아요 (Giscus — GitHub Discussions 기반) --> <!-- 설정 방법: https://giscus.app 에서 tall190/liber 입력 후 REPO_ID, CATEGORY_ID 교체 --> <div class="comments-section" data-astro-cid-bvzihdzo> <h3 data-astro-cid-bvzihdzo>댓글</h3> <script>
+				(function() {
+					var isDark = document.documentElement.classList.contains('dark');
+					var s = document.createElement('script');
+					s.src = 'https://giscus.app/client.js';
+					s.setAttribute('data-repo', 'tall190/liber');
+					s.setAttribute('data-repo-id', 'R_kgDOSIJHDw');
+					s.setAttribute('data-category', 'Announcements');
+					s.setAttribute('data-category-id', 'DIC_kwDOSIJHD84C7Uy6');
+					s.setAttribute('data-mapping', 'pathname');
+					s.setAttribute('data-strict', '0');
+					s.setAttribute('data-reactions-enabled', '1');
+					s.setAttribute('data-emit-metadata', '0');
+					s.setAttribute('data-input-position', 'bottom');
+					s.setAttribute('data-theme', isDark ? 'dark' : 'light');
+					s.setAttribute('data-lang', 'ko');
+					s.setAttribute('crossorigin', 'anonymous');
+					s.async = true;
+					document.currentScript.parentElement.appendChild(s);
+				})();
+			</script> </div> <footer data-astro-cid-sz7xmlte>
+&copy; 2026 Liber. All rights reserved.
+</footer> </body></html>

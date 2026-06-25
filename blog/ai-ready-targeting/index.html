@@ -1,0 +1,165 @@
+<!DOCTYPE html><html lang="ko" data-astro-cid-bvzihdzo> <head><!-- Dark mode: apply before render to prevent flash --><script>
+	(function() {
+		const theme = localStorage.getItem('theme');
+		if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark');
+		}
+	})();
+</script> <!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="/liber/favicon.png"><link rel="icon" type="image/svg+xml" href="/liber/favicon.svg"><link rel="icon" href="/liber/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Liber" href="https://tall190.github.io/rss.xml"><meta name="generator" content="Astro v6.1.8"><style>@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/fd137eb932fcc611.woff") format("woff");font-display:swap;font-weight:400;font-style:normal;}@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/5c86995be98976a1.woff") format("woff");font-display:swap;font-weight:700;font-style:normal;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}:root{--font-atkinson:Atkinson-c7f4c4e8b285552f,"Atkinson-c7f4c4e8b285552f fallback: Arial",sans-serif;}</style><link rel="preload" href="/liber/_astro/fonts/fd137eb932fcc611.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/liber/_astro/fonts/5c86995be98976a1.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://tall190.github.io/liber/blog/ai-ready-targeting/"><!-- Primary Meta Tags --><title>AI-ready Targeting — 쿠키 없이도 정확하게, AI 페르소나가 답이다</title><meta name="title" content="AI-ready Targeting — 쿠키 없이도 정확하게, AI 페르소나가 답이다"><meta name="description" content="3rd-party 쿠키가 사라지고 있다. 기존 타겟팅 방식이 흔들린다. 하지만 AI 페르소나 에이전트는 쿠키 없이도, 심지어 실제 사용자 데이터 없이도 더 정확한 타겟팅을 가능하게 할 수 있다."><meta name="author" content="Liber"><meta name="keywords" content="AI-ready, 마케팅, 타겟팅"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://tall190.github.io/liber/blog/ai-ready-targeting/"><meta property="og:title" content="AI-ready Targeting — 쿠키 없이도 정확하게, AI 페르소나가 답이다"><meta property="og:description" content="3rd-party 쿠키가 사라지고 있다. 기존 타겟팅 방식이 흔들린다. 하지만 AI 페르소나 에이전트는 쿠키 없이도, 심지어 실제 사용자 데이터 없이도 더 정확한 타겟팅을 가능하게 할 수 있다."><meta property="og:image" content="https://tall190.github.io/liber/_astro/ai-ready-targeting_hero_image.Qyow0u75.png"><meta property="og:locale" content="ko_KR"><meta property="article:published_time" content="2026-04-21T00:00:00.000Z"><meta property="article:tag" content="AI-ready"><meta property="article:tag" content="마케팅"><meta property="article:tag" content="타겟팅"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://tall190.github.io/liber/blog/ai-ready-targeting/"><meta property="twitter:title" content="AI-ready Targeting — 쿠키 없이도 정확하게, AI 페르소나가 답이다"><meta property="twitter:description" content="3rd-party 쿠키가 사라지고 있다. 기존 타겟팅 방식이 흔들린다. 하지만 AI 페르소나 에이전트는 쿠키 없이도, 심지어 실제 사용자 데이터 없이도 더 정확한 타겟팅을 가능하게 할 수 있다."><meta property="twitter:image" content="https://tall190.github.io/liber/_astro/ai-ready-targeting_hero_image.Qyow0u75.png"><!-- Theme toggle script --><script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const toggle = document.getElementById('theme-toggle');
+		if (!toggle) return;
+		toggle.addEventListener('click', function() {
+			const isDark = document.documentElement.classList.toggle('dark');
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
+			// Sync Giscus theme
+			const giscus = document.querySelector('iframe.giscus-frame');
+			if (giscus) {
+				giscus.contentWindow.postMessage(
+					{ giscus: { setConfig: { theme: isDark ? 'dark' : 'light' } } },
+					'https://giscus.app'
+				);
+			}
+		});
+	});
+</script><!-- Schema.org JSON-LD: AI가 이 글을 구조화된 데이터로 읽을 수 있어요 --><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"AI-ready Targeting — 쿠키 없이도 정확하게, AI 페르소나가 답이다","description":"3rd-party 쿠키가 사라지고 있다. 기존 타겟팅 방식이 흔들린다. 하지만 AI 페르소나 에이전트는 쿠키 없이도, 심지어 실제 사용자 데이터 없이도 더 정확한 타겟팅을 가능하게 할 수 있다.","datePublished":"2026-04-21T00:00:00.000Z","dateModified":"2026-04-21T00:00:00.000Z","url":"https://tall190.github.io/liber/blog/ai-ready-targeting/","inLanguage":"ko-KR","mainEntityOfPage":{"@type":"WebPage","@id":"https://tall190.github.io/liber/blog/ai-ready-targeting/"},"author":{"@type":"Person","name":"Jayden","url":"https://tall190.github.io/liber/about/","sameAs":["https://github.com/tall190"]},"publisher":{"@type":"Organization","name":"Liber","url":"https://tall190.github.io/liber","logo":{"@type":"ImageObject","url":"https://tall190.github.io/liber/favicon.png"}},"keywords":"AI-ready, 마케팅, 타겟팅","image":"https://tall190.github.io/liber/_astro/ai-ready-targeting_hero_image.Qyow0u75.png"}</script><style>:root{--accent: #2337ff;--accent-dark: #000d8a;--black: 15, 18, 25;--gray: 96, 115, 159;--gray-light: 229, 233, 240;--gray-dark: 34, 41, 57;--gray-gradient: rgba(var(--gray-light), 50%), #fff;--box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);--bg: #fff;--bg-secondary: #f9fafb;--header-bg: white;--code-bg: rgb(var(--gray-light));color-scheme:light}:root.dark{--accent: #6b7cff;--accent-dark: #8b9aff;--black: 230, 230, 230;--gray: 155, 165, 190;--gray-light: 50, 55, 65;--gray-dark: 210, 215, 225;--gray-gradient: rgba(var(--gray-light), 50%), #1a1a2e;--box-shadow: 0 2px 6px rgba(0, 0, 0, 40%), 0 8px 24px rgba(0, 0, 0, 50%), 0 16px 32px rgba(0, 0, 0, 50%);--bg: #1a1a2e;--bg-secondary: #16162a;--header-bg: #16162a;--code-bg: rgba(var(--gray-light), .6);color-scheme:dark}body{font-family:var(--font-atkinson);margin:0;padding:0;text-align:left;background:var(--bg);background-image:linear-gradient(var(--gray-gradient));background-repeat:no-repeat;background-size:100% 600px;word-wrap:break-word;overflow-wrap:break-word;color:rgb(var(--gray-dark));font-size:20px;line-height:1.7;transition:background-color .3s,color .3s}main{width:720px;max-width:calc(100% - 2em);margin:auto;padding:3em 1em}h1,h2,h3,h4,h5,h6{margin:0 0 .5rem;color:rgb(var(--black));line-height:1.2}h1{font-size:3.052em}h2{font-size:2.441em}h3{font-size:1.953em}h4{font-size:1.563em}h5{font-size:1.25em}strong,b{font-weight:700}a,a:hover{color:var(--accent)}p{margin-bottom:1em}.prose p{margin-bottom:2em}.prose p:has(>img){margin-top:.5em;margin-bottom:.5em}textarea{width:100%;font-size:16px}input{font-size:16px}table{width:100%}img{max-width:100%;height:auto;border-radius:8px}code{padding:2px 5px;background-color:var(--code-bg);border-radius:2px}pre{padding:1.5em;border-radius:8px;overflow-x:auto;max-width:100%;font-size:15px}pre>code{all:unset}blockquote{border-left:4px solid var(--accent);padding:0 0 0 20px;margin:0;font-size:1.333em}hr{border:none;border-top:1px solid rgb(var(--gray-light))}@media(max-width:720px){body{font-size:18px}main{padding:1em}}.sr-only{border:0;padding:0;margin:0;position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px 1px 1px 1px);clip:rect(1px,1px,1px,1px);clip-path:inset(50%);white-space:nowrap}.prose p>em:only-child{display:block;font-size:.85em;color:rgb(var(--gray));margin-top:-.3em;margin-bottom:1.5em;text-align:center}footer[data-astro-cid-sz7xmlte]{padding:2em 1em 6em;background:linear-gradient(var(--gray-gradient)) no-repeat;color:rgb(var(--gray));text-align:center;transition:background-color .3s,color .3s}a[data-astro-cid-eimmu3lg]{display:inline-block;text-decoration:none}a[data-astro-cid-eimmu3lg].active{font-weight:bolder;text-decoration:underline}header[data-astro-cid-3ef6ksr2]{margin:0;padding:0 1em;background:var(--header-bg);box-shadow:0 2px 8px rgba(var(--black),5%);transition:background-color .3s}h2[data-astro-cid-3ef6ksr2]{margin:0;font-size:1em}h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2],h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none}nav[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;justify-content:space-between}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{padding:1em .5em;color:var(--black);border-bottom:4px solid transparent;text-decoration:none}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none;border-bottom-color:var(--accent)}.theme-toggle[data-astro-cid-3ef6ksr2]{background:none;border:none;cursor:pointer;padding:.5em;color:rgb(var(--black));display:flex;align-items:center;transition:color .3s}.theme-toggle[data-astro-cid-3ef6ksr2]:hover{color:var(--accent)}.dark .icon-sun[data-astro-cid-3ef6ksr2]{display:inline}.dark .icon-moon[data-astro-cid-3ef6ksr2],.icon-sun[data-astro-cid-3ef6ksr2]{display:none}.icon-moon[data-astro-cid-3ef6ksr2]{display:inline}
+main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.post-meta[data-astro-cid-bvzihdzo]{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:.5rem;flex-wrap:wrap}.hits-badge[data-astro-cid-bvzihdzo]{display:inline-flex;align-items:center}.hits-badge[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{height:20px;border-radius:4px}.post-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.8rem}.tag[data-astro-cid-bvzihdzo]{display:inline-block;font-size:.75rem;font-weight:600;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--accent));color:#fff;text-decoration:none;letter-spacing:.02em}.tag[data-astro-cid-bvzihdzo]:hover{background:var(--accent-dark)}.comments-section[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:3rem auto 2rem;padding:0 1em;border-top:1px solid rgb(var(--gray-light));padding-top:2rem}.comments-section[data-astro-cid-bvzihdzo] h3[data-astro-cid-bvzihdzo]{font-size:1.1rem;color:rgb(var(--gray-dark));margin-bottom:1.5rem}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/liber/" data-astro-cid-3ef6ksr2><img src="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp" srcset="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp 1x, /liber/_astro/liber-logo.DqNb0q2U_Z1NhCXk.webp 2x, /liber/_astro/liber-logo.DqNb0q2U_16RKps.webp 3x" alt="Liber" data-astro-cid-3ef6ksr2="true" loading="lazy" decoding="async" width="121" height="40"></a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/liber/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Home </a> <a href="/liber/blog/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Blog </a> <a href="/liber/about/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> About </a> <button class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환" data-astro-cid-3ef6ksr2> <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle><line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line><line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line><line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line><line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line></svg> <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path></svg> </button> </div> </nav> </header> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo> <img src="/liber/_astro/ai-ready-targeting_hero_image.Qyow0u75_29Re9D.webp" alt data-astro-cid-bvzihdzo="true" loading="lazy" decoding="async" width="1020" height="510"> </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-04-21T00:00:00.000Z"> Apr 21, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>AI-ready Targeting — 쿠키 없이도 정확하게, AI 페르소나가 답이다</h1> <div class="post-meta" data-astro-cid-bvzihdzo> <span class="hits-badge" data-astro-cid-bvzihdzo> <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Ftall190.github.io%2Fliber%2Fblog%2Fai-ready-targeting%2F&#38;label=views&#38;labelColor=%23374151&#38;countColor=%236366f1&#38;style=flat" alt="조회수" loading="eager" data-astro-cid-bvzihdzo> </span> </div> <div class="post-tags" data-astro-cid-bvzihdzo> <a class="tag" href="/liber/blog/tags/AI-ready/" data-astro-cid-bvzihdzo>AI-ready</a><a class="tag" href="/liber/blog/tags/마케팅/" data-astro-cid-bvzihdzo>마케팅</a><a class="tag" href="/liber/blog/tags/타겟팅/" data-astro-cid-bvzihdzo>타겟팅</a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>타겟팅 광고는 오랫동안 하나의 전제 위에 서 있었어요.</p>
+<p>“당신이 어디에서 무엇을 봤는지 알고 있다.”</p>
+<p>브라우저 쿠키가 그 전제를 가능하게 했어요. 사용자가 어느 쇼핑몰에서 운동화를 봤는지, 어떤 기사를 읽었는지, 얼마나 자주 특정 카테고리를 방문하는지 — 이 모든 흔적이 쿠키에 기록됐고, 광고는 그 흔적을 따라갔어요.</p>
+<p>그 전제가 흔들리고 있어요.</p>
+<h2 id="쿠키-없는-세상이-오고-있다">쿠키 없는 세상이 오고 있다</h2>
+<p>3rd-party 쿠키는 이미 오랫동안 제한되기 시작했어요.</p>
+<p>Safari는 2017년부터 ITP(Intelligent Tracking Prevention)로 쿠키 수명을 제한했고, Firefox도 강력한 차단 정책을 도입했어요. Chrome도 Privacy Sandbox를 통해 3rd-party 쿠키를 대체하는 방향으로 가고 있어요. 완전한 폐지 시점이 다소 미뤄지더라도, 방향은 명확해요.</p>
+<p>그리고 규제도 강해지고 있어요. GDPR, CCPA — 사용자 동의 없이 추적하는 것이 점점 어려워지고 있어요.</p>
+<p>타겟팅 광고가 의존해온 인프라가 흔들리고 있는 거예요. 흥미로운 건, 대형 플랫폼들은 이미 AI로 전환하고 있다는 점이에요.</p>
+<h2 id="대형-플랫폼은-이미-ai로-전환했다">대형 플랫폼은 이미 AI로 전환했다</h2>
+<p>Meta와 Google은 이미 쿠키 없이 타겟팅하는 방식을 상당 부분 AI로 전환했어요.</p>
+<p><strong>Meta Advantage+</strong></p>
+<p>Meta는 쿠키 대신 자체 로그인 데이터(Facebook, Instagram, WhatsApp)와 Conversions API로 신호를 수집해요. Advantage+ Shopping Campaigns는 광고주가 예산만 설정하면, AI가 최적 오디언스를 발굴하고, 크리에이티브를 선택하고, 배치를 결정해요.</p>
+<p>Meta 내부 데이터 기준 전통 캠페인 대비 ROAS <strong>32% 개선</strong>을 주장해요. 광고주가 직접 세그먼트를 설정하는 것보다 AI가 데이터 패턴으로 오디언스를 찾는 게 더 정확하다는 거예요.</p>
+<p><strong>Google Performance Max</strong></p>
+<p>검색, 디스플레이, YouTube, Gmail 전체 인벤토리에서 AI가 실시간으로 입찰·크리에이티브·오디언스를 동시에 최적화해요. 3rd-party 쿠키 대신 로그인 데이터, 문맥 신호, 1st-party 고객 목록을 활용해요.</p>
+<p>두 플랫폼 모두 공통점이 있어요. <strong>실제 사용자의 행동 데이터를 AI가 학습해서 패턴을 만들고, 그 패턴으로 유사한 사용자를 찾아요.</strong></p>
+<p>하지만 이 방식에도 한계가 있어요.</p>
+<h2 id="하지만-여기에-한계가-있다">하지만 여기에 한계가 있다</h2>
+<p>대형 플랫폼의 AI 타겟팅은 강력하지만, 몇 가지 한계가 있어요.</p>
+<p><strong>1. 플랫폼 의존성</strong></p>
+<p>Meta 안에서만 작동하는 Advantage+, Google 안에서만 작동하는 Performance Max. 플랫폼이 내 광고 타겟팅을 블랙박스로 처리하고, 광고주는 이유를 알 수 없어요.</p>
+<p><strong>2. 콜드 스타트 문제</strong></p>
+<p>AI 타겟팅은 데이터가 많아야 잘 작동해요. 신규 브랜드, 신규 제품, 신규 시장 — 데이터가 없으면 AI도 어디서 시작해야 할지 몰라요.</p>
+<p><strong>3. 가설 검증 속도</strong></p>
+<p>“이 광고가 30대 직장 여성에게 잘 먹힐까?” 알려면 실제 캠페인을 돌려봐야 해요. 비용이 나가고, 시간이 걸리고, 실패하면 그냥 손해예요.</p>
+<p>여기서 새로운 접근이 필요해요.</p>
+<hr>
+<h2 id="ai-페르소나-에이전트-새로운-타겟팅의-출발점">AI 페르소나 에이전트: 새로운 타겟팅의 출발점</h2>
+<p>핵심 아이디어는 이거예요.</p>
+<p><strong>실제 사용자 데이터가 없어도, AI로 만든 페르소나 에이전트들이 타겟팅의 가설을 먼저 검증해줄 수 있다.</strong></p>
+<p>구체적으로 어떻게 작동하는지 볼게요.</p>
+<h3 id="1단계-페르소나-에이전트-설계">1단계: 페르소나 에이전트 설계</h3>
+<p>다양한 특성의 페르소나를 AI 에이전트로 정의해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>페르소나 A: "현실적인 워킹맘 지수"</span></span>
+<span class="line"><span>- 나이: 35세 / 직업: 마케터 (대기업)</span></span>
+<span class="line"><span>- 월 소득: 450만원 / 자산: 중간</span></span>
+<span class="line"><span>- 관심사: 육아, 간편식, 자기계발</span></span>
+<span class="line"><span>- 구매 패턴: 가성비 중시, 브랜드보다 리뷰 신뢰</span></span>
+<span class="line"><span>- 시간: 아침 출근 전, 점심시간, 자기 전</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>페르소나 B: "가치 지향 MZ"</span></span>
+<span class="line"><span>- 나이: 27세 / 직업: 스타트업 디자이너</span></span>
+<span class="line"><span>- 월 소득: 280만원 / 자산: 낮음</span></span>
+<span class="line"><span>- 관심사: 환경, 미니멀리즘, 비건</span></span>
+<span class="line"><span>- 구매 패턴: 브랜드 철학 중시, SNS 추천 영향 큼</span></span>
+<span class="line"><span>- 시간: 저녁, 주말</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>페르소나 C: "여유로운 50대 자산가"</span></span>
+<span class="line"><span>- 나이: 52세 / 직업: 자영업</span></span>
+<span class="line"><span>- 월 소득: 1,200만원 / 자산: 높음</span></span>
+<span class="line"><span>- 관심사: 건강, 골프, 해외여행</span></span>
+<span class="line"><span>- 구매 패턴: 가격 민감도 낮음, 품질·브랜드 중시</span></span>
+<span class="line"><span>- 시간: 오전</span></span></code></pre>
+<p><img alt="워킹맘 35세 / 가치지향 MZ 27세 / 여유로운 자산가 52세 — AI 페르소나 에이전트 카드" loading="lazy" decoding="async"  width="2816" height="1536" src="/liber/_astro/ai-ready-targeting_persona_image.CoZrxxT4_2esJqg.webp" ></p>
+<h3 id="2단계-에이전트가-캠페인을-경험하게-한다">2단계: 에이전트가 캠페인을 경험하게 한다</h3>
+<p>이 AI 에이전트들에게 광고 소재, 랜딩 페이지, 이메일을 보여줘요.</p>
+<p>“페르소나 A가 이 광고를 봤을 때 어떻게 반응할까?”
+“페르소나 B는 이 가격 정책에 납득할까, 이탈할까?”
+“세 페르소나 중 어떤 메시지가 가장 공감을 얻을까?”</p>
+<p><a href="https://github.com/microsoft/TinyTroupe">Microsoft Research의 TinyTroupe</a> (2025)는 정확히 이걸 위한 오픈소스 툴이에요. 직업·나이·성격·신념이 다른 페르소나들을 설정하고, 마케팅 시나리오에서 어떻게 반응하는지 시뮬레이션해요. 브레인스토밍, 포커스 그룹, 광고 사전 평가에 쓰고 있어요.</p>
+<p><a href="https://www.syntheticusers.com">Synthetic Users</a>는 상업 버전으로, OCEAN 심리 모델 기반 페르소나를 만들어서 실제 사용자 인터뷰를 대체해요. 독립 연구에서 실제 인터뷰와 <strong>85~92% 일치율</strong>을 보였어요. 인터뷰당 비용은 기존 리서치 에이전시 대비 <strong>90% 절감</strong>.</p>
+<h3 id="3단계-패턴을-실제-타겟팅에-연결하기">3단계: 패턴을 실제 타겟팅에 연결하기</h3>
+<p>페르소나 에이전트들의 반응 패턴을 분석하면, 실제 캠페인 전략이 나와요.</p>
+<p>“페르소나 A (워킹맘)는 ‘시간 절약’과 ‘아이에게 좋은’ 메시지에 강하게 반응했고, 가격 비교 단계에서 이탈 확률이 높았다.”</p>
+<p>이 인사이트로:</p>
+<ul>
+<li>메시지 프레임: “바쁜 엄마들의 선택” (시간 절약 강조)</li>
+<li>가격 페이지: 경쟁 비교보다 ‘가격 대비 가치’ 강조</li>
+<li>타이밍: 아침 출근 전, 점심시간 타겟</li>
+</ul>
+<p>실제 데이터 없이, AI 페르소나로 가설을 세우고, 실제 캠페인에서 검증하는 거예요.</p>
+<p>그럼 왜 이게 기존 방식보다 나은지 정리해볼게요.</p>
+<h2 id="왜-이게-기존-방식보다-나은가">왜 이게 기존 방식보다 나은가</h2>
+<p><strong>1. 쿠키 필요 없음</strong></p>
+<p>AI 페르소나는 실제 브라우저 추적 데이터가 필요 없어요. 페르소나 정의와 시나리오만 있으면 돼요. Cookieless 환경에서도 작동해요.</p>
+<p><strong>2. 콜드 스타트 해결</strong></p>
+<p>신규 브랜드도 바로 시작할 수 있어요. “우리 타겟 고객이 이런 사람들이야”라는 가설만 있으면, AI 페르소나로 검증을 시작할 수 있어요.</p>
+<p><strong>3. 비용 효율</strong></p>
+<p>캠페인을 실제로 돌리기 전에 AI 페르소나로 필터링하면, 실패 비용이 줄어요. <a href="https://arxiv.org/abs/2510.18155">IEEE ICEBE 2025의 LLM 마케팅 시뮬레이션 연구</a>는 AI 에이전트 기반 마케팅 시뮬레이션을 “사전 구현 테스트를 위한 확장 가능하고 저위험 툴”로 정의했어요.</p>
+<p><strong>4. 빠른 반복</strong></p>
+<p>A/B 테스트를 실제 사용자로 하면 시간과 비용이 걸려요. AI 페르소나로 먼저 10가지 변형을 테스트하고, 가장 유망한 2-3개만 실제로 테스트하면 훨씬 효율적이에요.</p>
+<p>물론 한계도 있어요.</p>
+<h2 id="한계와-주의할-점">한계와 주의할 점</h2>
+<p><a href="https://www.nngroup.com">Nielsen Norman Group</a>은 AI 합성 사용자에 대해 비판적이에요. “실제 사용자 리서치를 대체할 수 없다. 예비조사와 가설 생성에만 써야 한다”고 말해요.</p>
+<p>실제로 AI 페르소나의 한계가 있어요.</p>
+<ul>
+<li><strong>이상적 행동 경향</strong>: AI 에이전트는 실제 사람보다 더 합리적으로 행동하는 경향이 있어요. “최저가를 찾겠다”는 말을 하면서도 결국 편의로 더 비싼 걸 사는 인간의 비합리성을 잘 모방하지 못해요.</li>
+<li><strong>행동 데이터 부재</strong>: 페르소나가 실제로 무언가를 ‘사용’하지는 않아요. 경험에 기반한 깊은 피드백은 여전히 실제 사용자가 필요해요.</li>
+<li><strong>보정 필요</strong>: <a href="https://arxiv.org/abs/2604.07513">SYN-DIGITS 연구</a> (2026)에 따르면, AI 페르소나와 실제 인간 행동 간 차이를 보정하면 개인 수준 예측 정확도가 최대 <strong>50% 향상</strong>해요. 무보정 상태로 맹신하면 안 돼요.</li>
+</ul>
+<p>결론은 이거예요. <strong>AI 페르소나는 실제 데이터를 대체하는 게 아니라, 실제 데이터를 더 효율적으로 모으기 위한 필터</strong>예요.</p>
+<p>이런 한계를 염두에 두면서, 실전에서 쓸 수 있는 플로우를 정리하면 이렇게 돼요.</p>
+<h2 id="앞으로의-타겟팅-플로우">앞으로의 타겟팅 플로우</h2>
+<p>AI-ready Targeting을 실현하는 플로우는 이렇게 그릴 수 있어요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>1. 페르소나 설계</span></span>
+<span class="line"><span>   다양한 특성(직업/나이/자산/관심사)의 AI 에이전트 생성</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>2. 가설 검증 (AI 시뮬레이션)</span></span>
+<span class="line"><span>   캠페인/크리에이티브/메시지를 페르소나들에게 먼저 테스트</span></span>
+<span class="line"><span>   → 반응 패턴 분석 → 가장 유망한 전략 선별</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>3. 실제 캠페인 (1st-party 데이터 활용)</span></span>
+<span class="line"><span>   GA4 + 1st-party 데이터로 실제 타겟팅</span></span>
+<span class="line"><span>   → AI 예측 잠재고객으로 세그먼트 정교화</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>4. 피드백 루프</span></span>
+<span class="line"><span>   실제 결과를 페르소나 모델에 반영</span></span>
+<span class="line"><span>   → 시뮬레이션 정확도 개선 → 다음 캠페인 가설 재검증</span></span></code></pre>
+<p><img alt="페르소나 설계 → AI 시뮬레이션 → 실제 캠페인 → 피드백 루프, 4단계 타겟팅 플로우" loading="lazy" decoding="async"  width="2816" height="1536" src="/liber/_astro/ai-ready-targeting_steps_image.BW3_D8f7_Z16iIGx.webp" ></p>
+<p>쿠키가 없어도, 실제 데이터가 부족해도 — AI 페르소나가 타겟팅의 출발점이 되는 거예요.</p>
+<p>타겟팅의 문제는 언제나 같았어요. “맞는 사람에게, 맞는 메시지를, 맞는 시간에.”</p>
+<p>쿠키가 그 답이었던 시대가 가고 있어요. AI 페르소나가 새로운 답이 될 수 있어요.</p>
+<p>당신의 타겟팅은 AI와 함께할 준비가 되어있나요?</p>
+<hr>
+<p><em>이전 글: <a href="/liber/blog/ai-ready-tracking">AI-ready Tracking — GA4 태그 너머, AI가 보는 사용자 경험</a></em>
+<em>시리즈: <a href="/liber/blog/ai-ready-ui">AI-ready UI</a> | <a href="/liber/blog/geo-for-brands">AI-ready Marketing</a></em></p>  </div> </article> </main> <!-- 댓글 & 좋아요 (Giscus — GitHub Discussions 기반) --> <!-- 설정 방법: https://giscus.app 에서 tall190/liber 입력 후 REPO_ID, CATEGORY_ID 교체 --> <div class="comments-section" data-astro-cid-bvzihdzo> <h3 data-astro-cid-bvzihdzo>댓글</h3> <script>
+				(function() {
+					var isDark = document.documentElement.classList.contains('dark');
+					var s = document.createElement('script');
+					s.src = 'https://giscus.app/client.js';
+					s.setAttribute('data-repo', 'tall190/liber');
+					s.setAttribute('data-repo-id', 'R_kgDOSIJHDw');
+					s.setAttribute('data-category', 'Announcements');
+					s.setAttribute('data-category-id', 'DIC_kwDOSIJHD84C7Uy6');
+					s.setAttribute('data-mapping', 'pathname');
+					s.setAttribute('data-strict', '0');
+					s.setAttribute('data-reactions-enabled', '1');
+					s.setAttribute('data-emit-metadata', '0');
+					s.setAttribute('data-input-position', 'bottom');
+					s.setAttribute('data-theme', isDark ? 'dark' : 'light');
+					s.setAttribute('data-lang', 'ko');
+					s.setAttribute('crossorigin', 'anonymous');
+					s.async = true;
+					document.currentScript.parentElement.appendChild(s);
+				})();
+			</script> </div> <footer data-astro-cid-sz7xmlte>
+&copy; 2026 Liber. All rights reserved.
+</footer> </body></html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html><html lang="ko" data-astro-cid-bvzihdzo> <head><!-- Dark mode: apply before render to prevent flash --><script>
+	(function() {
+		const theme = localStorage.getItem('theme');
+		if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark');
+		}
+	})();
+</script> <!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="/liber/favicon.png"><link rel="icon" type="image/svg+xml" href="/liber/favicon.svg"><link rel="icon" href="/liber/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Liber" href="https://tall190.github.io/rss.xml"><meta name="generator" content="Astro v6.1.8"><style>@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/fd137eb932fcc611.woff") format("woff");font-display:swap;font-weight:400;font-style:normal;}@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/5c86995be98976a1.woff") format("woff");font-display:swap;font-weight:700;font-style:normal;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}:root{--font-atkinson:Atkinson-c7f4c4e8b285552f,"Atkinson-c7f4c4e8b285552f fallback: Arial",sans-serif;}</style><link rel="preload" href="/liber/_astro/fonts/fd137eb932fcc611.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/liber/_astro/fonts/5c86995be98976a1.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://tall190.github.io/liber/blog/vector-db-chunking/"><!-- Primary Meta Tags --><title>벡터 DB 2편: 청킹과 임베딩 전략 — RAG 품질을 결정하는 것들</title><meta name="title" content="벡터 DB 2편: 청킹과 임베딩 전략 — RAG 품질을 결정하는 것들"><meta name="description" content="같은 벡터 DB를 써도 검색 정확도가 60%와 92%로 갈리는 이유가 있어요. DB 선택보다 더 중요한 것 — 데이터를 어떻게 준비하느냐를 다뤄요."><meta name="author" content="Liber"><meta name="keywords" content="Vector DB, RAG, Chunking, Embedding, AI-Ready"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://tall190.github.io/liber/blog/vector-db-chunking/"><meta property="og:title" content="벡터 DB 2편: 청킹과 임베딩 전략 — RAG 품질을 결정하는 것들"><meta property="og:description" content="같은 벡터 DB를 써도 검색 정확도가 60%와 92%로 갈리는 이유가 있어요. DB 선택보다 더 중요한 것 — 데이터를 어떻게 준비하느냐를 다뤄요."><meta property="og:image" content="https://tall190.github.io/liber/_astro/vector-db-chunking_hero_image.s0Jlcrv-.png"><meta property="og:locale" content="ko_KR"><meta property="article:published_time" content="2026-05-06T00:00:00.000Z"><meta property="article:tag" content="Vector DB"><meta property="article:tag" content="RAG"><meta property="article:tag" content="Chunking"><meta property="article:tag" content="Embedding"><meta property="article:tag" content="AI-Ready"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://tall190.github.io/liber/blog/vector-db-chunking/"><meta property="twitter:title" content="벡터 DB 2편: 청킹과 임베딩 전략 — RAG 품질을 결정하는 것들"><meta property="twitter:description" content="같은 벡터 DB를 써도 검색 정확도가 60%와 92%로 갈리는 이유가 있어요. DB 선택보다 더 중요한 것 — 데이터를 어떻게 준비하느냐를 다뤄요."><meta property="twitter:image" content="https://tall190.github.io/liber/_astro/vector-db-chunking_hero_image.s0Jlcrv-.png"><!-- Theme toggle script --><script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const toggle = document.getElementById('theme-toggle');
+		if (!toggle) return;
+		toggle.addEventListener('click', function() {
+			const isDark = document.documentElement.classList.toggle('dark');
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
+			// Sync Giscus theme
+			const giscus = document.querySelector('iframe.giscus-frame');
+			if (giscus) {
+				giscus.contentWindow.postMessage(
+					{ giscus: { setConfig: { theme: isDark ? 'dark' : 'light' } } },
+					'https://giscus.app'
+				);
+			}
+		});
+	});
+</script><!-- Schema.org JSON-LD: AI가 이 글을 구조화된 데이터로 읽을 수 있어요 --><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"벡터 DB 2편: 청킹과 임베딩 전략 — RAG 품질을 결정하는 것들","description":"같은 벡터 DB를 써도 검색 정확도가 60%와 92%로 갈리는 이유가 있어요. DB 선택보다 더 중요한 것 — 데이터를 어떻게 준비하느냐를 다뤄요.","datePublished":"2026-05-06T00:00:00.000Z","dateModified":"2026-05-06T00:00:00.000Z","url":"https://tall190.github.io/liber/blog/vector-db-chunking/","inLanguage":"ko-KR","mainEntityOfPage":{"@type":"WebPage","@id":"https://tall190.github.io/liber/blog/vector-db-chunking/"},"author":{"@type":"Person","name":"Jayden","url":"https://tall190.github.io/liber/about/","sameAs":["https://github.com/tall190"]},"publisher":{"@type":"Organization","name":"Liber","url":"https://tall190.github.io/liber","logo":{"@type":"ImageObject","url":"https://tall190.github.io/liber/favicon.png"}},"keywords":"Vector DB, RAG, Chunking, Embedding, AI-Ready","image":"https://tall190.github.io/liber/_astro/vector-db-chunking_hero_image.s0Jlcrv-.png"}</script><style>:root{--accent: #2337ff;--accent-dark: #000d8a;--black: 15, 18, 25;--gray: 96, 115, 159;--gray-light: 229, 233, 240;--gray-dark: 34, 41, 57;--gray-gradient: rgba(var(--gray-light), 50%), #fff;--box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);--bg: #fff;--bg-secondary: #f9fafb;--header-bg: white;--code-bg: rgb(var(--gray-light));color-scheme:light}:root.dark{--accent: #6b7cff;--accent-dark: #8b9aff;--black: 230, 230, 230;--gray: 155, 165, 190;--gray-light: 50, 55, 65;--gray-dark: 210, 215, 225;--gray-gradient: rgba(var(--gray-light), 50%), #1a1a2e;--box-shadow: 0 2px 6px rgba(0, 0, 0, 40%), 0 8px 24px rgba(0, 0, 0, 50%), 0 16px 32px rgba(0, 0, 0, 50%);--bg: #1a1a2e;--bg-secondary: #16162a;--header-bg: #16162a;--code-bg: rgba(var(--gray-light), .6);color-scheme:dark}body{font-family:var(--font-atkinson);margin:0;padding:0;text-align:left;background:var(--bg);background-image:linear-gradient(var(--gray-gradient));background-repeat:no-repeat;background-size:100% 600px;word-wrap:break-word;overflow-wrap:break-word;color:rgb(var(--gray-dark));font-size:20px;line-height:1.7;transition:background-color .3s,color .3s}main{width:720px;max-width:calc(100% - 2em);margin:auto;padding:3em 1em}h1,h2,h3,h4,h5,h6{margin:0 0 .5rem;color:rgb(var(--black));line-height:1.2}h1{font-size:3.052em}h2{font-size:2.441em}h3{font-size:1.953em}h4{font-size:1.563em}h5{font-size:1.25em}strong,b{font-weight:700}a,a:hover{color:var(--accent)}p{margin-bottom:1em}.prose p{margin-bottom:2em}.prose p:has(>img){margin-top:.5em;margin-bottom:.5em}textarea{width:100%;font-size:16px}input{font-size:16px}table{width:100%}img{max-width:100%;height:auto;border-radius:8px}code{padding:2px 5px;background-color:var(--code-bg);border-radius:2px}pre{padding:1.5em;border-radius:8px;overflow-x:auto;max-width:100%;font-size:15px}pre>code{all:unset}blockquote{border-left:4px solid var(--accent);padding:0 0 0 20px;margin:0;font-size:1.333em}hr{border:none;border-top:1px solid rgb(var(--gray-light))}@media(max-width:720px){body{font-size:18px}main{padding:1em}}.sr-only{border:0;padding:0;margin:0;position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px 1px 1px 1px);clip:rect(1px,1px,1px,1px);clip-path:inset(50%);white-space:nowrap}.prose p>em:only-child{display:block;font-size:.85em;color:rgb(var(--gray));margin-top:-.3em;margin-bottom:1.5em;text-align:center}footer[data-astro-cid-sz7xmlte]{padding:2em 1em 6em;background:linear-gradient(var(--gray-gradient)) no-repeat;color:rgb(var(--gray));text-align:center;transition:background-color .3s,color .3s}a[data-astro-cid-eimmu3lg]{display:inline-block;text-decoration:none}a[data-astro-cid-eimmu3lg].active{font-weight:bolder;text-decoration:underline}header[data-astro-cid-3ef6ksr2]{margin:0;padding:0 1em;background:var(--header-bg);box-shadow:0 2px 8px rgba(var(--black),5%);transition:background-color .3s}h2[data-astro-cid-3ef6ksr2]{margin:0;font-size:1em}h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2],h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none}nav[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;justify-content:space-between}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{padding:1em .5em;color:var(--black);border-bottom:4px solid transparent;text-decoration:none}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none;border-bottom-color:var(--accent)}.theme-toggle[data-astro-cid-3ef6ksr2]{background:none;border:none;cursor:pointer;padding:.5em;color:rgb(var(--black));display:flex;align-items:center;transition:color .3s}.theme-toggle[data-astro-cid-3ef6ksr2]:hover{color:var(--accent)}.dark .icon-sun[data-astro-cid-3ef6ksr2]{display:inline}.dark .icon-moon[data-astro-cid-3ef6ksr2],.icon-sun[data-astro-cid-3ef6ksr2]{display:none}.icon-moon[data-astro-cid-3ef6ksr2]{display:inline}
+main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.post-meta[data-astro-cid-bvzihdzo]{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:.5rem;flex-wrap:wrap}.hits-badge[data-astro-cid-bvzihdzo]{display:inline-flex;align-items:center}.hits-badge[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{height:20px;border-radius:4px}.post-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.8rem}.tag[data-astro-cid-bvzihdzo]{display:inline-block;font-size:.75rem;font-weight:600;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--accent));color:#fff;text-decoration:none;letter-spacing:.02em}.tag[data-astro-cid-bvzihdzo]:hover{background:var(--accent-dark)}.comments-section[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:3rem auto 2rem;padding:0 1em;border-top:1px solid rgb(var(--gray-light));padding-top:2rem}.comments-section[data-astro-cid-bvzihdzo] h3[data-astro-cid-bvzihdzo]{font-size:1.1rem;color:rgb(var(--gray-dark));margin-bottom:1.5rem}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/liber/" data-astro-cid-3ef6ksr2><img src="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp" srcset="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp 1x, /liber/_astro/liber-logo.DqNb0q2U_Z1NhCXk.webp 2x, /liber/_astro/liber-logo.DqNb0q2U_16RKps.webp 3x" alt="Liber" data-astro-cid-3ef6ksr2="true" loading="lazy" decoding="async" width="121" height="40"></a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/liber/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Home </a> <a href="/liber/blog/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Blog </a> <a href="/liber/about/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> About </a> <button class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환" data-astro-cid-3ef6ksr2> <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle><line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line><line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line><line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line><line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line></svg> <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path></svg> </button> </div> </nav> </header> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo> <img src="/liber/_astro/vector-db-chunking_hero_image.s0Jlcrv-_Z1JCT8B.webp" alt data-astro-cid-bvzihdzo="true" loading="lazy" decoding="async" width="1020" height="510"> </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-05-06T00:00:00.000Z"> May 6, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>벡터 DB 2편: 청킹과 임베딩 전략 — RAG 품질을 결정하는 것들</h1> <div class="post-meta" data-astro-cid-bvzihdzo> <span class="hits-badge" data-astro-cid-bvzihdzo> <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Ftall190.github.io%2Fliber%2Fblog%2Fvector-db-chunking%2F&#38;label=views&#38;labelColor=%23374151&#38;countColor=%236366f1&#38;style=flat" alt="조회수" loading="eager" data-astro-cid-bvzihdzo> </span> </div> <div class="post-tags" data-astro-cid-bvzihdzo> <a class="tag" href="/liber/blog/tags/Vector DB/" data-astro-cid-bvzihdzo>Vector DB</a><a class="tag" href="/liber/blog/tags/RAG/" data-astro-cid-bvzihdzo>RAG</a><a class="tag" href="/liber/blog/tags/Chunking/" data-astro-cid-bvzihdzo>Chunking</a><a class="tag" href="/liber/blog/tags/Embedding/" data-astro-cid-bvzihdzo>Embedding</a><a class="tag" href="/liber/blog/tags/AI-Ready/" data-astro-cid-bvzihdzo>AI-Ready</a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>같은 Pinecone을 쓰는 두 팀이 있었어요.</p>
+<p>팀 A는 문서를 통째로 임베딩했어요. 검색 정확도는 60%였고, 답변이 느리고 맥락이 오염됐거든요. 팀 B는 청킹 전략을 설계하고, 메타데이터를 꼼꼼히 붙이고, 임베딩 모델을 신중하게 골랐어요. 결과는 92%였어요.</p>
+<p>벡터 DB는 그릇이에요. 무엇을 어떻게 담느냐가 음식의 맛을 결정하죠. 이번 편은 그 차이를 만드는 것들 — 청킹, 메타데이터, 임베딩 모델 선택을 다뤄요.</p>
+<h2 id="왜-전처리가-rag-품질을-결정하나요">왜 전처리가 RAG 품질을 결정하나요</h2>
+<p>많은 팀이 벡터 DB 선택에 시간을 쏟지만, 실제 품질은 <strong>무엇을 어떻게 넣느냐</strong>에서 결정돼요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[같은 Pinecone을 쓰는 두 팀]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>팀 A: 문서 통째로 임베딩, 메타데이터 없음</span></span>
+<span class="line"><span>  → 검색 정확도 60%, 느린 답변, 맥락 오염</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>팀 B: 청킹 전략 설계, 메타데이터 풍부, 모델 선택 신중</span></span>
+<span class="line"><span>  → 검색 정확도 92%, 정확한 답변, 빠른 응답</span></span></code></pre>
+<p>직접 겪어보니 더라고요. 처음에 저도 “일단 넣고 보자” 방식으로 시작했다가, 관련 없는 문서가 계속 올라오는 걸 보고 전처리를 다시 설계했어요. 개선 전후가 하늘과 땅 차이였거든요.</p>
+<p>그럼 구체적으로 어떻게 해야 하는지 볼게요.</p>
+<hr>
+<h2 id="청킹-전략--문서를-어떻게-자르는가">청킹 전략 — 문서를 어떻게 자르는가</h2>
+<h3 id="왜-청킹이-필요한가요">왜 청킹이 필요한가요</h3>
+<p>임베딩 모델에는 입력 길이 제한이 있어요. 그리고 긴 문서 전체를 하나의 벡터로 만들면 의미가 희석되거든요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[문서 전체를 하나의 벡터로]</span></span>
+<span class="line"><span>"QA 프로세스 문서 (50페이지)" → 벡터 1개</span></span>
+<span class="line"><span>→ "flaky test 대응 방법" 질문 → 50페이지 중 관련 내용 1단락인데</span></span>
+<span class="line"><span>  전체 문서 벡터가 반환됨 → LLM이 50페이지를 받음 → 맥락 오염, 비용 폭증</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>[청킹 후 임베딩]</span></span>
+<span class="line"><span>"QA 프로세스 문서" → 청크 200개 → 벡터 200개</span></span>
+<span class="line"><span>→ 관련 청크 5개만 반환 → LLM이 딱 필요한 내용만 받음</span></span></code></pre>
+<p>청킹 방식은 크게 네 가지예요.</p>
+<h3 id="fixed-size-chunking--가장-단순하게">Fixed Size Chunking — 가장 단순하게</h3>
+<p>글자 수나 토큰 수 기준으로 일정하게 자르는 방식이에요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> fixed_chunk</span><span style="color:#E1E4E8">(text, chunk_size</span><span style="color:#F97583">=</span><span style="color:#79B8FF">500</span><span style="color:#E1E4E8">, overlap</span><span style="color:#F97583">=</span><span style="color:#79B8FF">50</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#E1E4E8">    chunks </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#E1E4E8">    start </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#F97583">    while</span><span style="color:#E1E4E8"> start </span><span style="color:#F97583">&#x3C;</span><span style="color:#79B8FF"> len</span><span style="color:#E1E4E8">(text):</span></span>
+<span class="line"><span style="color:#E1E4E8">        end </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> start </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> chunk_size</span></span>
+<span class="line"><span style="color:#E1E4E8">        chunks.append(text[start:end])</span></span>
+<span class="line"><span style="color:#E1E4E8">        start </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> chunk_size </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> overlap  </span><span style="color:#6A737D"># overlap으로 문맥 연결</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> chunks</span></span></code></pre>
+<p>구현이 단순하고 청크 수가 예측 가능해요. 단점은 문장 중간에서 잘릴 수 있다는 거예요. 빠른 프로토타입이나 균일한 구조의 문서에 적합해요.</p>
+<h3 id="semantic-chunking--의미-단위로">Semantic Chunking — 의미 단위로</h3>
+<p>문장 의미가 바뀌는 지점을 감지해서 자르는 방식이에요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langchain_experimental.text_splitter </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> SemanticChunker</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langchain_openai.embeddings </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> OpenAIEmbeddings</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">splitter </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> SemanticChunker(</span></span>
+<span class="line"><span style="color:#E1E4E8">    OpenAIEmbeddings(),</span></span>
+<span class="line"><span style="color:#FFAB70">    breakpoint_threshold_type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"percentile"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    breakpoint_threshold_amount</span><span style="color:#F97583">=</span><span style="color:#79B8FF">95</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">chunks </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> splitter.split_text(document)</span></span></code></pre>
+<p>의미 단절이 없고 자연스러운 청크가 만들어져요. 다만 임베딩 비용이 추가로 들고 처리 시간도 길어지거든요. 긴 서술형 문서나 높은 품질이 필요한 경우에 써요.</p>
+<h3 id="hierarchical-chunking--문서-구조를-살려서">Hierarchical Chunking — 문서 구조를 살려서</h3>
+<p>헤더 구조를 유지하며 청크를 만드는 방식이에요. Confluence, Notion, GitHub README처럼 구조화된 문서에 딱 맞아요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langchain.text_splitter </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> MarkdownHeaderTextSplitter</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">headers_to_split_on </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#9ECBFF">"#"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"H1"</span><span style="color:#E1E4E8">), (</span><span style="color:#9ECBFF">"##"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"H2"</span><span style="color:#E1E4E8">), (</span><span style="color:#9ECBFF">"###"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"H3"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">splitter </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> MarkdownHeaderTextSplitter(headers_to_split_on)</span></span>
+<span class="line"><span style="color:#E1E4E8">chunks </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> splitter.split_text(markdown_document)</span></span>
+<span class="line"><span style="color:#6A737D"># 각 청크에 헤더 경로가 메타데이터로 포함됨</span></span></code></pre>
+<p>문서 구조가 보존되고, 헤더 경로가 메타데이터로 자동 추가돼요. 사내 문서 RAG에서는 이 방식이 가장 효과적이었어요.</p>
+<h3 id="sliding-window--경계-맥락을-보강">Sliding Window — 경계 맥락을 보강</h3>
+<p>고정 크기에 overlap을 크게 줘서 문맥 손실을 최소화해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>청크 크기: 400 토큰</span></span>
+<span class="line"><span>Overlap: 150 토큰</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>청크 1: 토큰 0~400</span></span>
+<span class="line"><span>청크 2: 토큰 250~650   ← 150 토큰 중복</span></span>
+<span class="line"><span>청크 3: 토큰 500~900</span></span></code></pre>
+<p>청크 경계에서 맥락이 끊기는 걸 방지하지만, 중복으로 저장 용량이 늘어요. 연속적 맥락이 중요한 문서 — 법률, 계약서, 긴 설명서에 적합해요.</p>
+<h3 id="청크-크기-설계-기준">청크 크기 설계 기준</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>항목</th><th>너무 작으면</th><th>너무 크면</th><th>권장 범위</th></tr></thead><tbody><tr><td>청크 크기</td><td>맥락 부족, 단어 단편화</td><td>의미 희석, LLM 비용 증가</td><td>256~512 토큰</td></tr><tr><td>Overlap</td><td>경계에서 맥락 단절</td><td>중복 증가, 검색 노이즈</td><td>청크의 10~20%</td></tr><tr><td>Top-K 반환 수</td><td>정보 부족</td><td>LLM 컨텍스트 초과, 노이즈</td><td>3~7개</td></tr></tbody></table>
+<p>실용적인 시작점은 이렇게 잡으면 돼요:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>일반 기술 문서: 청크 400토큰, Overlap 80토큰</span></span>
+<span class="line"><span>FAQ / 짧은 항목: 청크 200토큰, Overlap 없음</span></span>
+<span class="line"><span>긴 설명서 / 계약서: 청크 600토큰, Overlap 120토큰</span></span></code></pre>
+<hr>
+<h2 id="특수-콘텐츠-처리">특수 콘텐츠 처리</h2>
+<p>코드나 표처럼 단순 텍스트 변환으로는 의미가 손실되는 콘텐츠들이 있어요.</p>
+<h3 id="표table-처리">표(Table) 처리</h3>
+<p>표를 그냥 텍스트로 변환하면 관계가 무너져버려요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>❌ 나쁜 방법 (단순 텍스트 변환)</span></span>
+<span class="line"><span>"항목 Pinecone Supabase 벡터검색 최고 좋음 일반DB 없음 있음"</span></span>
+<span class="line"><span>→ 임베딩이 관계를 파악하지 못함</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>✅ 좋은 방법 (행 단위로 자연어 변환)</span></span>
+<span class="line"><span>"Pinecone은 벡터 검색이 최고 수준이지만 일반 DB 기능은 없다."</span></span>
+<span class="line"><span>"Supabase는 벡터 검색 품질이 좋고 일반 PostgreSQL DB 기능도 지원한다."</span></span>
+<span class="line"><span>→ 각 행이 의미 있는 문장이 됨</span></span></code></pre>
+<h3 id="코드-블럭-처리">코드 블럭 처리</h3>
+<p>코드는 별도 청크로 분리하고, 언어와 목적을 메타데이터로 붙여요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">    "id"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"doc-001-code-1"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "content"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"def embed(text): ..."</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "metadata"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">        "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"code"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "language"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"python"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "context"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Pinecone 임베딩 함수"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "parent_section"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"기본 사용법"</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="메타데이터-설계">메타데이터 설계</h2>
+<p>벡터 검색만으로는 특정 범위를 제한하기 어려워요. 메타데이터 필터를 사용하면 검색 공간을 좁혀서 정확도와 속도를 동시에 높일 수 있어요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#E1E4E8">results </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> index.query(</span></span>
+<span class="line"><span style="color:#FFAB70">    vector</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">embed(</span><span style="color:#9ECBFF">"E2E 테스트 방법"</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#FFAB70">    filter</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">        "team"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"QA"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "doc_type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"guide"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "updated_after"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"2026-01-01"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#FFAB70">    top_k</span><span style="color:#F97583">=</span><span style="color:#79B8FF">5</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#6A737D"># QA팀 가이드 문서 중 2026년 이후 업데이트된 것만 검색</span></span></code></pre>
+<p>필드 설계는 아래를 기준으로 시작하면 돼요:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>필드</th><th>예시 값</th><th>용도</th></tr></thead><tbody><tr><td><code>source</code></td><td>confluence, github, notion</td><td>출처 필터</td></tr><tr><td><code>doc_type</code></td><td>guide, faq, report, spec</td><td>문서 유형 필터</td></tr><tr><td><code>team</code></td><td>QA, FE, BE, PM</td><td>팀별 검색</td></tr><tr><td><code>created_at</code></td><td>2026-04-27</td><td>날짜 범위 필터</td></tr><tr><td><code>language</code></td><td>ko, en</td><td>언어 필터</td></tr><tr><td><code>parent_title</code></td><td>”벡터 DB 전처리 가이드”</td><td>원본 문서 제목</td></tr><tr><td><code>chunk_index</code></td><td>3</td><td>문서 내 위치</td></tr></tbody></table>
+<p>설계 원칙은 간단해요. <strong>자주 필터링할 것만 메타데이터로</strong> — 너무 많으면 오버헤드만 늘어요. 기수(cardinality)가 낮은 값(팀명, 문서 유형)을 선호하고, 날짜는 ISO 8601로 통일하는 게 좋아요.</p>
+<hr>
+<h2 id="임베딩-모델-선택">임베딩 모델 선택</h2>
+<p>어떤 모델을 쓰느냐가 사실 가장 중요해요. 벡터 DB를 아무리 잘 골라도 임베딩 모델이 의미를 제대로 표현하지 못하면 검색이 실패하거든요.</p>
+<p>MTEB(Massive Text Embedding Benchmark) 기준으로 주요 모델을 비교하면 이렇게 돼요:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>모델</th><th>MTEB 평균</th><th>한국어</th><th>차원</th><th>비용</th></tr></thead><tbody><tr><td><a href="https://huggingface.co/BAAI/bge-m3">BGE-M3</a></td><td>66.1</td><td>우수</td><td>1,024</td><td>무료</td></tr><tr><td><a href="https://platform.openai.com/docs/guides/embeddings">text-embedding-3-large</a></td><td>64.6</td><td>양호</td><td>3,072</td><td>$0.13/1M</td></tr><tr><td>Cohere Embed v3 Multilingual</td><td>64.0</td><td>우수</td><td>1,024</td><td>$0.10/1M</td></tr><tr><td><a href="https://platform.openai.com/docs/guides/embeddings">text-embedding-3-small</a></td><td>62.3</td><td>양호</td><td>1,536</td><td>$0.02/1M</td></tr><tr><td><a href="https://huggingface.co/BM-K/KoSimCSE-roberta">KoSimCSE-roberta</a></td><td>한국어 특화</td><td>최적</td><td>768</td><td>무료</td></tr></tbody></table>
+<p>한국어 RAG라면 BGE-M3 또는 KoSimCSE-roberta가 출발점이에요.</p>
+<p>그리고 반드시 지켜야 할 원칙이 있어요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>❌ 잘못된 경우</span></span>
+<span class="line"><span>인덱싱: BGE-M3 → 벡터 공간 A</span></span>
+<span class="line"><span>검색:  OpenAI → 벡터 공간 B</span></span>
+<span class="line"><span>→ 벡터 공간이 달라 의미 있는 검색 불가</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>✅ 올바른 경우</span></span>
+<span class="line"><span>인덱싱: BGE-M3 → 벡터 공간 A</span></span>
+<span class="line"><span>검색:  BGE-M3 → 동일 벡터 공간 A</span></span>
+<span class="line"><span>→ 정확한 유사도 계산</span></span></code></pre>
+<p><strong>인덱싱과 검색에서 반드시 같은 모델을 써야 해요.</strong> 당연해 보이지만 실제 코드에서 실수하는 경우가 꽤 많아요.</p>
+<h2 id="정리">정리</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>항목</th><th>핵심 포인트</th></tr></thead><tbody><tr><td>청킹</td><td>256<del>512 토큰, 10</del>20% overlap이 기본</td></tr><tr><td>구조화 문서</td><td>Hierarchical chunking으로 헤더 구조 보존</td></tr><tr><td>메타데이터</td><td>자주 필터링할 것만, cardinality 낮게</td></tr><tr><td>임베딩 모델</td><td>한국어면 BGE-M3 or KoSimCSE</td></tr><tr><td>모델 일관성</td><td>인덱싱과 검색에서 반드시 동일 모델</td></tr></tbody></table>
+<p>DB보다 전처리가 품질을 결정해요. 어떤 DB를 쓸지보다 어떻게 넣을지를 먼저 설계하는 게 맞아요.</p>
+<p>다음 편에서는 실제 벡터 DB 6개의 벤치마크 숫자를 비교하면서 어떤 상황에 어떤 DB가 유리한지 살펴볼게요.</p>  </div> </article> </main> <!-- 댓글 & 좋아요 (Giscus — GitHub Discussions 기반) --> <!-- 설정 방법: https://giscus.app 에서 tall190/liber 입력 후 REPO_ID, CATEGORY_ID 교체 --> <div class="comments-section" data-astro-cid-bvzihdzo> <h3 data-astro-cid-bvzihdzo>댓글</h3> <script>
+				(function() {
+					var isDark = document.documentElement.classList.contains('dark');
+					var s = document.createElement('script');
+					s.src = 'https://giscus.app/client.js';
+					s.setAttribute('data-repo', 'tall190/liber');
+					s.setAttribute('data-repo-id', 'R_kgDOSIJHDw');
+					s.setAttribute('data-category', 'Announcements');
+					s.setAttribute('data-category-id', 'DIC_kwDOSIJHD84C7Uy6');
+					s.setAttribute('data-mapping', 'pathname');
+					s.setAttribute('data-strict', '0');
+					s.setAttribute('data-reactions-enabled', '1');
+					s.setAttribute('data-emit-metadata', '0');
+					s.setAttribute('data-input-position', 'bottom');
+					s.setAttribute('data-theme', isDark ? 'dark' : 'light');
+					s.setAttribute('data-lang', 'ko');
+					s.setAttribute('crossorigin', 'anonymous');
+					s.async = true;
+					document.currentScript.parentElement.appendChild(s);
+				})();
+			</script> </div> <footer data-astro-cid-sz7xmlte>
+&copy; 2026 Liber. All rights reserved.
+</footer> </body></html>

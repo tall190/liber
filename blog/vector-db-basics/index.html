@@ -1,0 +1,600 @@
+<!DOCTYPE html><html lang="ko" data-astro-cid-bvzihdzo> <head><!-- Dark mode: apply before render to prevent flash --><script>
+	(function() {
+		const theme = localStorage.getItem('theme');
+		if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark');
+		}
+	})();
+</script> <!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="/liber/favicon.png"><link rel="icon" type="image/svg+xml" href="/liber/favicon.svg"><link rel="icon" href="/liber/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Liber" href="https://tall190.github.io/rss.xml"><meta name="generator" content="Astro v6.1.8"><style>@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/fd137eb932fcc611.woff") format("woff");font-display:swap;font-weight:400;font-style:normal;}@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/5c86995be98976a1.woff") format("woff");font-display:swap;font-weight:700;font-style:normal;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}:root{--font-atkinson:Atkinson-c7f4c4e8b285552f,"Atkinson-c7f4c4e8b285552f fallback: Arial",sans-serif;}</style><link rel="preload" href="/liber/_astro/fonts/fd137eb932fcc611.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/liber/_astro/fonts/5c86995be98976a1.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://tall190.github.io/liber/blog/vector-db-basics/"><!-- Primary Meta Tags --><title>벡터 DB 기초: AI가 문서를 찾는 방법</title><meta name="title" content="벡터 DB 기초: AI가 문서를 찾는 방법"><meta name="description" content="Confluence 검색의 한계에서 시작한 RAG 탐구기. 임베딩이 뭔지, 벡터 DB가 왜 필요한지, HNSW·IVF·DiskANN 알고리즘이 어떻게 다른지 — 실무자 관점에서 정리했어요."><meta name="author" content="Liber"><meta name="keywords" content="Vector DB, RAG, Embedding, HNSW, AI-Ready"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://tall190.github.io/liber/blog/vector-db-basics/"><meta property="og:title" content="벡터 DB 기초: AI가 문서를 찾는 방법"><meta property="og:description" content="Confluence 검색의 한계에서 시작한 RAG 탐구기. 임베딩이 뭔지, 벡터 DB가 왜 필요한지, HNSW·IVF·DiskANN 알고리즘이 어떻게 다른지 — 실무자 관점에서 정리했어요."><meta property="og:image" content="https://tall190.github.io/liber/_astro/vector-db-basics_hero_image.CmkQ4Wcu.png"><meta property="og:locale" content="ko_KR"><meta property="article:published_time" content="2026-04-28T00:00:00.000Z"><meta property="article:tag" content="Vector DB"><meta property="article:tag" content="RAG"><meta property="article:tag" content="Embedding"><meta property="article:tag" content="HNSW"><meta property="article:tag" content="AI-Ready"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://tall190.github.io/liber/blog/vector-db-basics/"><meta property="twitter:title" content="벡터 DB 기초: AI가 문서를 찾는 방법"><meta property="twitter:description" content="Confluence 검색의 한계에서 시작한 RAG 탐구기. 임베딩이 뭔지, 벡터 DB가 왜 필요한지, HNSW·IVF·DiskANN 알고리즘이 어떻게 다른지 — 실무자 관점에서 정리했어요."><meta property="twitter:image" content="https://tall190.github.io/liber/_astro/vector-db-basics_hero_image.CmkQ4Wcu.png"><!-- Theme toggle script --><script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const toggle = document.getElementById('theme-toggle');
+		if (!toggle) return;
+		toggle.addEventListener('click', function() {
+			const isDark = document.documentElement.classList.toggle('dark');
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
+			// Sync Giscus theme
+			const giscus = document.querySelector('iframe.giscus-frame');
+			if (giscus) {
+				giscus.contentWindow.postMessage(
+					{ giscus: { setConfig: { theme: isDark ? 'dark' : 'light' } } },
+					'https://giscus.app'
+				);
+			}
+		});
+	});
+</script><!-- Schema.org JSON-LD: AI가 이 글을 구조화된 데이터로 읽을 수 있어요 --><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"벡터 DB 기초: AI가 문서를 찾는 방법","description":"Confluence 검색의 한계에서 시작한 RAG 탐구기. 임베딩이 뭔지, 벡터 DB가 왜 필요한지, HNSW·IVF·DiskANN 알고리즘이 어떻게 다른지 — 실무자 관점에서 정리했어요.","datePublished":"2026-04-28T00:00:00.000Z","dateModified":"2026-04-28T00:00:00.000Z","url":"https://tall190.github.io/liber/blog/vector-db-basics/","inLanguage":"ko-KR","mainEntityOfPage":{"@type":"WebPage","@id":"https://tall190.github.io/liber/blog/vector-db-basics/"},"author":{"@type":"Person","name":"Jayden","url":"https://tall190.github.io/liber/about/","sameAs":["https://github.com/tall190"]},"publisher":{"@type":"Organization","name":"Liber","url":"https://tall190.github.io/liber","logo":{"@type":"ImageObject","url":"https://tall190.github.io/liber/favicon.png"}},"keywords":"Vector DB, RAG, Embedding, HNSW, AI-Ready","image":"https://tall190.github.io/liber/_astro/vector-db-basics_hero_image.CmkQ4Wcu.png"}</script><style>:root{--accent: #2337ff;--accent-dark: #000d8a;--black: 15, 18, 25;--gray: 96, 115, 159;--gray-light: 229, 233, 240;--gray-dark: 34, 41, 57;--gray-gradient: rgba(var(--gray-light), 50%), #fff;--box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);--bg: #fff;--bg-secondary: #f9fafb;--header-bg: white;--code-bg: rgb(var(--gray-light));color-scheme:light}:root.dark{--accent: #6b7cff;--accent-dark: #8b9aff;--black: 230, 230, 230;--gray: 155, 165, 190;--gray-light: 50, 55, 65;--gray-dark: 210, 215, 225;--gray-gradient: rgba(var(--gray-light), 50%), #1a1a2e;--box-shadow: 0 2px 6px rgba(0, 0, 0, 40%), 0 8px 24px rgba(0, 0, 0, 50%), 0 16px 32px rgba(0, 0, 0, 50%);--bg: #1a1a2e;--bg-secondary: #16162a;--header-bg: #16162a;--code-bg: rgba(var(--gray-light), .6);color-scheme:dark}body{font-family:var(--font-atkinson);margin:0;padding:0;text-align:left;background:var(--bg);background-image:linear-gradient(var(--gray-gradient));background-repeat:no-repeat;background-size:100% 600px;word-wrap:break-word;overflow-wrap:break-word;color:rgb(var(--gray-dark));font-size:20px;line-height:1.7;transition:background-color .3s,color .3s}main{width:720px;max-width:calc(100% - 2em);margin:auto;padding:3em 1em}h1,h2,h3,h4,h5,h6{margin:0 0 .5rem;color:rgb(var(--black));line-height:1.2}h1{font-size:3.052em}h2{font-size:2.441em}h3{font-size:1.953em}h4{font-size:1.563em}h5{font-size:1.25em}strong,b{font-weight:700}a,a:hover{color:var(--accent)}p{margin-bottom:1em}.prose p{margin-bottom:2em}.prose p:has(>img){margin-top:.5em;margin-bottom:.5em}textarea{width:100%;font-size:16px}input{font-size:16px}table{width:100%}img{max-width:100%;height:auto;border-radius:8px}code{padding:2px 5px;background-color:var(--code-bg);border-radius:2px}pre{padding:1.5em;border-radius:8px;overflow-x:auto;max-width:100%;font-size:15px}pre>code{all:unset}blockquote{border-left:4px solid var(--accent);padding:0 0 0 20px;margin:0;font-size:1.333em}hr{border:none;border-top:1px solid rgb(var(--gray-light))}@media(max-width:720px){body{font-size:18px}main{padding:1em}}.sr-only{border:0;padding:0;margin:0;position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px 1px 1px 1px);clip:rect(1px,1px,1px,1px);clip-path:inset(50%);white-space:nowrap}.prose p>em:only-child{display:block;font-size:.85em;color:rgb(var(--gray));margin-top:-.3em;margin-bottom:1.5em;text-align:center}footer[data-astro-cid-sz7xmlte]{padding:2em 1em 6em;background:linear-gradient(var(--gray-gradient)) no-repeat;color:rgb(var(--gray));text-align:center;transition:background-color .3s,color .3s}a[data-astro-cid-eimmu3lg]{display:inline-block;text-decoration:none}a[data-astro-cid-eimmu3lg].active{font-weight:bolder;text-decoration:underline}header[data-astro-cid-3ef6ksr2]{margin:0;padding:0 1em;background:var(--header-bg);box-shadow:0 2px 8px rgba(var(--black),5%);transition:background-color .3s}h2[data-astro-cid-3ef6ksr2]{margin:0;font-size:1em}h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2],h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none}nav[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;justify-content:space-between}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{padding:1em .5em;color:var(--black);border-bottom:4px solid transparent;text-decoration:none}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none;border-bottom-color:var(--accent)}.theme-toggle[data-astro-cid-3ef6ksr2]{background:none;border:none;cursor:pointer;padding:.5em;color:rgb(var(--black));display:flex;align-items:center;transition:color .3s}.theme-toggle[data-astro-cid-3ef6ksr2]:hover{color:var(--accent)}.dark .icon-sun[data-astro-cid-3ef6ksr2]{display:inline}.dark .icon-moon[data-astro-cid-3ef6ksr2],.icon-sun[data-astro-cid-3ef6ksr2]{display:none}.icon-moon[data-astro-cid-3ef6ksr2]{display:inline}
+main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.post-meta[data-astro-cid-bvzihdzo]{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:.5rem;flex-wrap:wrap}.hits-badge[data-astro-cid-bvzihdzo]{display:inline-flex;align-items:center}.hits-badge[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{height:20px;border-radius:4px}.post-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.8rem}.tag[data-astro-cid-bvzihdzo]{display:inline-block;font-size:.75rem;font-weight:600;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--accent));color:#fff;text-decoration:none;letter-spacing:.02em}.tag[data-astro-cid-bvzihdzo]:hover{background:var(--accent-dark)}.comments-section[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:3rem auto 2rem;padding:0 1em;border-top:1px solid rgb(var(--gray-light));padding-top:2rem}.comments-section[data-astro-cid-bvzihdzo] h3[data-astro-cid-bvzihdzo]{font-size:1.1rem;color:rgb(var(--gray-dark));margin-bottom:1.5rem}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/liber/" data-astro-cid-3ef6ksr2><img src="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp" srcset="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp 1x, /liber/_astro/liber-logo.DqNb0q2U_Z1NhCXk.webp 2x, /liber/_astro/liber-logo.DqNb0q2U_16RKps.webp 3x" alt="Liber" data-astro-cid-3ef6ksr2="true" loading="lazy" decoding="async" width="121" height="40"></a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/liber/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Home </a> <a href="/liber/blog/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Blog </a> <a href="/liber/about/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> About </a> <button class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환" data-astro-cid-3ef6ksr2> <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle><line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line><line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line><line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line><line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line></svg> <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path></svg> </button> </div> </nav> </header> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo> <img src="/liber/_astro/vector-db-basics_hero_image.CmkQ4Wcu_w3iuc.webp" alt data-astro-cid-bvzihdzo="true" loading="lazy" decoding="async" width="1020" height="510"> </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-04-28T00:00:00.000Z"> Apr 28, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>벡터 DB 기초: AI가 문서를 찾는 방법</h1> <div class="post-meta" data-astro-cid-bvzihdzo> <span class="hits-badge" data-astro-cid-bvzihdzo> <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Ftall190.github.io%2Fliber%2Fblog%2Fvector-db-basics%2F&#38;label=views&#38;labelColor=%23374151&#38;countColor=%236366f1&#38;style=flat" alt="조회수" loading="eager" data-astro-cid-bvzihdzo> </span> </div> <div class="post-tags" data-astro-cid-bvzihdzo> <a class="tag" href="/liber/blog/tags/Vector DB/" data-astro-cid-bvzihdzo>Vector DB</a><a class="tag" href="/liber/blog/tags/RAG/" data-astro-cid-bvzihdzo>RAG</a><a class="tag" href="/liber/blog/tags/Embedding/" data-astro-cid-bvzihdzo>Embedding</a><a class="tag" href="/liber/blog/tags/HNSW/" data-astro-cid-bvzihdzo>HNSW</a><a class="tag" href="/liber/blog/tags/AI-Ready/" data-astro-cid-bvzihdzo>AI-Ready</a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>사내 문서 검색을 개선하려다가 이상한 벽에 부딪혔어요.</p>
+<p>“E2E 테스트 관련 문서 찾아줘”라는 질문에 기존 검색은 <code>E2E</code>, <code>테스트</code>라는 단어가 들어간 문서만 돌려줬거든요. <code>Playwright 셋업 가이드</code>는 분명 같은 주제인데 검색 결과에 없었어요. 제목에 그 단어가 없으니까요.</p>
+<p>Confluence 검색창을 바라보며 든 생각 — “이건 단어를 찾는 거지, 의미를 찾는 게 아니구나.”</p>
+<p>그래서 RAG(Retrieval-Augmented Generation)를 파기 시작했어요. 오늘은 그 과정에서 배운 것들, 벡터 DB의 기초부터 ANN 알고리즘까지를 정리해 볼게요.</p>
+<h2 id="왜-기존-db로는-안-되는-걸까요">왜 기존 DB로는 안 되는 걸까요</h2>
+<p>RDB(MySQL, PostgreSQL)는 정확한 값을 빠르게 찾는 데 최적화되어 있어요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#6A737D">-- 이런 쿼리는 RDB가 완벽하게 처리해요</span></span>
+<span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> *</span><span style="color:#F97583"> FROM</span><span style="color:#E1E4E8"> documents </span><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> title </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> 'E2E 테스트 가이드'</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<p>근데 이런 질문은 못 해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>"E2E 테스트와 비슷한 주제의 문서를 찾아줘"</span></span>
+<span class="line"><span>"이 문장과 의미적으로 가장 가까운 FAQ 항목은?"</span></span></code></pre>
+<p>RDB는 값이 <strong>정확히 일치</strong>하거나 <strong>포함</strong>되는지만 판단할 수 있거든요. 의미가 비슷한지는 판단 못 해요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>항목</th><th>RDB</th><th>벡터 DB</th></tr></thead><tbody><tr><td>검색 방식</td><td>정확한 값 매칭 (=, LIKE, IN)</td><td>의미적 유사도</td></tr><tr><td>저장 단위</td><td>행(Row), 컬럼</td><td>벡터(고차원 숫자 배열)</td></tr><tr><td>강점</td><td>트랜잭션, 정합성, JOIN</td><td>자연어 이해, 비정형 데이터</td></tr><tr><td>약점</td><td>의미 기반 검색 불가</td><td>정확한 값 조회 약함</td></tr></tbody></table>
+<p>벡터 DB가 필요한 이유가 여기 있어요. 의미를 숫자로 바꿔서 비교하는 거예요. 그럼 “의미를 숫자로 바꾼다”는 게 실제로 어떤 뜻인지 볼게요.</p>
+<h2 id="임베딩-의미를-숫자-배열로-변환한다는-게-뭔-뜻이에요">임베딩: 의미를 숫자 배열로 변환한다는 게 뭔 뜻이에요</h2>
+<p><strong>임베딩(Embedding)</strong>은 텍스트를 수백~수천 차원의 숫자 배열(벡터)로 변환하는 기술이에요. 핵심은 이거예요 — 의미가 비슷한 텍스트는 벡터 공간에서 <strong>가까운 위치</strong>에 놓여요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>"E2E 테스트 자동화"</span></span>
+<span class="line"><span>  → [0.12, -0.45, 0.78, ...]  # 벡터 A</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>"Playwright 셋업 방법"</span></span>
+<span class="line"><span>  → [0.14, -0.43, 0.76, ...]  # 벡터 B (A와 가까움)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>"오늘 점심 뭐 먹을까"</span></span>
+<span class="line"><span>  → [0.91,  0.32, -0.11, ...]  # 벡터 C (A와 멀음)</span></span></code></pre>
+<p><img alt="임베딩 — 의미를 벡터 공간으로 변환" loading="lazy" decoding="async"  width="1100" height="800" src="/liber/_astro/vector-db-basics_embedding_image.BHd61c5c_m6lDA.webp" >
+<em>동일한 임베딩 모델로 문서와 쿼리를 변환해야 정확한 유사도 비교가 가능해요.</em></p>
+<p>테스트/QA 관련 문서들은 같은 클러스터에 모이고, 음식 관련 문서는 멀리 떨어지죠. 검색 쿼리(주황색)와 가장 가까운 벡터들이 바로 관련 문서가 되는 거예요.</p>
+<p>처음에 임베딩 값을 직접 찍어봤을 때 1,536개 숫자가 줄줄 나오는 걸 보고 당황했어요. 근데 이 숫자들이 의미의 각 차원을 표현하는 거거든요. 차원이 높을수록 의미를 더 풍부하게 담을 수 있지만, 저장 공간과 연산 비용도 커지죠.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>모델</th><th>차원</th><th>특징</th></tr></thead><tbody><tr><td><a href="https://platform.openai.com/docs/guides/embeddings">text-embedding-3-small</a></td><td>1,536</td><td>OpenAI 경량, 빠름</td></tr><tr><td><a href="https://platform.openai.com/docs/guides/embeddings">text-embedding-3-large</a></td><td>3,072</td><td>OpenAI 고품질</td></tr><tr><td><a href="https://huggingface.co/BAAI/bge-m3">BGE-M3</a></td><td>1,024</td><td>오픈소스, 다국어 강함</td></tr><tr><td><a href="https://huggingface.co/BM-K/KoSimCSE-roberta">KoSimCSE</a></td><td>768</td><td>한국어 특화</td></tr></tbody></table>
+<p>임베딩 모델이 의미를 벡터로 변환해준다는 건 알겠는데, 이 벡터들이 실제 검색에서 어떻게 쓰이는 걸까요.</p>
+<h2 id="rag-파이프라인-ai가-실제로-문서를-찾는-흐름">RAG 파이프라인: AI가 실제로 문서를 찾는 흐름</h2>
+<p>RAG는 AI가 모르는 내용을 외부 문서에서 찾아와 답하게 하는 방식이에요. 크게 세 단계로 나뉘어요.</p>
+<p><img alt="RAG 파이프라인 전체 흐름" loading="lazy" decoding="async"  width="1100" height="800" src="/liber/_astro/vector-db-basics_rag_image.CPqm0eR2_1z5I42.webp" >
+<em>벡터 DB 검색 품질(Recall)이 RAG 전체 품질을 결정해요. 관련 문서를 못 찾으면 LLM이 아무리 좋아도 정확한 답을 낼 수 없어요.</em></p>
+<p><strong>① 사전 준비 (Indexing)</strong> — 문서를 벡터 DB에 저장해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>원본 문서 수집 → 청킹(Chunking) → 임베딩 변환 → 벡터 DB 저장</span></span></code></pre>
+<p>청킹이 중요해요. 너무 크게 자르면 관련 없는 내용이 섞이고, 너무 작게 자르면 맥락이 사라지거든요.</p>
+<p><strong>② 검색 (Retrieval)</strong> — 질문을 벡터로 만들고 가장 가까운 청크들을 찾아요.</p>
+<p><strong>③ 생성 (Generation)</strong> — 검색된 청크들 + 질문을 LLM에 넘기면 문서 기반 답변이 나와요.</p>
+<p><strong>핵심은 이거예요.</strong> 벡터 DB 검색 품질이 RAG 전체 품질을 결정해요. 관련 문서를 못 찾으면 LLM이 아무리 좋아도 정확한 답을 낼 수 없거든요.</p>
+<p>그럼 “가장 가까운 벡터를 찾는다”는 게 구체적으로 어떻게 계산되는 걸까요.</p>
+<h2 id="유사도를-어떻게-계산하나요">유사도를 어떻게 계산하나요</h2>
+<p>벡터 사이의 거리를 계산하는 방식이 세 가지 있어요.</p>
+<p><img alt="유사도 측정 방식 비교" loading="lazy" decoding="async"  width="1100" height="800" src="/liber/_astro/vector-db-basics_cosine_image.CTkx989k_P6yQY.webp" >
+<em>텍스트 RAG엔 코사인 유사도가 기본값이에요. 정규화된 벡터라면 내적(Dot Product)과 동일한 결과가 나와요.</em></p>
+<p><strong>코사인 유사도</strong> — 두 벡터 사이의 각도를 기준으로 유사도를 측정해요. 벡터 크기는 무시하고 방향만 비교하죠. 텍스트 유사도 검색의 기본값이에요.</p>
+<p><strong>내적 (Dot Product)</strong> — 방향과 크기 모두 반영해요. 벡터가 정규화되어 있으면 코사인 유사도와 동일한 결과가 나와요.</p>
+<p><strong>유클리드 거리 (L2)</strong> — 두 점 사이의 직선 거리예요. 벡터가 정규화되어 있으면 L2와 코사인 유사도는 수학적으로 동일한 결과를 내요. 정규화되지 않은 상태에서는 이미지·수치 데이터 검색에 더 자주 쓰여요.</p>
+<p>텍스트 RAG라면 코사인 유사도를 기본으로 써요. 계산 방식은 정했는데, 이 검색이 “잘 된다”는 걸 어떻게 판단할 수 있을까요.</p>
+<h2 id="recall과-latency-성능을-보는-눈">Recall과 Latency: 성능을 보는 눈</h2>
+<p>벡터 DB 성능 이야기를 할 때 반드시 나오는 지표들이에요.</p>
+<p><img alt="Recall–Latency Tradeoff" loading="lazy" decoding="async"  width="1100" height="800" src="/liber/_astro/vector-db-basics_recall_image.DuFYgyuv_Z1DRASK.webp" >
+<em>ef 값을 높일수록 Recall은 올라가지만 Latency도 증가해요. 대부분의 RAG 서비스는 ef=128~256 구간이 적정점이에요.</em></p>
+<p><strong>Recall(재현율)</strong>: “실제로 관련 있는 문서 중, 몇 개를 찾아냈는가?” Recall@10이란 상위 10개 결과에 실제 관련 문서가 포함된 비율이에요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Recall 수준</th><th>의미</th></tr></thead><tbody><tr><td>1.0 (100%)</td><td>모든 관련 문서를 찾음. FLAT(Brute Force)만 수학적으로 보장 가능</td></tr><tr><td>0.95~0.98</td><td><strong>대부분의 RAG 서비스 적정 목표</strong>. 사용자가 품질 저하를 체감하지 않는 수준</td></tr><tr><td>0.99+</td><td>금융·의료·법률 등 정확도가 절대적인 도메인에서 요구. Latency 비용이 큼</td></tr><tr><td>0.80 이하</td><td>체감되는 품질 저하. 관련 문서 10개 중 2개 이상을 놓침</td></tr></tbody></table>
+<p><strong>Latency</strong>: 질문 넣고 결과 나올 때까지 걸리는 시간이에요. 실서비스에서는 평균이 아니라 꼬리 분포가 중요해요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>지표</th><th>의미</th></tr></thead><tbody><tr><td>p50 (중앙값)</td><td>절반의 요청이 이 시간 안에 응답</td></tr><tr><td>p95</td><td>95% 요청이 이 시간 안에 응답</td></tr><tr><td>p99</td><td><strong>실서비스 핵심 지표</strong>. p50이 5ms라도 p99가 500ms면 100명 중 1명은 매우 느린 경험을 함</td></tr></tbody></table>
+<p>가장 중요한 원칙은 이거예요.</p>
+<blockquote>
+<p>더 정확하게 찾을수록 더 오래 걸리고, 더 빠를수록 덜 정확해져요.</p>
+</blockquote>
+<p>많은 RAG 서비스의 합리적인 목표 구간은 <strong>Recall 0.95~0.98, p99 Latency 50ms 이하</strong>예요. 정확도가 더 중요한 금융·의료 같은 도메인에서는 Recall 0.99+를 요구하기도 해요. 이 목표를 현실적으로 달성하려면 어떤 알고리즘을 써야 할까요.</p>
+<h2 id="ann-알고리즘-왜-정확도를-조금-포기하는가">ANN 알고리즘: 왜 정확도를 조금 포기하는가</h2>
+<p>수억 개 벡터를 모두 비교하는 건 현실적으로 불가능해요. 그래서 대부분의 벡터 DB는 <strong>근사 최근접 이웃(ANN)</strong> 알고리즘을 사용해요.</p>
+<h3 id="flat--brute-force">FLAT — Brute Force</h3>
+<p><img alt="FLAT 알고리즘" loading="lazy" decoding="async"  width="1100" height="800" src="/liber/_astro/vector-db-basics_flat_image.RHzbPK27_Z3T4My.webp" >
+<em>모든 벡터와 비교하므로 Recall 100%를 보장해요. 데이터가 많아질수록 비례해서 느려지는 게 단점이에요.</em></p>
+<p>가장 단순해요. 모든 벡터와 하나씩 비교해요. Recall 100%지만 시간 복잡도가 O(N × D)라 데이터가 많아지면 쓸 수가 없어요. 10만 개 이하, 정확도가 절대적으로 중요한 경우에만 적합해요.</p>
+<h3 id="ivf--클러스터-기반-탐색">IVF — 클러스터 기반 탐색</h3>
+<p><img alt="IVF 알고리즘" loading="lazy" decoding="async"  width="1100" height="800" src="/liber/_astro/vector-db-basics_ivf_image.D6wGc08H_1QEnHA.webp" >
+<em>전체를 탐색하지 않고 가까운 클러스터 일부만 탐색해요. nprobe 값으로 탐색 범위와 속도를 조절할 수 있어요.</em></p>
+<p>전체 벡터를 클러스터로 나눈 뒤, 쿼리와 가까운 클러스터만 탐색하는 방식이에요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>100개 클러스터로 나눔</span></span>
+<span class="line"><span>→ 가장 가까운 5개만 탐색</span></span>
+<span class="line"><span>→ 전체의 5%만 비교</span></span></code></pre>
+<p><code>nprobe</code> 파라미터로 탐색할 클러스터 수를 조절해요. 수백만~수억 개 벡터 규모에 적합하고, <a href="https://github.com/facebookresearch/faiss">FAISS</a>·Milvus가 여기서 강해요.</p>
+<h3 id="hnsw--현재-가장-널리-쓰이는-알고리즘">HNSW — 현재 가장 널리 쓰이는 알고리즘</h3>
+<p><img alt="HNSW 알고리즘" loading="lazy" decoding="async"  width="1100" height="800" src="/liber/_astro/vector-db-basics_hnsw_image.B1WuUJla_1847FL.webp" >
+<em>현재 가장 널리 쓰이는 ANN 알고리즘이에요. Weaviate, Qdrant, pgvector 등이 기본값으로 사용해요.</em></p>
+<p>계층적 그래프 구조로 탐색해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>레이어 2 (희소)  → 대략적 방향 파악</span></span>
+<span class="line"><span>레이어 1 (중간)  → 범위 좁히기</span></span>
+<span class="line"><span>레이어 0 (밀집)  → 정밀 탐색, 최종 반환</span></span></code></pre>
+<p>속도와 정확도 균형이 가장 좋고, 실시간 삽입도 가능해요. Weaviate, Qdrant, pgvector가 HNSW를 기본으로 사용해요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>파라미터</th><th>역할</th><th>높이면</th></tr></thead><tbody><tr><td><code>M</code></td><td>각 노드의 최대 연결 수</td><td>Recall ↑, 메모리 ↑</td></tr><tr><td><code>ef_construction</code></td><td>인덱스 빌드 시 탐색 범위</td><td>품질 ↑, 빌드 시간 ↑</td></tr><tr><td><code>ef</code> (검색 시)</td><td>검색 시 탐색 범위</td><td>Recall ↑, Latency ↑</td></tr></tbody></table>
+<p><code>ef</code> 파라미터가 Recall-Latency 균형을 직접 제어해요. 아래는 대표적인 벤치마크 경향을 보여주는 예시 수치예요. 실제 수치는 하드웨어·데이터셋·차원에 따라 크게 달라지므로 직접 측정이 필요해요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>ef 값</th><th>Recall</th><th>Latency</th><th>해석</th></tr></thead><tbody><tr><td>32</td><td>~88%</td><td>~4ms</td><td>빠르지만 관련 문서 10개 중 1개 이상 놓침</td></tr><tr><td>64</td><td>~93%</td><td>~9ms</td><td>속도 우선 서비스에서 최소 기준선</td></tr><tr><td>128</td><td>~96%</td><td>~18ms</td><td><strong>대부분의 RAG 서비스 권장 시작점</strong></td></tr><tr><td>256</td><td>~98%</td><td>~35ms</td><td>높은 정확도 필요 시. p99 50ms 이내 가능</td></tr><tr><td>512</td><td>~99.3%</td><td>~75ms</td><td>금융·의료 등 Recall 최우선 도메인</td></tr><tr><td>FLAT</td><td>100%</td><td>~500ms</td><td>완전 탐색. 프로덕션 실시간 서비스 부적합</td></tr></tbody></table>
+<p>도메인에 따라 어디를 노려야 하는지도 달라져요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>도메인</th><th>Recall 목표</th><th>p99 Latency</th><th>ef 범위</th></tr></thead><tbody><tr><td>일반 사내 문서 RAG</td><td>0.95~0.98</td><td>50ms 이하</td><td>128~256</td></tr><tr><td>고객 대면 서비스</td><td>0.97+</td><td>30ms 이하</td><td>256+</td></tr><tr><td>금융·의료·법률</td><td>0.99+</td><td>100ms 허용</td><td>512+</td></tr><tr><td>내부 도구·프로토타입</td><td>0.90+</td><td>100ms 허용</td><td>64~128</td></tr></tbody></table>
+<h3 id="diskann--수억-벡터를-저비용으로">DiskANN — 수억 벡터를 저비용으로</h3>
+<p><img alt="DiskANN 알고리즘" loading="lazy" decoding="async"  width="1100" height="800" src="/liber/_astro/vector-db-basics_diskann_image.CAX2H82Q_1Sczn9.webp" >
+<em>SSD와 RAM을 계층적으로 활용해요. 적은 메모리로 수십억 벡터를 처리할 수 있어서 비용 효율이 높아요.</em></p>
+<p>HNSW의 약점은 인덱스가 RAM에 올라가야 한다는 거예요. 수억 개 벡터면 RAM 비용이 엄청나거든요. DiskANN은 인덱스를 SSD에 저장해서 이 문제를 해결해요. Microsoft Research에서 개발해 <a href="https://proceedings.neurips.cc/paper_files/paper/2019/hash/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Abstract.html">NeurIPS 2019</a>에서 발표했어요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th></th><th>HNSW</th><th>DiskANN</th></tr></thead><tbody><tr><td>스토리지</td><td>RAM 전체</td><td>SSD + RAM 일부</td></tr><tr><td>Latency</td><td>1~5ms</td><td>5~20ms</td></tr><tr><td>벡터 규모</td><td>~수천만</td><td>수억+</td></tr><tr><td>비용</td><td>높음</td><td>낮음</td></tr></tbody></table>
+<p>Latency가 약간 높지만, 수십억 벡터를 훨씬 적은 비용으로 처리할 수 있어요.</p>
+<h3 id="알고리즘-선택-기준">알고리즘 선택 기준</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>알고리즘</th><th>Recall</th><th>속도</th><th>메모리</th><th>적합한 규모</th></tr></thead><tbody><tr><td>FLAT</td><td>★★★★★</td><td>★</td><td>★★★</td><td>~10만</td></tr><tr><td>IVF</td><td>★★★★</td><td>★★★★</td><td>★★★★</td><td>천만~억</td></tr><tr><td>HNSW</td><td>★★★★☆†</td><td>★★★★★</td><td>★★</td><td>만~수천만‡</td></tr><tr><td>DiskANN</td><td>★★★★</td><td>★★★★</td><td>★★★★★</td><td>억+</td></tr></tbody></table>
+<p>† HNSW는 ANN(근사)이라 100% Recall을 보장하지 않아요. ef 값으로 0.99+까지 높일 수 있지만, 수학적 보장은 FLAT만 가능해요.
+‡ RAM이 충분하면 수억 개까지 확장 가능하지만, 그 이상 규모에서는 비용 대비 DiskANN이 유리해요.</p>
+<p>알고리즘을 잘 골랐다고 끝이 아니에요. 여기서 한 가지 더 신경 써야 할 게 있어요.</p>
+<h2 id="임베딩-모델이-사실-더-중요해요">임베딩 모델이 사실 더 중요해요</h2>
+<p>벡터 DB를 아무리 잘 골라도 임베딩 모델이 의미를 제대로 표현하지 못하면 검색이 실패해요. 직접 경험해봤는데, 같은 문서셋에 같은 HNSW 인덱스를 써도 일반 다국어 모델과 한국어 특화 모델 사이에 Recall이 눈에 띄게 달랐어요. 모델이 “E2E 테스트”와 “자동화 품질 검증”을 다른 의미로 인식하면, 관련 문서를 아예 못 찾는 거거든요.</p>
+<p>한국어 RAG라면 한국어 성능이 높은 모델 선택이 필수예요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>모델</th><th>한국어 성능</th><th>비용</th><th>자체 호스팅</th></tr></thead><tbody><tr><td><a href="https://platform.openai.com/docs/guides/embeddings">text-embedding-3-small</a></td><td>양호</td><td>$0.02/1M 토큰*</td><td>❌</td></tr><tr><td><a href="https://platform.openai.com/docs/guides/embeddings">text-embedding-3-large</a></td><td>좋음</td><td>$0.13/1M 토큰*</td><td>❌</td></tr><tr><td><a href="https://huggingface.co/BAAI/bge-m3">BGE-M3</a></td><td>우수</td><td>무료</td><td>✅</td></tr><tr><td><a href="https://huggingface.co/BM-K/KoSimCSE-roberta">KoSimCSE-roberta</a></td><td>한국어 특화</td><td>무료</td><td>✅</td></tr></tbody></table>
+<p>* 가격은 변동될 수 있어요. 적용 시점에 OpenAI 공식 가격 페이지를 확인하세요.</p>
+<p>빠르게 시작하려면 <code>text-embedding-3-small</code>, 비용을 줄이고 싶다면 <code>BGE-M3</code>, 순수 한국어 문서라면 <code>KoSimCSE-roberta</code>가 출발점이에요. 단, 한국어 임베딩 모델은 빠르게 발전하고 있어서 적용 시점에 최신 벤치마크 결과를 확인하고 선택하는 걸 권장해요.</p>
+<h2 id="정리">정리</h2>
+<p>RAG 시스템을 처음 접하면 “어떤 벡터 DB를 써야 하지?”부터 고민하게 되는데, 사실 그보다 먼저 임베딩 모델을 잘 고르는 게 더 중요해요. 좋은 DB도 나쁜 임베딩 위에서는 제 실력을 못 내거든요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>개념</th><th>한 줄 요약</th></tr></thead><tbody><tr><td>임베딩</td><td>텍스트를 벡터로 변환, 의미가 비슷하면 벡터가 가깝다</td></tr><tr><td>벡터 DB</td><td>벡터를 저장하고 유사한 것을 빠르게 찾는 DB</td></tr><tr><td>RAG</td><td>AI가 외부 문서에서 관련 내용을 찾아 답하는 방식</td></tr><tr><td>HNSW</td><td>가장 널리 쓰이는 ANN 알고리즘, 속도/정확도 균형</td></tr><tr><td>임베딩 모델</td><td>검색 품질의 핵심, DB보다 중요</td></tr></tbody></table>
+<p>다음 편에서는 실제로 데이터를 어떻게 준비하고 청킹 전략을 어떻게 세우는지 살펴볼게요. 청킹 방식이 Recall에 얼마나 큰 영향을 주는지 수치로 보여드릴 거예요.</p>
+<hr>
+<h2 id="참고-자료">참고 자료</h2>
+<h3 id="원논문">원논문</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>알고리즘</th><th>논문</th><th>발표</th></tr></thead><tbody><tr><td>HNSW</td><td><a href="https://arxiv.org/abs/1603.09320">Efficient and Robust ANN Search Using HNSW Graphs</a> — Malkov &#x26; Yashunin</td><td>TPAMI 2020</td></tr><tr><td>DiskANN</td><td><a href="https://proceedings.neurips.cc/paper_files/paper/2019/hash/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Abstract.html">DiskANN: Fast Accurate Billion-point Nearest Neighbor Search</a> — Subramanya et al.</td><td>NeurIPS 2019</td></tr><tr><td>FAISS (IVF)</td><td><a href="https://arxiv.org/abs/1702.08734">Billion-scale similarity search with GPUs</a> — Johnson, Douze, Jégou</td><td>IEEE 2021</td></tr></tbody></table>
+<h3 id="벤치마크">벤치마크</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>자료</th><th>내용</th></tr></thead><tbody><tr><td><a href="https://ann-benchmarks.com/">ANN-Benchmarks</a></td><td>HNSW·IVF·FLAT 알고리즘별 Recall–Latency 실측 비교</td></tr><tr><td><a href="https://huggingface.co/spaces/mteb/leaderboard">MTEB Leaderboard</a></td><td>임베딩 모델 다국어 성능 순위 (한국어 포함)</td></tr></tbody></table>
+<h3 id="공식-문서">공식 문서</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>항목</th><th>링크</th></tr></thead><tbody><tr><td>OpenAI Embeddings API</td><td><a href="https://platform.openai.com/docs/guides/embeddings">platform.openai.com/docs/guides/embeddings</a></td></tr><tr><td>BGE-M3 (BAAI)</td><td><a href="https://huggingface.co/BAAI/bge-m3">huggingface.co/BAAI/bge-m3</a></td></tr><tr><td>KoSimCSE-roberta</td><td><a href="https://huggingface.co/BM-K/KoSimCSE-roberta">huggingface.co/BM-K/KoSimCSE-roberta</a></td></tr><tr><td>pgvector (HNSW)</td><td><a href="https://github.com/pgvector/pgvector">github.com/pgvector/pgvector</a></td></tr><tr><td>Qdrant 인덱스 문서</td><td><a href="https://qdrant.tech/documentation/manage-data/indexing/">qdrant.tech/documentation</a></td></tr><tr><td>Weaviate Vector Index</td><td><a href="https://docs.weaviate.io/weaviate/concepts/vector-index">docs.weaviate.io</a></td></tr><tr><td>FAISS (Meta)</td><td><a href="https://github.com/facebookresearch/faiss">github.com/facebookresearch/faiss</a></td></tr><tr><td>DiskANN (Microsoft)</td><td><a href="https://github.com/microsoft/DiskANN">github.com/microsoft/DiskANN</a></td></tr><tr><td>Azure AI Search (DiskANN)</td><td><a href="https://learn.microsoft.com/en-us/azure/search/vector-search-overview">learn.microsoft.com/azure/search/vector-search-overview</a></td></tr></tbody></table>  </div> </article> </main> <!-- 댓글 & 좋아요 (Giscus — GitHub Discussions 기반) --> <!-- 설정 방법: https://giscus.app 에서 tall190/liber 입력 후 REPO_ID, CATEGORY_ID 교체 --> <div class="comments-section" data-astro-cid-bvzihdzo> <h3 data-astro-cid-bvzihdzo>댓글</h3> <script>
+				(function() {
+					var isDark = document.documentElement.classList.contains('dark');
+					var s = document.createElement('script');
+					s.src = 'https://giscus.app/client.js';
+					s.setAttribute('data-repo', 'tall190/liber');
+					s.setAttribute('data-repo-id', 'R_kgDOSIJHDw');
+					s.setAttribute('data-category', 'Announcements');
+					s.setAttribute('data-category-id', 'DIC_kwDOSIJHD84C7Uy6');
+					s.setAttribute('data-mapping', 'pathname');
+					s.setAttribute('data-strict', '0');
+					s.setAttribute('data-reactions-enabled', '1');
+					s.setAttribute('data-emit-metadata', '0');
+					s.setAttribute('data-input-position', 'bottom');
+					s.setAttribute('data-theme', isDark ? 'dark' : 'light');
+					s.setAttribute('data-lang', 'ko');
+					s.setAttribute('crossorigin', 'anonymous');
+					s.async = true;
+					document.currentScript.parentElement.appendChild(s);
+				})();
+			</script> </div> <footer data-astro-cid-sz7xmlte>
+&copy; 2026 Liber. All rights reserved.
+</footer> </body></html>

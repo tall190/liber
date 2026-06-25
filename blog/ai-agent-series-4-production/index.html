@@ -1,0 +1,265 @@
+<!DOCTYPE html><html lang="ko" data-astro-cid-bvzihdzo> <head><!-- Dark mode: apply before render to prevent flash --><script>
+	(function() {
+		const theme = localStorage.getItem('theme');
+		if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark');
+		}
+	})();
+</script> <!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="/liber/favicon.png"><link rel="icon" type="image/svg+xml" href="/liber/favicon.svg"><link rel="icon" href="/liber/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Liber" href="https://tall190.github.io/rss.xml"><meta name="generator" content="Astro v6.1.8"><style>@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/fd137eb932fcc611.woff") format("woff");font-display:swap;font-weight:400;font-style:normal;}@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/5c86995be98976a1.woff") format("woff");font-display:swap;font-weight:700;font-style:normal;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}:root{--font-atkinson:Atkinson-c7f4c4e8b285552f,"Atkinson-c7f4c4e8b285552f fallback: Arial",sans-serif;}</style><link rel="preload" href="/liber/_astro/fonts/fd137eb932fcc611.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/liber/_astro/fonts/5c86995be98976a1.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://tall190.github.io/liber/blog/ai-agent-series-4-production/"><!-- Primary Meta Tags --><title>Agent를 Production으로 보내기: Observability, 비용, 안정성, 보안</title><meta name="title" content="Agent를 Production으로 보내기: Observability, 비용, 안정성, 보안"><meta name="description" content="로컬에서 잘 돌던 에이전트가 프로덕션에서 무너지는 이유. Observability 도구 비교, 비용 50~80% 절감 방법, Retry/Timeout/Fallback 패턴, Prompt Injection 방어까지 실무 체크리스트로 정리했어요."><meta name="author" content="Liber"><meta name="keywords" content="AI, Agent, Production, Observability, 비용최적화, 보안"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://tall190.github.io/liber/blog/ai-agent-series-4-production/"><meta property="og:title" content="Agent를 Production으로 보내기: Observability, 비용, 안정성, 보안"><meta property="og:description" content="로컬에서 잘 돌던 에이전트가 프로덕션에서 무너지는 이유. Observability 도구 비교, 비용 50~80% 절감 방법, Retry/Timeout/Fallback 패턴, Prompt Injection 방어까지 실무 체크리스트로 정리했어요."><meta property="og:image" content="https://tall190.github.io/liber/_astro/ai-agent-series-4-production_hero_image.CM88HxHG.png"><meta property="og:locale" content="ko_KR"><meta property="article:published_time" content="2026-05-24T00:00:00.000Z"><meta property="article:tag" content="AI"><meta property="article:tag" content="Agent"><meta property="article:tag" content="Production"><meta property="article:tag" content="Observability"><meta property="article:tag" content="비용최적화"><meta property="article:tag" content="보안"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://tall190.github.io/liber/blog/ai-agent-series-4-production/"><meta property="twitter:title" content="Agent를 Production으로 보내기: Observability, 비용, 안정성, 보안"><meta property="twitter:description" content="로컬에서 잘 돌던 에이전트가 프로덕션에서 무너지는 이유. Observability 도구 비교, 비용 50~80% 절감 방법, Retry/Timeout/Fallback 패턴, Prompt Injection 방어까지 실무 체크리스트로 정리했어요."><meta property="twitter:image" content="https://tall190.github.io/liber/_astro/ai-agent-series-4-production_hero_image.CM88HxHG.png"><!-- Theme toggle script --><script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const toggle = document.getElementById('theme-toggle');
+		if (!toggle) return;
+		toggle.addEventListener('click', function() {
+			const isDark = document.documentElement.classList.toggle('dark');
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
+			// Sync Giscus theme
+			const giscus = document.querySelector('iframe.giscus-frame');
+			if (giscus) {
+				giscus.contentWindow.postMessage(
+					{ giscus: { setConfig: { theme: isDark ? 'dark' : 'light' } } },
+					'https://giscus.app'
+				);
+			}
+		});
+	});
+</script><!-- Schema.org JSON-LD: AI가 이 글을 구조화된 데이터로 읽을 수 있어요 --><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Agent를 Production으로 보내기: Observability, 비용, 안정성, 보안","description":"로컬에서 잘 돌던 에이전트가 프로덕션에서 무너지는 이유. Observability 도구 비교, 비용 50~80% 절감 방법, Retry/Timeout/Fallback 패턴, Prompt Injection 방어까지 실무 체크리스트로 정리했어요.","datePublished":"2026-05-24T00:00:00.000Z","dateModified":"2026-05-24T00:00:00.000Z","url":"https://tall190.github.io/liber/blog/ai-agent-series-4-production/","inLanguage":"ko-KR","mainEntityOfPage":{"@type":"WebPage","@id":"https://tall190.github.io/liber/blog/ai-agent-series-4-production/"},"author":{"@type":"Person","name":"Jayden","url":"https://tall190.github.io/liber/about/","sameAs":["https://github.com/tall190"]},"publisher":{"@type":"Organization","name":"Liber","url":"https://tall190.github.io/liber","logo":{"@type":"ImageObject","url":"https://tall190.github.io/liber/favicon.png"}},"keywords":"AI, Agent, Production, Observability, 비용최적화, 보안","image":"https://tall190.github.io/liber/_astro/ai-agent-series-4-production_hero_image.CM88HxHG.png"}</script><style>:root{--accent: #2337ff;--accent-dark: #000d8a;--black: 15, 18, 25;--gray: 96, 115, 159;--gray-light: 229, 233, 240;--gray-dark: 34, 41, 57;--gray-gradient: rgba(var(--gray-light), 50%), #fff;--box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);--bg: #fff;--bg-secondary: #f9fafb;--header-bg: white;--code-bg: rgb(var(--gray-light));color-scheme:light}:root.dark{--accent: #6b7cff;--accent-dark: #8b9aff;--black: 230, 230, 230;--gray: 155, 165, 190;--gray-light: 50, 55, 65;--gray-dark: 210, 215, 225;--gray-gradient: rgba(var(--gray-light), 50%), #1a1a2e;--box-shadow: 0 2px 6px rgba(0, 0, 0, 40%), 0 8px 24px rgba(0, 0, 0, 50%), 0 16px 32px rgba(0, 0, 0, 50%);--bg: #1a1a2e;--bg-secondary: #16162a;--header-bg: #16162a;--code-bg: rgba(var(--gray-light), .6);color-scheme:dark}body{font-family:var(--font-atkinson);margin:0;padding:0;text-align:left;background:var(--bg);background-image:linear-gradient(var(--gray-gradient));background-repeat:no-repeat;background-size:100% 600px;word-wrap:break-word;overflow-wrap:break-word;color:rgb(var(--gray-dark));font-size:20px;line-height:1.7;transition:background-color .3s,color .3s}main{width:720px;max-width:calc(100% - 2em);margin:auto;padding:3em 1em}h1,h2,h3,h4,h5,h6{margin:0 0 .5rem;color:rgb(var(--black));line-height:1.2}h1{font-size:3.052em}h2{font-size:2.441em}h3{font-size:1.953em}h4{font-size:1.563em}h5{font-size:1.25em}strong,b{font-weight:700}a,a:hover{color:var(--accent)}p{margin-bottom:1em}.prose p{margin-bottom:2em}.prose p:has(>img){margin-top:.5em;margin-bottom:.5em}textarea{width:100%;font-size:16px}input{font-size:16px}table{width:100%}img{max-width:100%;height:auto;border-radius:8px}code{padding:2px 5px;background-color:var(--code-bg);border-radius:2px}pre{padding:1.5em;border-radius:8px;overflow-x:auto;max-width:100%;font-size:15px}pre>code{all:unset}blockquote{border-left:4px solid var(--accent);padding:0 0 0 20px;margin:0;font-size:1.333em}hr{border:none;border-top:1px solid rgb(var(--gray-light))}@media(max-width:720px){body{font-size:18px}main{padding:1em}}.sr-only{border:0;padding:0;margin:0;position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px 1px 1px 1px);clip:rect(1px,1px,1px,1px);clip-path:inset(50%);white-space:nowrap}.prose p>em:only-child{display:block;font-size:.85em;color:rgb(var(--gray));margin-top:-.3em;margin-bottom:1.5em;text-align:center}footer[data-astro-cid-sz7xmlte]{padding:2em 1em 6em;background:linear-gradient(var(--gray-gradient)) no-repeat;color:rgb(var(--gray));text-align:center;transition:background-color .3s,color .3s}a[data-astro-cid-eimmu3lg]{display:inline-block;text-decoration:none}a[data-astro-cid-eimmu3lg].active{font-weight:bolder;text-decoration:underline}header[data-astro-cid-3ef6ksr2]{margin:0;padding:0 1em;background:var(--header-bg);box-shadow:0 2px 8px rgba(var(--black),5%);transition:background-color .3s}h2[data-astro-cid-3ef6ksr2]{margin:0;font-size:1em}h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2],h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none}nav[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;justify-content:space-between}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{padding:1em .5em;color:var(--black);border-bottom:4px solid transparent;text-decoration:none}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none;border-bottom-color:var(--accent)}.theme-toggle[data-astro-cid-3ef6ksr2]{background:none;border:none;cursor:pointer;padding:.5em;color:rgb(var(--black));display:flex;align-items:center;transition:color .3s}.theme-toggle[data-astro-cid-3ef6ksr2]:hover{color:var(--accent)}.dark .icon-sun[data-astro-cid-3ef6ksr2]{display:inline}.dark .icon-moon[data-astro-cid-3ef6ksr2],.icon-sun[data-astro-cid-3ef6ksr2]{display:none}.icon-moon[data-astro-cid-3ef6ksr2]{display:inline}
+main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.post-meta[data-astro-cid-bvzihdzo]{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:.5rem;flex-wrap:wrap}.hits-badge[data-astro-cid-bvzihdzo]{display:inline-flex;align-items:center}.hits-badge[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{height:20px;border-radius:4px}.post-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.8rem}.tag[data-astro-cid-bvzihdzo]{display:inline-block;font-size:.75rem;font-weight:600;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--accent));color:#fff;text-decoration:none;letter-spacing:.02em}.tag[data-astro-cid-bvzihdzo]:hover{background:var(--accent-dark)}.comments-section[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:3rem auto 2rem;padding:0 1em;border-top:1px solid rgb(var(--gray-light));padding-top:2rem}.comments-section[data-astro-cid-bvzihdzo] h3[data-astro-cid-bvzihdzo]{font-size:1.1rem;color:rgb(var(--gray-dark));margin-bottom:1.5rem}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/liber/" data-astro-cid-3ef6ksr2><img src="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp" srcset="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp 1x, /liber/_astro/liber-logo.DqNb0q2U_Z1NhCXk.webp 2x, /liber/_astro/liber-logo.DqNb0q2U_16RKps.webp 3x" alt="Liber" data-astro-cid-3ef6ksr2="true" loading="lazy" decoding="async" width="121" height="40"></a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/liber/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Home </a> <a href="/liber/blog/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Blog </a> <a href="/liber/about/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> About </a> <button class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환" data-astro-cid-3ef6ksr2> <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle><line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line><line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line><line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line><line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line></svg> <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path></svg> </button> </div> </nav> </header> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo> <img src="/liber/_astro/ai-agent-series-4-production_hero_image.CM88HxHG_Z17n9NA.webp" alt data-astro-cid-bvzihdzo="true" loading="lazy" decoding="async" width="1020" height="510"> </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-05-24T00:00:00.000Z"> May 24, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>Agent를 Production으로 보내기: Observability, 비용, 안정성, 보안</h1> <div class="post-meta" data-astro-cid-bvzihdzo> <span class="hits-badge" data-astro-cid-bvzihdzo> <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Ftall190.github.io%2Fliber%2Fblog%2Fai-agent-series-4-production%2F&#38;label=views&#38;labelColor=%23374151&#38;countColor=%236366f1&#38;style=flat" alt="조회수" loading="eager" data-astro-cid-bvzihdzo> </span> </div> <div class="post-tags" data-astro-cid-bvzihdzo> <a class="tag" href="/liber/blog/tags/AI/" data-astro-cid-bvzihdzo>AI</a><a class="tag" href="/liber/blog/tags/Agent/" data-astro-cid-bvzihdzo>Agent</a><a class="tag" href="/liber/blog/tags/Production/" data-astro-cid-bvzihdzo>Production</a><a class="tag" href="/liber/blog/tags/Observability/" data-astro-cid-bvzihdzo>Observability</a><a class="tag" href="/liber/blog/tags/비용최적화/" data-astro-cid-bvzihdzo>비용최적화</a><a class="tag" href="/liber/blog/tags/보안/" data-astro-cid-bvzihdzo>보안</a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>로컬에서 잘 돌던 에이전트가 프로덕션에 올라가면 달라지기 시작해요. 비용이 예상보다 빨리 나가고, 특정 입력에서 무한 루프가 생기고, 어떤 Tool이 실패했는지 추적이 안 되죠.</p>
+<p>이 글에서는 Agent를 프로덕션에 안정적으로 운영하기 위해 필요한 것들을 다뤄요. Observability, 비용 관리, 안정성, 보안 순서로 살펴볼게요.</p>
+<h2 id="observability-에이전트-내부를-보는-법">Observability: 에이전트 내부를 보는 법</h2>
+<p>LLM 앱과 Agent의 Observability는 달라요. API 응답 시간이나 에러율만으로는 부족해요. “어떤 Tool을 몇 번 호출했는가”, “어디서 루프가 돌았는가”, “어떤 프롬프트에서 비용이 튀었는가”까지 봐야 해요.</p>
+<h3 id="주요-도구-비교">주요 도구 비교</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>도구</th><th>강점</th><th>약점</th><th>적합한 상황</th></tr></thead><tbody><tr><td>LangSmith</td><td>LangGraph 네이티브, 에이전트 트리 시각화</td><td>LangChain 의존, 이식성 낮음</td><td>LangGraph 전용 팀</td></tr><tr><td>Arize Phoenix</td><td>OTEL 표준, RAG 평가 최고 수준, 완전 self-hostable</td><td>—</td><td>엔터프라이즈, 혼합 ML/LLM</td></tr><tr><td>W&#x26;B Weave</td><td>ML 실험 + 프로덕션 연계, 프롬프트 버전 관리</td><td>per-seat 가격</td><td>연구 집약적 팀</td></tr><tr><td>Langfuse</td><td>오픈소스, 경량, 자가 호스팅</td><td>일부 기능 제한</td><td>소규모 팀, 비용 민감</td></tr></tbody></table>
+<p>프레임워크를 자유롭게 바꿀 가능성이 있다면 OpenTelemetry를 기본으로 지원하는 Phoenix나 Langfuse를 선택하는 게 유리해요. LangSmith는 LangGraph 생태계를 벗어나면 전체 재계측이 필요해요.</p>
+<h3 id="직접-계측-opentelemetry">직접 계측: OpenTelemetry</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> opentelemetry </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> trace</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">tracer </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> trace.get_tracer(</span><span style="color:#9ECBFF">"agent"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> run_agent</span><span style="color:#E1E4E8">(user_message: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">) -> </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">    with</span><span style="color:#E1E4E8"> tracer.start_as_current_span(</span><span style="color:#9ECBFF">"agent_run"</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> span:</span></span>
+<span class="line"><span style="color:#E1E4E8">        span.set_attribute(</span><span style="color:#9ECBFF">"user.message"</span><span style="color:#E1E4E8">, user_message)</span></span>
+<span class="line"><span style="color:#E1E4E8">        iteration </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        while</span><span style="color:#79B8FF"> True</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">            with</span><span style="color:#E1E4E8"> tracer.start_as_current_span(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"llm_call_</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">iteration</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> llm_span:</span></span>
+<span class="line"><span style="color:#E1E4E8">                response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> client.messages.create(</span><span style="color:#79B8FF">...</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">                llm_span.set_attribute(</span><span style="color:#9ECBFF">"tokens.input"</span><span style="color:#E1E4E8">, response.usage.input_tokens)</span></span>
+<span class="line"><span style="color:#E1E4E8">                llm_span.set_attribute(</span><span style="color:#9ECBFF">"tokens.output"</span><span style="color:#E1E4E8">, response.usage.output_tokens)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#E1E4E8"> response.stop_reason </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> "tool_use"</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">                tool_block </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> next</span><span style="color:#E1E4E8">(b </span><span style="color:#F97583">for</span><span style="color:#E1E4E8"> b </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> response.content </span><span style="color:#F97583">if</span><span style="color:#E1E4E8"> b.type </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> "tool_use"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">                with</span><span style="color:#E1E4E8"> tracer.start_as_current_span(</span><span style="color:#9ECBFF">"tool_execution"</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> tool_span:</span></span>
+<span class="line"><span style="color:#E1E4E8">                    tool_span.set_attribute(</span><span style="color:#9ECBFF">"tool.name"</span><span style="color:#E1E4E8">, tool_block.name)</span></span>
+<span class="line"><span style="color:#E1E4E8">                    result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> execute_tool(tool_block.name, tool_block.input)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">            iteration </span><span style="color:#F97583">+=</span><span style="color:#79B8FF"> 1</span></span></code></pre>
+<p>이렇게 하면 LLM 호출 횟수, Tool 실행 소요 시간, 어느 지점에서 실패했는지 추적할 수 있어요.</p>
+<h2 id="비용-관리-예산을-지키는-법">비용 관리: 예산을 지키는 법</h2>
+<p>체계적으로 최적화하면 50~80% 절감이 가능해요. 우선순위 순서로 적용할 방법들이에요.</p>
+<h3 id="1-모델-라우팅">1. 모델 라우팅</h3>
+<p>태스크 복잡도에 따라 모델을 나눠요. claude-sonnet-4-6과 claude-haiku-4-5 간 비용 차이는 약 15배예요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> select_model</span><span style="color:#E1E4E8">(task: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">) -> </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    simple_patterns </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"요약"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"번역"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"형식 변환"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"분류"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#79B8FF"> any</span><span style="color:#E1E4E8">(p </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> task </span><span style="color:#F97583">for</span><span style="color:#E1E4E8"> p </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> simple_patterns):</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#9ECBFF"> "claude-haiku-4-5-20251001"</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#9ECBFF"> "claude-sonnet-4-6"</span></span></code></pre>
+<p>Multi-agent 구조에서는 Sub-agent에 Haiku를, Orchestrator에 Sonnet을 배치하는 게 기본 패턴이에요.</p>
+<h3 id="2-프롬프트-캐싱">2. 프롬프트 캐싱</h3>
+<p>반복되는 시스템 프롬프트를 캐싱하면 반복 호출 비용을 크게 줄일 수 있어요. Anthropic Prompt Caching은 캐시된 토큰을 표준의 10% 가격으로 제공해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#E1E4E8">response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> client.messages.create(</span></span>
+<span class="line"><span style="color:#FFAB70">    model</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"claude-sonnet-4-6"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    max_tokens</span><span style="color:#F97583">=</span><span style="color:#79B8FF">1024</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    system</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#9ECBFF">            "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            "text"</span><span style="color:#E1E4E8">: long_system_prompt,</span></span>
+<span class="line"><span style="color:#9ECBFF">            "cache_control"</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"ephemeral"</span><span style="color:#E1E4E8">}  </span><span style="color:#6A737D"># 캐시 활성화</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#FFAB70">    messages</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">messages</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre>
+<p>같은 시스템 프롬프트로 반복 호출할 때, 첫 호출 이후 캐시가 적중되면 비용이 90% 줄어요.</p>
+<h3 id="3-예산-한도">3. 예산 한도</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#79B8FF">MAX_ITERATIONS</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 15</span></span>
+<span class="line"><span style="color:#79B8FF">TOKEN_BUDGET</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 50000</span></span>
+<span class="line"><span style="color:#E1E4E8">token_used </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> _ </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> range</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">MAX_ITERATIONS</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> client.messages.create(</span><span style="color:#79B8FF">...</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    token_used </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> response.usage.input_tokens </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> response.usage.output_tokens</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> token_used </span><span style="color:#F97583">></span><span style="color:#79B8FF"> TOKEN_BUDGET</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#9ECBFF"> "토큰 예산 초과. 작업 중단."</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> response.stop_reason </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> "end_turn"</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        break</span></span></code></pre>
+<h2 id="안정성-실패에-강한-에이전트">안정성: 실패에 강한 에이전트</h2>
+<h3 id="retry-with-exponential-backoff">Retry with Exponential Backoff</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> time</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> random</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> call_with_retry</span><span style="color:#E1E4E8">(func, max_retries</span><span style="color:#F97583">=</span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">, base_delay</span><span style="color:#F97583">=</span><span style="color:#79B8FF">1.0</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> attempt </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> range</span><span style="color:#E1E4E8">(max_retries):</span></span>
+<span class="line"><span style="color:#F97583">        try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#E1E4E8"> func()</span></span>
+<span class="line"><span style="color:#F97583">        except</span><span style="color:#E1E4E8"> anthropic.RateLimitError:</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#E1E4E8"> attempt </span><span style="color:#F97583">==</span><span style="color:#E1E4E8"> max_retries </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">                raise</span></span>
+<span class="line"><span style="color:#E1E4E8">            delay </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> base_delay </span><span style="color:#F97583">*</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">2</span><span style="color:#F97583"> **</span><span style="color:#E1E4E8"> attempt) </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> random.uniform(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">            time.sleep(delay)</span></span>
+<span class="line"><span style="color:#F97583">        except</span><span style="color:#E1E4E8"> anthropic.APIError </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#E1E4E8"> e.status_code </span><span style="color:#F97583">>=</span><span style="color:#79B8FF"> 500</span><span style="color:#F97583"> and</span><span style="color:#E1E4E8"> attempt </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> max_retries </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">                time.sleep(base_delay </span><span style="color:#F97583">*</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">2</span><span style="color:#F97583"> **</span><span style="color:#E1E4E8"> attempt))</span></span>
+<span class="line"><span style="color:#F97583">            else</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">                raise</span></span></code></pre>
+<p>LangGraph v1.1부터는 이 retry middleware가 프레임워크 수준에서 내장됐어요.</p>
+<h3 id="tool-timeout">Tool Timeout</h3>
+<p>Tool이 응답하지 않으면 에이전트 전체가 멈춰요. 각 Tool 호출에 타임아웃을 걸어요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> signal</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> contextlib </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> contextmanager</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@contextmanager</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> timeout</span><span style="color:#E1E4E8">(seconds):</span></span>
+<span class="line"><span style="color:#F97583">    def</span><span style="color:#B392F0"> handler</span><span style="color:#E1E4E8">(signum, frame):</span></span>
+<span class="line"><span style="color:#F97583">        raise</span><span style="color:#79B8FF"> TimeoutError</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">seconds</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">초 초과"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    signal.signal(signal.</span><span style="color:#79B8FF">SIGALRM</span><span style="color:#E1E4E8">, handler)</span></span>
+<span class="line"><span style="color:#E1E4E8">    signal.alarm(seconds)</span></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        yield</span></span>
+<span class="line"><span style="color:#F97583">    finally</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        signal.alarm(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> execute_tool_safe</span><span style="color:#E1E4E8">(name, inputs):</span></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        with</span><span style="color:#E1E4E8"> timeout(</span><span style="color:#79B8FF">30</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#E1E4E8"> execute_tool(name, inputs)</span></span>
+<span class="line"><span style="color:#F97583">    except</span><span style="color:#79B8FF"> TimeoutError</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">"error"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"도구 실행 시간 초과 (30초)"</span><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="fallback-전략">Fallback 전략</h3>
+<p>주요 경로가 실패했을 때 대안을 준비해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> get_data</span><span style="color:#E1E4E8">(query: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">) -> </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> fetch_from_api(query)         </span><span style="color:#6A737D"># 1차: 실시간 API</span></span>
+<span class="line"><span style="color:#F97583">    except</span><span style="color:#E1E4E8"> APIError:</span></span>
+<span class="line"><span style="color:#F97583">        try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#E1E4E8"> fetch_from_cache(query)   </span><span style="color:#6A737D"># 2차: 캐시</span></span>
+<span class="line"><span style="color:#F97583">        except</span><span style="color:#E1E4E8"> CacheError:</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">"데이터 조회 실패. 가능한 대안: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">suggest_alternatives(query)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">"</span></span></code></pre>
+<h2 id="보안">보안</h2>
+<h3 id="prompt-injection-방어">Prompt Injection 방어</h3>
+<p>악의적인 사용자가 에이전트를 통해 의도하지 않은 행동을 유발할 수 있어요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#79B8FF">DANGEROUS_PATTERNS</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#9ECBFF">    "ignore previous instructions"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "system:"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "&#x3C;|im_start|>"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "IGNORE ALL PREVIOUS"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> validate_input</span><span style="color:#E1E4E8">(user_input: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">) -> </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> pattern </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> DANGEROUS_PATTERNS</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> pattern.lower() </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> user_input.lower():</span></span>
+<span class="line"><span style="color:#F97583">            raise</span><span style="color:#79B8FF"> ValueError</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"의심스러운 입력 감지"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> user_input</span></span></code></pre>
+<p>더 강력한 방법은 별도의 LLM으로 입력을 검증하는 거예요 (LLM-as-judge).</p>
+<h3 id="권한-최소화">권한 최소화</h3>
+<p>에이전트에 꼭 필요한 Tool만 제공해요. 파일 읽기만 필요한 에이전트에 쓰기 권한 Tool을 주지 마요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># 나쁜 예: 모든 Tool을 하나의 에이전트에</span></span>
+<span class="line"><span style="color:#E1E4E8">agent </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Agent(</span><span style="color:#FFAB70">tools</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[read_file, write_file, delete_file, execute_code])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 좋은 예: 역할에 맞는 Tool만</span></span>
+<span class="line"><span style="color:#E1E4E8">read_agent </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Agent(</span><span style="color:#FFAB70">tools</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[read_file, search_web])   </span><span style="color:#6A737D"># 읽기 전용</span></span>
+<span class="line"><span style="color:#E1E4E8">write_agent </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Agent(</span><span style="color:#FFAB70">tools</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[write_file])              </span><span style="color:#6A737D"># 별도 격리</span></span></code></pre>
+<h3 id="중요-행동에-human-in-the-loop">중요 행동에 Human-in-the-loop</h3>
+<p>파일 삭제, 결제, 이메일 발송처럼 되돌리기 어려운 행동 전에 사람의 확인을 받아요. LangGraph의 <code>interrupt</code> 메커니즘이나 Strands의 Human Interruption API를 쓰면 이 패턴을 체계적으로 구현할 수 있어요.</p>
+<h2 id="프로덕션-배포-전-체크리스트">프로덕션 배포 전 체크리스트</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Observability</span></span>
+<span class="line"><span>□ 모든 LLM 호출에 트레이싱 적용</span></span>
+<span class="line"><span>□ Tool 호출 성공/실패 로깅</span></span>
+<span class="line"><span>□ 토큰 사용량 모니터링</span></span>
+<span class="line"><span>□ 비용 이상 알림 설정</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>비용</span></span>
+<span class="line"><span>□ 모델 라우팅 (복잡도별 모델 분리)</span></span>
+<span class="line"><span>□ 프롬프트 캐싱 활성화</span></span>
+<span class="line"><span>□ 최대 반복 횟수 및 토큰 예산 설정</span></span>
+<span class="line"><span>□ 컨텍스트 압축 로직 구현</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>안정성</span></span>
+<span class="line"><span>□ API 호출 Retry + Exponential Backoff</span></span>
+<span class="line"><span>□ 모든 Tool에 Timeout 설정</span></span>
+<span class="line"><span>□ Fallback 경로 정의</span></span>
+<span class="line"><span>□ 최대 실행 시간 제한</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>보안</span></span>
+<span class="line"><span>□ 사용자 입력 검증 (Prompt Injection 방어)</span></span>
+<span class="line"><span>□ Tool 권한 최소화</span></span>
+<span class="line"><span>□ 중요 행동에 Human approval 추가</span></span>
+<span class="line"><span>□ API 키 환경변수 관리 (코드 하드코딩 금지)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>테스트</span></span>
+<span class="line"><span>□ 정상 케이스 E2E 테스트</span></span>
+<span class="line"><span>□ Tool 실패 시 동작 검증</span></span>
+<span class="line"><span>□ 컨텍스트 한계 근처 동작 확인</span></span>
+<span class="line"><span>□ 악의적 입력에 대한 동작 확인</span></span></code></pre>
+<h2 id="정리">정리</h2>
+<p>프로덕션 에이전트 운영은 기능 구현보다 운영 인프라가 더 어려운 경우가 많아요.</p>
+<p>Observability 없이 배포하면 뭔가 이상해도 어디서 문제가 생겼는지 알 수 없어요. 비용 제어 없이 배포하면 예산이 갑자기 터져요. 보안 없이 배포하면 공격 벡터가 생겨요.</p>
+<p>이 시리즈를 통해 Agent의 개념부터 프레임워크 선택, 실제 구현, 프로덕션 운영까지 한 사이클을 돌아봤어요. 시작은 작게 — 도구 하나, 루프 하나부터예요.</p>  </div> </article> </main> <!-- 댓글 & 좋아요 (Giscus — GitHub Discussions 기반) --> <!-- 설정 방법: https://giscus.app 에서 tall190/liber 입력 후 REPO_ID, CATEGORY_ID 교체 --> <div class="comments-section" data-astro-cid-bvzihdzo> <h3 data-astro-cid-bvzihdzo>댓글</h3> <script>
+				(function() {
+					var isDark = document.documentElement.classList.contains('dark');
+					var s = document.createElement('script');
+					s.src = 'https://giscus.app/client.js';
+					s.setAttribute('data-repo', 'tall190/liber');
+					s.setAttribute('data-repo-id', 'R_kgDOSIJHDw');
+					s.setAttribute('data-category', 'Announcements');
+					s.setAttribute('data-category-id', 'DIC_kwDOSIJHD84C7Uy6');
+					s.setAttribute('data-mapping', 'pathname');
+					s.setAttribute('data-strict', '0');
+					s.setAttribute('data-reactions-enabled', '1');
+					s.setAttribute('data-emit-metadata', '0');
+					s.setAttribute('data-input-position', 'bottom');
+					s.setAttribute('data-theme', isDark ? 'dark' : 'light');
+					s.setAttribute('data-lang', 'ko');
+					s.setAttribute('crossorigin', 'anonymous');
+					s.async = true;
+					document.currentScript.parentElement.appendChild(s);
+				})();
+			</script> </div> <footer data-astro-cid-sz7xmlte>
+&copy; 2026 Liber. All rights reserved.
+</footer> </body></html>

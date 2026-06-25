@@ -1,0 +1,393 @@
+<!DOCTYPE html><html lang="ko" data-astro-cid-bvzihdzo> <head><!-- Dark mode: apply before render to prevent flash --><script>
+	(function() {
+		const theme = localStorage.getItem('theme');
+		if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark');
+		}
+	})();
+</script> <!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="/liber/favicon.png"><link rel="icon" type="image/svg+xml" href="/liber/favicon.svg"><link rel="icon" href="/liber/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Liber" href="https://tall190.github.io/rss.xml"><meta name="generator" content="Astro v6.1.8"><style>@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/fd137eb932fcc611.woff") format("woff");font-display:swap;font-weight:400;font-style:normal;}@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/5c86995be98976a1.woff") format("woff");font-display:swap;font-weight:700;font-style:normal;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}:root{--font-atkinson:Atkinson-c7f4c4e8b285552f,"Atkinson-c7f4c4e8b285552f fallback: Arial",sans-serif;}</style><link rel="preload" href="/liber/_astro/fonts/fd137eb932fcc611.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/liber/_astro/fonts/5c86995be98976a1.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://tall190.github.io/liber/blog/prompt-engineering-bible/"><!-- Primary Meta Tags --><title>프롬프트 엔지니어링 바이블: 기본 설계부터 할루시네이션 방지까지</title><meta name="title" content="프롬프트 엔지니어링 바이블: 기본 설계부터 할루시네이션 방지까지"><meta name="description" content="프롬프트는 코드예요. 설계 원칙, 모델별 최적화, 비용 vs 성능 트레이드오프, 그리고 AI 서비스에서 가장 치명적인 할루시네이션을 막는 8가지 기법까지. 소개글이 아닌 실전 레퍼런스로 만들었어요."><meta name="author" content="Liber"><meta name="keywords" content="AI, Prompt Engineering, LLM, 할루시네이션, 실무"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://tall190.github.io/liber/blog/prompt-engineering-bible/"><meta property="og:title" content="프롬프트 엔지니어링 바이블: 기본 설계부터 할루시네이션 방지까지"><meta property="og:description" content="프롬프트는 코드예요. 설계 원칙, 모델별 최적화, 비용 vs 성능 트레이드오프, 그리고 AI 서비스에서 가장 치명적인 할루시네이션을 막는 8가지 기법까지. 소개글이 아닌 실전 레퍼런스로 만들었어요."><meta property="og:image" content="https://tall190.github.io/liber/_astro/prompt-engineering-bible_hero_image.BZZMCd8n.png"><meta property="og:locale" content="ko_KR"><meta property="article:published_time" content="2026-06-10T00:00:00.000Z"><meta property="article:tag" content="AI"><meta property="article:tag" content="Prompt Engineering"><meta property="article:tag" content="LLM"><meta property="article:tag" content="할루시네이션"><meta property="article:tag" content="실무"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://tall190.github.io/liber/blog/prompt-engineering-bible/"><meta property="twitter:title" content="프롬프트 엔지니어링 바이블: 기본 설계부터 할루시네이션 방지까지"><meta property="twitter:description" content="프롬프트는 코드예요. 설계 원칙, 모델별 최적화, 비용 vs 성능 트레이드오프, 그리고 AI 서비스에서 가장 치명적인 할루시네이션을 막는 8가지 기법까지. 소개글이 아닌 실전 레퍼런스로 만들었어요."><meta property="twitter:image" content="https://tall190.github.io/liber/_astro/prompt-engineering-bible_hero_image.BZZMCd8n.png"><!-- Theme toggle script --><script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const toggle = document.getElementById('theme-toggle');
+		if (!toggle) return;
+		toggle.addEventListener('click', function() {
+			const isDark = document.documentElement.classList.toggle('dark');
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
+			// Sync Giscus theme
+			const giscus = document.querySelector('iframe.giscus-frame');
+			if (giscus) {
+				giscus.contentWindow.postMessage(
+					{ giscus: { setConfig: { theme: isDark ? 'dark' : 'light' } } },
+					'https://giscus.app'
+				);
+			}
+		});
+	});
+</script><!-- Schema.org JSON-LD: AI가 이 글을 구조화된 데이터로 읽을 수 있어요 --><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"프롬프트 엔지니어링 바이블: 기본 설계부터 할루시네이션 방지까지","description":"프롬프트는 코드예요. 설계 원칙, 모델별 최적화, 비용 vs 성능 트레이드오프, 그리고 AI 서비스에서 가장 치명적인 할루시네이션을 막는 8가지 기법까지. 소개글이 아닌 실전 레퍼런스로 만들었어요.","datePublished":"2026-06-10T00:00:00.000Z","dateModified":"2026-06-10T00:00:00.000Z","url":"https://tall190.github.io/liber/blog/prompt-engineering-bible/","inLanguage":"ko-KR","mainEntityOfPage":{"@type":"WebPage","@id":"https://tall190.github.io/liber/blog/prompt-engineering-bible/"},"author":{"@type":"Person","name":"Jayden","url":"https://tall190.github.io/liber/about/","sameAs":["https://github.com/tall190"]},"publisher":{"@type":"Organization","name":"Liber","url":"https://tall190.github.io/liber","logo":{"@type":"ImageObject","url":"https://tall190.github.io/liber/favicon.png"}},"keywords":"AI, Prompt Engineering, LLM, 할루시네이션, 실무","image":"https://tall190.github.io/liber/_astro/prompt-engineering-bible_hero_image.BZZMCd8n.png"}</script><style>:root{--accent: #2337ff;--accent-dark: #000d8a;--black: 15, 18, 25;--gray: 96, 115, 159;--gray-light: 229, 233, 240;--gray-dark: 34, 41, 57;--gray-gradient: rgba(var(--gray-light), 50%), #fff;--box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);--bg: #fff;--bg-secondary: #f9fafb;--header-bg: white;--code-bg: rgb(var(--gray-light));color-scheme:light}:root.dark{--accent: #6b7cff;--accent-dark: #8b9aff;--black: 230, 230, 230;--gray: 155, 165, 190;--gray-light: 50, 55, 65;--gray-dark: 210, 215, 225;--gray-gradient: rgba(var(--gray-light), 50%), #1a1a2e;--box-shadow: 0 2px 6px rgba(0, 0, 0, 40%), 0 8px 24px rgba(0, 0, 0, 50%), 0 16px 32px rgba(0, 0, 0, 50%);--bg: #1a1a2e;--bg-secondary: #16162a;--header-bg: #16162a;--code-bg: rgba(var(--gray-light), .6);color-scheme:dark}body{font-family:var(--font-atkinson);margin:0;padding:0;text-align:left;background:var(--bg);background-image:linear-gradient(var(--gray-gradient));background-repeat:no-repeat;background-size:100% 600px;word-wrap:break-word;overflow-wrap:break-word;color:rgb(var(--gray-dark));font-size:20px;line-height:1.7;transition:background-color .3s,color .3s}main{width:720px;max-width:calc(100% - 2em);margin:auto;padding:3em 1em}h1,h2,h3,h4,h5,h6{margin:0 0 .5rem;color:rgb(var(--black));line-height:1.2}h1{font-size:3.052em}h2{font-size:2.441em}h3{font-size:1.953em}h4{font-size:1.563em}h5{font-size:1.25em}strong,b{font-weight:700}a,a:hover{color:var(--accent)}p{margin-bottom:1em}.prose p{margin-bottom:2em}.prose p:has(>img){margin-top:.5em;margin-bottom:.5em}textarea{width:100%;font-size:16px}input{font-size:16px}table{width:100%}img{max-width:100%;height:auto;border-radius:8px}code{padding:2px 5px;background-color:var(--code-bg);border-radius:2px}pre{padding:1.5em;border-radius:8px;overflow-x:auto;max-width:100%;font-size:15px}pre>code{all:unset}blockquote{border-left:4px solid var(--accent);padding:0 0 0 20px;margin:0;font-size:1.333em}hr{border:none;border-top:1px solid rgb(var(--gray-light))}@media(max-width:720px){body{font-size:18px}main{padding:1em}}.sr-only{border:0;padding:0;margin:0;position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px 1px 1px 1px);clip:rect(1px,1px,1px,1px);clip-path:inset(50%);white-space:nowrap}.prose p>em:only-child{display:block;font-size:.85em;color:rgb(var(--gray));margin-top:-.3em;margin-bottom:1.5em;text-align:center}footer[data-astro-cid-sz7xmlte]{padding:2em 1em 6em;background:linear-gradient(var(--gray-gradient)) no-repeat;color:rgb(var(--gray));text-align:center;transition:background-color .3s,color .3s}a[data-astro-cid-eimmu3lg]{display:inline-block;text-decoration:none}a[data-astro-cid-eimmu3lg].active{font-weight:bolder;text-decoration:underline}header[data-astro-cid-3ef6ksr2]{margin:0;padding:0 1em;background:var(--header-bg);box-shadow:0 2px 8px rgba(var(--black),5%);transition:background-color .3s}h2[data-astro-cid-3ef6ksr2]{margin:0;font-size:1em}h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2],h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none}nav[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;justify-content:space-between}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{padding:1em .5em;color:var(--black);border-bottom:4px solid transparent;text-decoration:none}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none;border-bottom-color:var(--accent)}.theme-toggle[data-astro-cid-3ef6ksr2]{background:none;border:none;cursor:pointer;padding:.5em;color:rgb(var(--black));display:flex;align-items:center;transition:color .3s}.theme-toggle[data-astro-cid-3ef6ksr2]:hover{color:var(--accent)}.dark .icon-sun[data-astro-cid-3ef6ksr2]{display:inline}.dark .icon-moon[data-astro-cid-3ef6ksr2],.icon-sun[data-astro-cid-3ef6ksr2]{display:none}.icon-moon[data-astro-cid-3ef6ksr2]{display:inline}
+main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.post-meta[data-astro-cid-bvzihdzo]{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:.5rem;flex-wrap:wrap}.hits-badge[data-astro-cid-bvzihdzo]{display:inline-flex;align-items:center}.hits-badge[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{height:20px;border-radius:4px}.post-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.8rem}.tag[data-astro-cid-bvzihdzo]{display:inline-block;font-size:.75rem;font-weight:600;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--accent));color:#fff;text-decoration:none;letter-spacing:.02em}.tag[data-astro-cid-bvzihdzo]:hover{background:var(--accent-dark)}.comments-section[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:3rem auto 2rem;padding:0 1em;border-top:1px solid rgb(var(--gray-light));padding-top:2rem}.comments-section[data-astro-cid-bvzihdzo] h3[data-astro-cid-bvzihdzo]{font-size:1.1rem;color:rgb(var(--gray-dark));margin-bottom:1.5rem}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/liber/" data-astro-cid-3ef6ksr2><img src="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp" srcset="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp 1x, /liber/_astro/liber-logo.DqNb0q2U_Z1NhCXk.webp 2x, /liber/_astro/liber-logo.DqNb0q2U_16RKps.webp 3x" alt="Liber" data-astro-cid-3ef6ksr2="true" loading="lazy" decoding="async" width="121" height="40"></a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/liber/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Home </a> <a href="/liber/blog/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Blog </a> <a href="/liber/about/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> About </a> <button class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환" data-astro-cid-3ef6ksr2> <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle><line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line><line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line><line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line><line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line></svg> <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path></svg> </button> </div> </nav> </header> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo> <img src="/liber/_astro/prompt-engineering-bible_hero_image.BZZMCd8n_2uy9r6.webp" alt data-astro-cid-bvzihdzo="true" loading="lazy" decoding="async" width="1020" height="510"> </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-06-10T00:00:00.000Z"> Jun 10, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>프롬프트 엔지니어링 바이블: 기본 설계부터 할루시네이션 방지까지</h1> <div class="post-meta" data-astro-cid-bvzihdzo> <span class="hits-badge" data-astro-cid-bvzihdzo> <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Ftall190.github.io%2Fliber%2Fblog%2Fprompt-engineering-bible%2F&#38;label=views&#38;labelColor=%23374151&#38;countColor=%236366f1&#38;style=flat" alt="조회수" loading="eager" data-astro-cid-bvzihdzo> </span> </div> <div class="post-tags" data-astro-cid-bvzihdzo> <a class="tag" href="/liber/blog/tags/AI/" data-astro-cid-bvzihdzo>AI</a><a class="tag" href="/liber/blog/tags/Prompt Engineering/" data-astro-cid-bvzihdzo>Prompt Engineering</a><a class="tag" href="/liber/blog/tags/LLM/" data-astro-cid-bvzihdzo>LLM</a><a class="tag" href="/liber/blog/tags/할루시네이션/" data-astro-cid-bvzihdzo>할루시네이션</a><a class="tag" href="/liber/blog/tags/실무/" data-astro-cid-bvzihdzo>실무</a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>프롬프트 엔지니어링만큼 논란이 많은 분야도 없어요. “그냥 잘 물어보면 되는 거 아냐?”라는 반응부터, “이건 아직 과학이 아니라 예술이다”는 말까지. 그 사이 어딘가에 진실이 있어요.</p>
+<p>논란이 많은 이유는 두 가지예요. 하나는 모델이 너무 빠르게 바뀌어서 어제 통하던 기법이 오늘은 오히려 역효과를 낼 수 있다는 것, 다른 하나는 목적에 따라 정답이 달라진다는 거예요. 비용을 줄이려는 프롬프트와 정확도를 올리려는 프롬프트는 설계 방향이 반대예요.</p>
+<p>이 글은 프롬프트 엔지니어링의 입문서가 아니에요. 실제로 AI 서비스를 설계하거나 운영하면서 부딪히는 질문들 — 어떻게 설계하고, 어떻게 개선하고, 어떻게 테스트하고, 할루시네이션을 어떻게 막는지 — 에 답하는 실전 레퍼런스예요. 길이에 상관없이 필요한 만큼 담았어요.</p>
+<hr>
+<h2 id="1-프롬프트를-구성하는-요소들">1. 프롬프트를 구성하는 요소들</h2>
+<p>프롬프트는 단일한 텍스트 덩어리가 아니에요. 잘 설계된 프롬프트에는 역할이 분리된 구성 요소들이 있어요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[System Prompt]</span></span>
+<span class="line"><span>너는 계약서 분석 전문가야. 반드시 근거 조항을 명시하고,</span></span>
+<span class="line"><span>불확실한 내용은 "확인 필요"로 표시해.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>[Context]</span></span>
+<span class="line"><span>&#x3C;document></span></span>
+<span class="line"><span>제3조: 계약은 서면 통보 후 30일 이내에 해지할 수 있다.</span></span>
+<span class="line"><span>&#x3C;/document></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>[User Message]</span></span>
+<span class="line"><span>이 계약서에 해지 조항이 있나요? JSON으로 알려줘.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>[Assistant Prefill]</span></span>
+<span class="line"><span>{"result":</span></span></code></pre>
+<p>이 네 줄이 각각 다른 역할을 해요.</p>
+<p>**시스템 프롬프트(System Prompt)**는 에이전트의 정체성과 행동 규칙을 정의해요. “너는 금융 전문가야”처럼 역할을 부여하거나, “반드시 출처를 명시해”, “모르면 모른다고 해”처럼 행동 제약을 걸어요. 모든 대화에 걸쳐 일관되게 적용되는 기반이에요.</p>
+<p>**사용자 메시지(User Message)**는 실제 요청이에요. 맥락, 입력 데이터, 원하는 결과 형식이 여기에 들어가요.</p>
+<p>**어시스턴트 프리필(Assistant Prefill)**은 Claude에서 특히 유효한 기법이에요. 응답의 첫 부분을 직접 작성해서 모델이 그 패턴을 이어가게 유도해요. <code>{"result":</code> 로 시작하게 하면 JSON이 나오고, <code>`**분석 결과:**`</code> 로 시작하게 하면 그 구조가 이어져요.</p>
+<p>**컨텍스트(Context)**는 모델이 판단에 쓸 배경 정보예요. 참조 문서, 이전 대화, 데이터 등이 포함돼요.</p>
+<p>이 네 가지가 명확히 구분되어 있을수록 프롬프트의 예측 가능성이 올라가요. 뒤섞이면 모델이 어느 역할로 응답해야 하는지 혼란이 생겨요.</p>
+<hr>
+<h2 id="2-핵심-기법들-무엇을-언제-쓰는가">2. 핵심 기법들: 무엇을 언제 쓰는가</h2>
+<h3 id="zero-shot">Zero-shot</h3>
+<p>예시 없이 직접 요청하는 방식이에요. 현대 LLM은 이것만으로도 대부분의 일반 작업을 처리해요. 속도와 토큰 효율이 가장 좋아요. 단, 출력 형식이 중요하거나 엣지 케이스가 많은 작업엔 부족해요.</p>
+<h3 id="few-shot">Few-shot</h3>
+<p>원하는 출력 형식의 예시를 2-5개 제공하는 방식이에요. 모델이 패턴을 따라가기 때문에 형식 일관성이 필요한 작업에 효과적이에요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>예시:</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>입력: "배송이 3일 늦었어요"</span></span>
+<span class="line"><span>분류: 불만 / 카테고리: 배송</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>입력: "이 상품 환불 가능한가요?"</span></span>
+<span class="line"><span>분류: 문의 / 카테고리: 환불</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>입력: "색상이 사진이랑 달라요"</span></span>
+<span class="line"><span>분류: [모델이 여기서 패턴을 따름]</span></span></code></pre>
+<p>Few-shot에서 예시의 품질이 결과를 결정해요. 예외적인 케이스나 까다로운 케이스를 예시에 포함하면 그 패턴까지 학습시킬 수 있어요.</p>
+<h3 id="chain-of-thought-cot">Chain of Thought (CoT)</h3>
+<p>“단계별로 생각해봐” 유도 방식이에요. 복잡한 수학 문제, 멀티스텝 추론, 법률/의료 판단처럼 중간 과정이 중요한 작업에서 정확도를 올려줘요.</p>
+<p>하지만 <strong>2026년 기준으로 주의해야 할 사항이 있어요.</strong> Claude Opus 4, GPT-4o, o1, DeepSeek-R1 같은 추론 모델은 이미 내부적으로 사고 과정을 거쳐요. 이런 모델에게 “step by step으로 생각해봐”라고 하면 오히려 역효과가 날 수 있어요. <a href="https://sureprompts.com/blog/advanced-prompt-engineering-2026-claude-gpt5-gemini">SurePrompts의 2026년 가이드</a>는 이를 명확히 정리해요.</p>
+<blockquote>
+<p>“Let’s think step by step”은 이미 쓸모없거나 역효과예요. 추론 모델은 이미 답하기 전에 생각해요. 이 지시어는 모델이 이미 할당한 사고 예산을 낭비시켜요.</p>
+</blockquote>
+<p>비추론 모델(Claude Haiku, GPT-4o-mini 등)에는 여전히 유효하고, 추론 모델에는 토큰 예산(<code>budget_tokens</code>)으로 사고량을 제어하는 게 더 효과적이에요.</p>
+<h3 id="xml-태그를-활용한-구조화">XML 태그를 활용한 구조화</h3>
+<p>Claude에서 특히 효과적인 기법이에요. 입력의 각 부분을 XML 태그로 명확히 구분하면 모델이 어떤 정보가 어떤 역할인지 혼동하지 않아요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="xml"><code><span class="line"><span style="color:#E1E4E8">&#x3C;</span><span style="color:#85E89D">task</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  고객 문의를 분류하고 우선순위를 매겨줘.</span></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C;/</span><span style="color:#85E89D">task</span><span style="color:#E1E4E8">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C;</span><span style="color:#85E89D">context</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  우리 서비스는 B2B SaaS이고, SLA에 따라 기업 고객은 4시간 내 응답이 필요해.</span></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C;/</span><span style="color:#85E89D">context</span><span style="color:#E1E4E8">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C;</span><span style="color:#85E89D">input</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  {{customer_message}}</span></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C;/</span><span style="color:#85E89D">input</span><span style="color:#E1E4E8">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C;</span><span style="color:#85E89D">output_format</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  JSON으로 반환. 필드: category, priority(1-5), suggested_response_template</span></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C;/</span><span style="color:#85E89D">output_format</span><span style="color:#E1E4E8">></span></span></code></pre>
+<p>태그 없이 같은 내용을 평문으로 쓰면, 모델이 어디까지가 맥락이고 어디서부터가 실제 입력인지 구분하기 어려워져요. 특히 입력 데이터에 지시어처럼 보이는 텍스트가 포함될 때 (프롬프트 인젝션) 이 구분이 중요해요.</p>
+<h3 id="출력-명세서output-contract-작성">출력 명세서(Output Contract) 작성</h3>
+<p><a href="https://www.lakera.ai/blog/prompt-engineering-guide">2026년 프롬프트 엔지니어링의 가장 중요한 변화</a>는 “잘 써진 요청”에서 “명확한 성공 기준과 출력 명세서”로의 이동이에요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>❌ 예전 방식:</span></span>
+<span class="line"><span>"이 코드를 리뷰해줘."</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>✅ 출력 명세서 방식:</span></span>
+<span class="line"><span>"이 코드를 리뷰해줘.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>성공 기준:</span></span>
+<span class="line"><span>- 버그나 런타임 에러 가능성이 있는 부분을 모두 식별</span></span>
+<span class="line"><span>- 각 이슈에 심각도 (critical / warning / info) 표시</span></span>
+<span class="line"><span>- 수정 제안을 원본 코드와 함께 before/after 형식으로</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>제외:</span></span>
+<span class="line"><span>- 스타일 관련 의견 (linter가 처리)</span></span>
+<span class="line"><span>- 미래 기능 제안</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>출력 형식: 마크다운, 심각도 순으로 정렬"</span></span></code></pre>
+<p>요청이 명확할수록 모델이 추측하는 부분이 줄어들어요. 추측이 줄면 할루시네이션도 줄어요.</p>
+<hr>
+<h2 id="3-모델별로-다르게-써야-하는-이유">3. 모델별로 다르게 써야 하는 이유</h2>
+<p>같은 내용의 프롬프트라도 Claude, GPT, Gemini에서 결과가 다르게 나오는 건 각 모델의 훈련 방식과 아키텍처 차이 때문이에요.</p>
+<h3 id="claude-anthropic">Claude (Anthropic)</h3>
+<p>Claude는 <strong>XML 태그</strong>에 가장 잘 반응해요. Anthropic이 공식 문서에서 XML 구조화를 권장하고, 실제로 Claude는 태그로 역할을 분리하면 다른 모델보다 더 정확하게 각 부분을 처리해요.</p>
+<p><strong>Contract-style</strong> 명세서에도 강해요. 조건과 제약이 명시적으로 나열되면 그 계약을 꼼꼼히 따르는 경향이 있어요. 반면 모호한 요청에는 추론으로 빈칸을 채우는 대신 명확화 질문을 하거나 가정을 명시하는 편이에요.</p>
+<p><strong>Prefill 기법</strong>이 유효한 모델이에요. Assistant 턴의 첫 텍스트를 직접 제공하면 그 패턴을 이어가요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#E1E4E8">response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> client.messages.create(</span></span>
+<span class="line"><span style="color:#FFAB70">    model</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"claude-sonnet-4-6"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    messages</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#9ECBFF">"role"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"content"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"이 계약서의 위험 조항을 JSON으로 추출해줘."</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#9ECBFF">"role"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"assistant"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"content"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'{"risk_clauses": ['</span><span style="color:#E1E4E8">}  </span><span style="color:#6A737D"># Prefill</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre>
+<h3 id="gpt-openai">GPT (OpenAI)</h3>
+<p>GPT는 <strong>마크다운 문법</strong>에 잘 반응해요. <code>###</code>, <code>---</code>, 코드 블록 같은 구조가 Claude의 XML과 비슷한 역할을 해요.</p>
+<p>GPT-5에서 특이한 점은 <strong>“think hard about this”</strong> 같은 표현이 실제로 내부 추론 모델로의 라우팅을 트리거한다는 거예요. OpenAI의 GPT-5 시스템 카드에 공식 문서화된 기능으로, 단순 지시어가 아니라 실제 라우팅 신호로 작동해요. GPT-4o에는 해당되지 않아요.</p>
+<p>GPT의 Structured Outputs(Strict Mode)는 JSON 스키마를 Context-Free Grammar로 변환해서 스키마를 100% 보장해요. 정확한 출력 형식이 필요한 프로덕션 환경에서는 <code>response_format</code>을 활용하는 게 맞아요.</p>
+<h3 id="gemini-google">Gemini (Google)</h3>
+<p>Gemini는 <strong>짧고 직접적인 프롬프트</strong>에 더 잘 반응해요. Claude나 GPT보다 긴 프롬프트에서 중간 지시어를 놓치는 경향이 있어요. 메타 지시어(어떻게 답할지)를 태스크 설명보다 앞에 배치하는 게 중요해요.</p>
+<p>멀티모달이나 문서 업로드를 활용하는 작업에서 특히 강해요. 표나 문서를 직접 첨부하면 텍스트로 설명하는 것보다 더 정확한 결과가 나와요.</p>
+<hr>
+<h2 id="4-비용-최적화-vs-성능-최적화-목적에-따라-방향이-반대다">4. 비용 최적화 vs 성능 최적화: 목적에 따라 방향이 반대다</h2>
+<p>프롬프트 설계는 목적에 따라 전략이 달라져요. 비용을 줄이는 방향과 정확도를 올리는 방향은 종종 충돌해요.</p>
+<h3 id="비용-최적화가-목적일-때">비용 최적화가 목적일 때</h3>
+<p><strong>프롬프트 압축</strong>이 가장 직접적인 방법이에요. Microsoft Research의 <a href="https://llmlingua.com/llmlingua.html">LLMLingua</a>는 소형 모델로 프롬프트에서 불필요한 토큰을 제거해요. 공식 벤치마크(GSM8K 기준)에서 최대 20배 압축 시 성능 하락이 1.5 포인트 수준으로 보고돼요. 단, 다른 데이터셋에서는 하락폭이 더 클 수 있어요.</p>
+<p>수동으로 할 때는 이 원칙을 따라요.</p>
+<ul>
+<li>중복 표현 제거: “다음을 고려해서 잘 생각한 후에 신중하게” → “분석 기준:”</li>
+<li>인사말/배경 제거: 모델에게 하는 인사는 토큰 낭비예요</li>
+<li>결과물 길이 제한: <code>응답은 3문장 이내</code> 명시</li>
+<li>불필요한 예시 축소: Few-shot을 3개에서 1개로 줄여도 충분한 경우가 많아요</li>
+</ul>
+<p><strong>모델 다운그레이드 라우팅</strong>도 중요해요. 모든 요청에 최고 성능 모델을 쓸 필요가 없어요. 분류, 단순 요약, 키워드 추출은 Claude Haiku나 GPT-4o-mini로 충분해요. 라우터를 두고 복잡도 기반으로 모델을 선택하면 전체 비용이 40-60% 줄어요.</p>
+<p><strong>Prompt Caching</strong>은 고정된 시스템 프롬프트가 있는 워크플로우에서 가장 효과가 커요. Anthropic의 Prompt Caching은 캐시 히트 시 입력 토큰 비용의 90%를 절감해요. 1,000 토큰 넘는 시스템 프롬프트가 있다면 캐싱을 먼저 붙여야 해요.</p>
+<h3 id="성능-최적화가-목적일-때">성능 최적화가 목적일 때</h3>
+<p><strong>컨텍스트 강화</strong>가 핵심이에요. 모델이 판단에 필요한 정보를 모두 가지고 있어야 해요. 정보가 부족하면 모델은 추측으로 빈칸을 채우고, 그게 할루시네이션의 시작이에요.</p>
+<p><strong>명시적 제약</strong>을 추가할수록 정확도가 올라가요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>❌ "이 텍스트를 요약해줘"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>✅ "이 텍스트를 요약해줘.</span></span>
+<span class="line"><span>    - 원문에 있는 내용만 포함할 것</span></span>
+<span class="line"><span>    - 원문에 없는 추론이나 해석은 포함하지 말 것</span></span>
+<span class="line"><span>    - 불확실한 부분은 '원문에서 명확하지 않음'으로 표시</span></span>
+<span class="line"><span>    - 3-5문장"</span></span></code></pre>
+<p><strong>Self-Consistency</strong>도 효과적이에요. 같은 요청을 여러 번 생성하고 다수결이나 종합으로 최종 답을 만드는 방식이에요. 토큰이 N배 들지만 정확도가 크게 올라가요. 의료, 법률, 재무처럼 오답 비용이 높은 영역에서 쓸 만해요.</p>
+<hr>
+<h2 id="5-할루시네이션-종류부터-알아야-막을-수-있다">5. 할루시네이션: 종류부터 알아야 막을 수 있다</h2>
+<p>할루시네이션은 하나의 현상이 아니에요. <a href="https://www.frontiersin.org/journals/artificial-intelligence/articles/10.3389/frai.2025.1622292/full">Frontiers in AI의 2025년 리뷰</a>와 <a href="https://www.aigl.blog/a-comprehensive-taxonomy-of-hallucinations-in-large-language-models-universitat-de-barcelona-august-2025/">바르셀로나 대학의 할루시네이션 분류 연구(2025)</a> 등 LLM 할루시네이션 연구들이 공통으로 사용하는 분류 체계에 따르면 할루시네이션은 크게 두 범주로 나뉘어요.</p>
+<h3 id="내재적-할루시네이션-intrinsic-hallucination">내재적 할루시네이션 (Intrinsic Hallucination)</h3>
+<p>모델이 제공된 입력이나 컨텍스트와 <strong>직접 모순되는</strong> 내용을 생성하는 경우예요.</p>
+<blockquote>
+<p>“이 계약서에 해지 조항이 있나요?” → 계약서에 명확히 해지 조항이 없는데 “제3조에 해지 조항이 있습니다”라고 답하는 것</p>
+</blockquote>
+<p>입력된 정보를 잘못 해석하거나 무시하는 데서 발생해요.</p>
+<h3 id="외재적-할루시네이션-extrinsic-hallucination">외재적 할루시네이션 (Extrinsic Hallucination)</h3>
+<p>모델이 <strong>현실이나 학습 데이터로도 검증 불가능한</strong> 내용을 만들어내는 경우예요.</p>
+<blockquote>
+<p>실제로 존재하지 않는 논문을 인용하거나, 없는 API 함수를 사용하거나, 실존하지 않는 통계를 제시하는 것</p>
+</blockquote>
+<p>이 두 번째 유형이 AI 서비스에서 더 위험해요. 사용자가 그 내용을 신뢰하고 행동에 옮길 수 있거든요.</p>
+<p>그리고 이를 좀 더 실용적으로 나누면 <strong>사실성(Factuality) 오류</strong>와 <strong>충실성(Faithfulness) 오류</strong>로 구분할 수 있어요.</p>
+<ul>
+<li><strong>사실성 오류</strong>: 모델이 틀린 사실을 주장 — “세종대왕은 1423년에 태어났어요”</li>
+<li><strong>충실성 오류</strong>: 입력이나 소스를 왜곡 — 문서 A에는 없는 내용을 요약에 포함</li>
+</ul>
+<p>막는 방법이 달라요. 사실성 오류는 외부 데이터 접근(RAG)이나 불확실성 명시로 줄이고, 충실성 오류는 “입력 외 내용 포함 금지” 제약으로 줄여요.</p>
+<hr>
+<h2 id="6-할루시네이션-방지-기법-8가지">6. 할루시네이션 방지 기법 8가지</h2>
+<h3 id="기법-1-불확실성-제약-uncertainty-constraints">기법 1: 불확실성 제약 (Uncertainty Constraints)</h3>
+<p>가장 단순하면서 효과적인 방법이에요. 모델이 모르면 모른다고 말하도록 명시적으로 허용하고 요구해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>시스템 프롬프트에 반드시 포함:</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>"확실하지 않은 사실은 절대 단정하지 마세요.</span></span>
+<span class="line"><span>모르는 내용에 대해서는 '확인이 필요합니다' 또는 </span></span>
+<span class="line"><span>'이 부분은 제 학습 데이터에 포함되지 않을 수 있습니다'라고 명시하세요.</span></span>
+<span class="line"><span>추측이나 추론을 사실처럼 제시하지 마세요."</span></span></code></pre>
+<p>모델이 “틀려도 뭔가 말해야 한다”는 압박을 받지 않게 안전한 탈출구를 주는 거예요. 이 한 줄이 없으면 모델은 모르는 것에 대해서도 그럴듯하게 만들어내는 쪽을 선택해요.</p>
+<h3 id="기법-2-소스-제한-source-grounding">기법 2: 소스 제한 (Source Grounding)</h3>
+<p>모델의 응답 범위를 제공된 컨텍스트 안으로 제한해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>"다음 문서의 내용만을 기반으로 답변하세요.</span></span>
+<span class="line"><span>문서에 없는 내용은 '문서에서 찾을 수 없습니다'라고 답하세요.</span></span>
+<span class="line"><span>외부 지식을 활용하거나 추론을 통해 빈칸을 채우지 마세요."</span></span></code></pre>
+<p>이 기법은 RAG 시스템에서 특히 중요해요. 검색된 문서 외의 내용을 모델이 임의로 추가하는 것을 막아요.</p>
+<p><strong>검증 가능한 출처 요청</strong>을 함께 써도 효과적이에요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>"모든 주장에 출처 문단 번호를 표시하세요.</span></span>
+<span class="line"><span>출처를 명시할 수 없는 내용은 포함하지 마세요."</span></span></code></pre>
+<p>외부 검토자가 원본 문서와 대조해서 모든 주장을 확인할 수 있는 수준의 응답을 목표로 해요.</p>
+<h3 id="기법-3-부정-지시어-negative-instructions">기법 3: 부정 지시어 (Negative Instructions)</h3>
+<p>“하지 말 것”을 명확히 써요. 긍정적 지시만큼 부정적 제약이 중요해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>좋은 예:</span></span>
+<span class="line"><span>- "사용자가 제공한 텍스트에 없는 수치나 날짜를 생성하지 마세요"</span></span>
+<span class="line"><span>- "논문이나 연구를 인용할 때 직접 확인할 수 없는 것은 인용하지 마세요"</span></span>
+<span class="line"><span>- "법률적 판단을 내리지 마세요. 가능성과 고려사항만 제시하세요"</span></span></code></pre>
+<p>단, 부정 지시어가 너무 많으면 모델이 필요한 내용도 생략해버릴 수 있어요. 명확히 문제가 되는 것만 골라서 제약해요.</p>
+<h3 id="기법-4-단계적-검증-프롬프트-self-verification-chain">기법 4: 단계적 검증 프롬프트 (Self-Verification Chain)</h3>
+<p>모델이 먼저 답변을 만들고, 그 답변을 스스로 검증하게 해요. 싱글 패스보다 오류를 줄이는 데 효과적이에요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Step 1 프롬프트:</span></span>
+<span class="line"><span>"아래 질문에 답해줘. [질문]"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Step 2 프롬프트 (Step 1 응답 포함):</span></span>
+<span class="line"><span>"위 답변을 검토해줘.</span></span>
+<span class="line"><span>- 사실로 주장한 것 중 확인이 필요한 항목은?</span></span>
+<span class="line"><span>- 원본 데이터나 컨텍스트에 근거하지 않은 추론이 있는가?</span></span>
+<span class="line"><span>- 수정이 필요한 부분이 있으면 수정된 버전을 제공해줘."</span></span></code></pre>
+<p>비용이 2배 들지만, 오류가 치명적인 의료, 법률, 재무 영역에서는 그 비용이 정당화돼요.</p>
+<h3 id="기법-5-구조화된-출력으로-할루시네이션-범위-제한">기법 5: 구조화된 출력으로 할루시네이션 범위 제한</h3>
+<p>자유로운 텍스트 생성은 할루시네이션이 스며들기 쉬워요. 출력 형식을 구조화할수록 모델이 임의로 내용을 추가할 여지가 줄어요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># 나쁜 예: 자유 텍스트</span></span>
+<span class="line"><span style="color:#9ECBFF">"이 계약서를 분석해줘"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 좋은 예: 스키마 강제</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">  "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"object"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">  "properties"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">    "parties"</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"array"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"items"</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8">}},</span></span>
+<span class="line"><span style="color:#9ECBFF">    "effective_date"</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#9ECBFF">    "key_obligations"</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"array"</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#9ECBFF">    "risks_identified"</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"array"</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#9ECBFF">    "missing_clauses"</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"array"</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#9ECBFF">  "required"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"parties"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"effective_date"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">  "additionalProperties"</span><span style="color:#E1E4E8">: false</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><a href="https://crazyrouter.com/en/blog/ai-structured-output-json-mode-guide-2026">2026년 구조화 출력 가이드</a>에 따르면 신뢰도 수준이 세 단계로 나뉘어요.</p>
+<ul>
+<li><strong>프롬프트만으로 JSON 요청</strong>: 80-95% 신뢰도 (프로덕션에 부족)</li>
+<li><strong>Function Calling / Tool Use</strong>: 95-99% 신뢰도</li>
+<li><strong>Native Structured Output (스키마 강제)</strong>: 스키마 구조 100% 준수 보장</li>
+</ul>
+<p>중요한 건 <strong>JSON Mode ≠ Structured Outputs</strong>이에요. JSON Mode는 유효한 JSON 문법을 보장할 뿐, 스키마를 보장하지 않아요. Native Structured Output의 100%는 <strong>스키마 형식 준수</strong>의 보장이에요. 내용의 사실 정확성을 보장하지는 않아요. 프로덕션에서는 반드시 스키마 강제 방식을 써야 해요.</p>
+<h3 id="기법-6-온도temperature-제어">기법 6: 온도(Temperature) 제어</h3>
+<p>Temperature는 모델의 창의성 수준을 조절해요. 높을수록 다양하고 창의적이지만 사실적 오류가 늘어요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>목적별 Temperature 가이드:</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>사실 기반 Q&#x26;A, 의료/법률/재무 정보:   0.0 - 0.2</span></span>
+<span class="line"><span>코드 생성, 데이터 추출, 분류:          0.0 - 0.3</span></span>
+<span class="line"><span>일반 요약, 번역, 분석:                 0.3 - 0.6</span></span>
+<span class="line"><span>창의적 글쓰기, 브레인스토밍:           0.7 - 1.0</span></span></code></pre>
+<p>할루시네이션을 줄이려면 Temperature를 낮추는 게 가장 빠른 방법이에요. 단, 0으로 설정해도 할루시네이션이 완전히 사라지지는 않아요. LLM의 할루시네이션은 근본적으로 확률 분포 문제이기도 하지만, 훈련 데이터의 편향 문제이기도 하거든요.</p>
+<h3 id="기법-7-rag로-외부-지식-접지-retrieval-augmented-generation">기법 7: RAG로 외부 지식 접지 (Retrieval-Augmented Generation)</h3>
+<p>모델의 학습 데이터는 특정 시점에서 끊겨 있고, 도메인 특화 지식이 부족해요. RAG는 모델이 답변하기 전에 외부 데이터베이스에서 관련 정보를 가져와 컨텍스트에 포함시켜요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>RAG 시스템의 흐름:</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>사용자 질문</span></span>
+<span class="line"><span>   ↓</span></span>
+<span class="line"><span>임베딩으로 변환</span></span>
+<span class="line"><span>   ↓</span></span>
+<span class="line"><span>벡터 DB에서 관련 문서 검색</span></span>
+<span class="line"><span>   ↓</span></span>
+<span class="line"><span>검색된 문서 + 질문을 프롬프트에 포함</span></span>
+<span class="line"><span>   ↓</span></span>
+<span class="line"><span>모델이 "제공된 문서 기반"으로 답변</span></span></code></pre>
+<p>여기서 프롬프트 설계가 중요해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>"다음 [N]개의 문서를 바탕으로 질문에 답하세요.</span></span>
+<span class="line"><span>답변은 반드시 문서에 있는 내용만 포함해야 하며,</span></span>
+<span class="line"><span>관련 내용이 없을 경우 '제공된 문서에서 관련 정보를 찾을 수 없습니다'라고 답하세요.</span></span>
+<span class="line"><span>각 주장 뒤에 [문서 번호]를 표기해 출처를 명확히 하세요."</span></span></code></pre>
+<p>RAG에서 할루시네이션이 발생하는 패턴은 주로 두 가지예요. 검색된 문서가 질문과 관련이 없는데 억지로 연결하는 경우, 그리고 여러 문서의 내용을 섞으면서 원문에 없는 결합된 주장을 만드는 경우예요. “문서에 없으면 없다고 해”라는 명시적 제약이 이 두 가지를 모두 막아줘요.</p>
+<h3 id="기법-8-llm-as-judge-판단자로서의-llm">기법 8: LLM-as-Judge (판단자로서의 LLM)</h3>
+<p>한 모델의 출력을 다른 모델(또는 같은 모델)이 검증하게 하는 방식이에요. 인간 검수의 대안으로 쓰거나, 자동화된 파이프라인에서 품질 게이트로 활용해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># Judge 프롬프트 예시</span></span>
+<span class="line"><span style="color:#E1E4E8">judge_prompt </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> """</span></span>
+<span class="line"><span style="color:#9ECBFF">다음 응답을 검토해줘.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">[원본 질문]: </span><span style="color:#79B8FF">{question}</span></span>
+<span class="line"><span style="color:#9ECBFF">[참조 문서]: </span><span style="color:#79B8FF">{context}</span></span>
+<span class="line"><span style="color:#9ECBFF">[모델 응답]: </span><span style="color:#79B8FF">{response}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">아래 기준으로 평가해줘:</span></span>
+<span class="line"><span style="color:#9ECBFF">1. 사실성: 참조 문서와 일치하는가? (0-10)</span></span>
+<span class="line"><span style="color:#9ECBFF">2. 충실성: 질문에 직접 답하고 있는가? (0-10)</span></span>
+<span class="line"><span style="color:#9ECBFF">3. 할루시네이션: 참조 문서에 없는 내용을 주장하는가? (없음/경미/심각)</span></span>
+<span class="line"><span style="color:#9ECBFF">4. 수정 필요 사항: 있으면 구체적으로</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">출력 형식: JSON</span></span>
+<span class="line"><span style="color:#9ECBFF">"""</span></span></code></pre>
+<p>프로덕션에서는 모든 응답을 Judge로 통과시키기보다, 신뢰도 점수가 낮은 응답이나 고위험 카테고리(의료, 법률, 재무) 응답에만 적용하는 게 비용 효율적이에요.</p>
+<hr>
+<h2 id="7-프롬프트를-코드처럼-관리하기">7. 프롬프트를 코드처럼 관리하기</h2>
+<p>프롬프트는 코드예요. 그런데 많은 팀이 코드에는 Git을 쓰면서 프롬프트는 Notion이나 슬랙에 관리해요. 그 결과 어느 날 모델이 업데이트되면 왜 결과가 달라졌는지 원인을 못 찾아요.</p>
+<h3 id="버전-관리">버전 관리</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>prompts/</span></span>
+<span class="line"><span>  ├── customer_support/</span></span>
+<span class="line"><span>  │   ├── classify_v1.txt</span></span>
+<span class="line"><span>  │   ├── classify_v2.txt       ← 현재 프로덕션</span></span>
+<span class="line"><span>  │   └── classify_v3_test.txt  ← A/B 테스트 중</span></span>
+<span class="line"><span>  ├── data_extraction/</span></span>
+<span class="line"><span>  └── summarization/</span></span></code></pre>
+<p>프롬프트 파일에는 변경 이유를 주석으로 남겨요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span># v2.0 - 2026-03-15</span></span>
+<span class="line"><span># 변경: "불확실성 제약" 추가 (v1에서 존재하지 않는 조항을 인용하는 오류 발생)</span></span>
+<span class="line"><span># 변경: 출력 스키마를 JSON으로 강제 (v1의 자유 텍스트에서 파싱 오류 빈발)</span></span></code></pre>
+<h3 id="평가-테스트-케이스">평가 테스트 케이스</h3>
+<p>프롬프트를 바꿀 때마다 회귀 테스트가 돌아야 해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#E1E4E8">test_cases </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#9ECBFF">        "input"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"계약서 해지 조항이 뭔가요?"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "context"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"본 계약은 60일 전 서면 통보로 해지 가능합니다."</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "expected_contains"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"60일"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"서면 통보"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">        "expected_not_contains"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"90일"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"구두 통보"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#9ECBFF">        "input"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"위약금이 있나요?"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "context"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"본 계약서에 위약금 조항은 없습니다."</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "expected_contains"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"위약금 조항은 없"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#6A737D">        # 이 케이스에서 모델이 임의로 위약금을 만들어내면 안 됨</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">]</span></span></code></pre>
+<p>새 프롬프트가 기존 테스트 케이스를 모두 통과한 뒤에 프로덕션에 배포해요.</p>
+<hr>
+<h2 id="8-실전-체크리스트">8. 실전 체크리스트</h2>
+<p>프롬프트를 작성하거나 리뷰할 때 확인하는 항목들이에요.</p>
+<p><strong>기본 설계</strong></p>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> 시스템 프롬프트와 사용자 메시지가 역할별로 분리되어 있는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> 원하는 출력 형식이 명확히 정의되어 있는가? (스키마, 예시, 제약)</li>
+<li class="task-list-item"><input type="checkbox" disabled> 모델이 모를 때 어떻게 응답해야 하는지 명시했는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> 포함하지 말아야 할 내용이 부정 지시어로 명확히 정의되어 있는가?</li>
+</ul>
+<p><strong>할루시네이션 방지</strong></p>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> “확실하지 않으면 모른다고 해” 제약이 시스템 프롬프트에 있는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> 외부 지식보다 제공된 컨텍스트 우선 지시가 있는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> 사실 기반 작업이라면 Temperature가 0.3 이하인가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> 프로덕션에서 JSON을 사용한다면 Native Structured Output을 쓰고 있는가?</li>
+</ul>
+<p><strong>비용 최적화</strong></p>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> 중복 표현, 불필요한 배경 설명이 제거되어 있는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> 고정 시스템 프롬프트가 1,000 토큰을 넘는다면 Prompt Caching을 쓰는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> 작업 복잡도에 맞는 모델을 선택하고 있는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> 단순 작업에 CoT나 Thinking 모드를 불필요하게 쓰고 있지 않은가?</li>
+</ul>
+<p><strong>운영</strong></p>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> 프롬프트 파일에 버전이 있고 변경 이유가 기록되어 있는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> 회귀 테스트 케이스가 있고 배포 전에 실행되는가?</li>
+<li class="task-list-item"><input type="checkbox" disabled> 모델 업데이트 후 기존 프롬프트 동작을 확인하는 프로세스가 있는가?</li>
+</ul>
+<hr>
+<h2 id="마무리">마무리</h2>
+<p>프롬프트 엔지니어링이 “논란”인 이유는 고정된 답이 없기 때문이에요. 모델이 바뀌면 기법도 바뀌고, 목적이 다르면 접근도 달라요. 하지만 변하지 않는 것들이 있어요.</p>
+<p>모델에게 추측을 강요하지 말 것, 모르면 모른다고 말할 수 있게 허용할 것, 출력 범위를 명확히 제한할 것, 프롬프트를 코드처럼 관리할 것.</p>
+<p>이 네 가지가 지켜지는 시스템은 할루시네이션이 발생해도 원인을 찾고 고칠 수 있어요. 지켜지지 않는 시스템은 뭔가 이상하다는 걸 알아도 어디서 무엇이 잘못됐는지 알 수가 없어요. 그게 더 위험해요.</p>
+<hr>
+<p><strong>참고 자료</strong></p>
+<ul>
+<li><a href="https://www.frontiersin.org/journals/artificial-intelligence/articles/10.3389/frai.2025.1622292/full">Survey and analysis of hallucinations in large language models</a> — Frontiers in AI, 2025</li>
+<li><a href="https://www.aigl.blog/a-comprehensive-taxonomy-of-hallucinations-in-large-language-models-universitat-de-barcelona-august-2025/">A Comprehensive Taxonomy of Hallucinations in LLMs</a> — Universitat de Barcelona, 2025</li>
+<li><a href="https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/best-practices-for-mitigating-hallucinations-in-large-language-models-llms/4403129">Best Practices for Mitigating Hallucinations in LLMs</a> — Microsoft Azure AI</li>
+<li><a href="https://sureprompts.com/blog/advanced-prompt-engineering-2026-claude-gpt5-gemini">Advanced Prompt Engineering in 2026: Claude 4.6, GPT-5.4, and Gemini 2.5</a> — SurePrompts</li>
+<li><a href="https://crazyrouter.com/en/blog/ai-structured-output-json-mode-guide-2026">AI Structured Output Guide 2026: JSON Mode Across OpenAI, Claude, and Gemini</a></li>
+<li><a href="https://tianpan.co/blog/2026-04-20-structured-output-reliability-production">Structured Output Reliability in Production</a></li>
+<li><a href="https://llmlingua.com/llmlingua.html">LLMLingua: Compressing Prompts for Accelerated Inference</a> — Microsoft Research</li>
+<li><a href="https://www.lakera.ai/blog/prompt-engineering-guide">The Ultimate Guide to Prompt Engineering in 2026</a> — Lakera</li>
+<li><a href="https://arxiv.org/pdf/2412.18547">Token-Budget-Aware LLM Reasoning (TALE)</a> — arXiv</li>
+</ul>  </div> </article> </main> <!-- 댓글 & 좋아요 (Giscus — GitHub Discussions 기반) --> <!-- 설정 방법: https://giscus.app 에서 tall190/liber 입력 후 REPO_ID, CATEGORY_ID 교체 --> <div class="comments-section" data-astro-cid-bvzihdzo> <h3 data-astro-cid-bvzihdzo>댓글</h3> <script>
+				(function() {
+					var isDark = document.documentElement.classList.contains('dark');
+					var s = document.createElement('script');
+					s.src = 'https://giscus.app/client.js';
+					s.setAttribute('data-repo', 'tall190/liber');
+					s.setAttribute('data-repo-id', 'R_kgDOSIJHDw');
+					s.setAttribute('data-category', 'Announcements');
+					s.setAttribute('data-category-id', 'DIC_kwDOSIJHD84C7Uy6');
+					s.setAttribute('data-mapping', 'pathname');
+					s.setAttribute('data-strict', '0');
+					s.setAttribute('data-reactions-enabled', '1');
+					s.setAttribute('data-emit-metadata', '0');
+					s.setAttribute('data-input-position', 'bottom');
+					s.setAttribute('data-theme', isDark ? 'dark' : 'light');
+					s.setAttribute('data-lang', 'ko');
+					s.setAttribute('crossorigin', 'anonymous');
+					s.async = true;
+					document.currentScript.parentElement.appendChild(s);
+				})();
+			</script> </div> <footer data-astro-cid-sz7xmlte>
+&copy; 2026 Liber. All rights reserved.
+</footer> </body></html>

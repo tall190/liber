@@ -1,0 +1,307 @@
+<!DOCTYPE html><html lang="ko" data-astro-cid-bvzihdzo> <head><!-- Dark mode: apply before render to prevent flash --><script>
+	(function() {
+		const theme = localStorage.getItem('theme');
+		if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark');
+		}
+	})();
+</script> <!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="/liber/favicon.png"><link rel="icon" type="image/svg+xml" href="/liber/favicon.svg"><link rel="icon" href="/liber/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Liber" href="https://tall190.github.io/rss.xml"><meta name="generator" content="Astro v6.1.8"><style>@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/fd137eb932fcc611.woff") format("woff");font-display:swap;font-weight:400;font-style:normal;}@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/5c86995be98976a1.woff") format("woff");font-display:swap;font-weight:700;font-style:normal;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}:root{--font-atkinson:Atkinson-c7f4c4e8b285552f,"Atkinson-c7f4c4e8b285552f fallback: Arial",sans-serif;}</style><link rel="preload" href="/liber/_astro/fonts/fd137eb932fcc611.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/liber/_astro/fonts/5c86995be98976a1.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://tall190.github.io/liber/blog/ai-ready-ui/"><!-- Primary Meta Tags --><title>AI-ready UI — AI 에이전트가 당신의 화면을 탐색하는 방식</title><meta name="title" content="AI-ready UI — AI 에이전트가 당신의 화면을 탐색하는 방식"><meta name="description" content="AI 에이전트가 DOM을 읽는 원리부터 UI 식별자 선택 비교, 동작하는 ESLint 룰, production 최적화, 레거시 마이그레이션 전략까지. 3년차 이상 FE 개발자를 위한 실전 가이드."><meta name="author" content="Liber"><meta name="keywords" content="AI-ready, 개발, FE, E2E"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://tall190.github.io/liber/blog/ai-ready-ui/"><meta property="og:title" content="AI-ready UI — AI 에이전트가 당신의 화면을 탐색하는 방식"><meta property="og:description" content="AI 에이전트가 DOM을 읽는 원리부터 UI 식별자 선택 비교, 동작하는 ESLint 룰, production 최적화, 레거시 마이그레이션 전략까지. 3년차 이상 FE 개발자를 위한 실전 가이드."><meta property="og:image" content="https://tall190.github.io/liber/_astro/ai-ready-ui_hero_image.C9FEWQvQ.png"><meta property="og:locale" content="ko_KR"><meta property="article:published_time" content="2026-04-21T00:00:00.000Z"><meta property="article:tag" content="AI-ready"><meta property="article:tag" content="개발"><meta property="article:tag" content="FE"><meta property="article:tag" content="E2E"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://tall190.github.io/liber/blog/ai-ready-ui/"><meta property="twitter:title" content="AI-ready UI — AI 에이전트가 당신의 화면을 탐색하는 방식"><meta property="twitter:description" content="AI 에이전트가 DOM을 읽는 원리부터 UI 식별자 선택 비교, 동작하는 ESLint 룰, production 최적화, 레거시 마이그레이션 전략까지. 3년차 이상 FE 개발자를 위한 실전 가이드."><meta property="twitter:image" content="https://tall190.github.io/liber/_astro/ai-ready-ui_hero_image.C9FEWQvQ.png"><!-- Theme toggle script --><script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const toggle = document.getElementById('theme-toggle');
+		if (!toggle) return;
+		toggle.addEventListener('click', function() {
+			const isDark = document.documentElement.classList.toggle('dark');
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
+			// Sync Giscus theme
+			const giscus = document.querySelector('iframe.giscus-frame');
+			if (giscus) {
+				giscus.contentWindow.postMessage(
+					{ giscus: { setConfig: { theme: isDark ? 'dark' : 'light' } } },
+					'https://giscus.app'
+				);
+			}
+		});
+	});
+</script><!-- Schema.org JSON-LD: AI가 이 글을 구조화된 데이터로 읽을 수 있어요 --><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"AI-ready UI — AI 에이전트가 당신의 화면을 탐색하는 방식","description":"AI 에이전트가 DOM을 읽는 원리부터 UI 식별자 선택 비교, 동작하는 ESLint 룰, production 최적화, 레거시 마이그레이션 전략까지. 3년차 이상 FE 개발자를 위한 실전 가이드.","datePublished":"2026-04-21T00:00:00.000Z","dateModified":"2026-04-21T00:00:00.000Z","url":"https://tall190.github.io/liber/blog/ai-ready-ui/","inLanguage":"ko-KR","mainEntityOfPage":{"@type":"WebPage","@id":"https://tall190.github.io/liber/blog/ai-ready-ui/"},"author":{"@type":"Person","name":"Jayden","url":"https://tall190.github.io/liber/about/","sameAs":["https://github.com/tall190"]},"publisher":{"@type":"Organization","name":"Liber","url":"https://tall190.github.io/liber","logo":{"@type":"ImageObject","url":"https://tall190.github.io/liber/favicon.png"}},"keywords":"AI-ready, 개발, FE, E2E","image":"https://tall190.github.io/liber/_astro/ai-ready-ui_hero_image.C9FEWQvQ.png"}</script><style>:root{--accent: #2337ff;--accent-dark: #000d8a;--black: 15, 18, 25;--gray: 96, 115, 159;--gray-light: 229, 233, 240;--gray-dark: 34, 41, 57;--gray-gradient: rgba(var(--gray-light), 50%), #fff;--box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);--bg: #fff;--bg-secondary: #f9fafb;--header-bg: white;--code-bg: rgb(var(--gray-light));color-scheme:light}:root.dark{--accent: #6b7cff;--accent-dark: #8b9aff;--black: 230, 230, 230;--gray: 155, 165, 190;--gray-light: 50, 55, 65;--gray-dark: 210, 215, 225;--gray-gradient: rgba(var(--gray-light), 50%), #1a1a2e;--box-shadow: 0 2px 6px rgba(0, 0, 0, 40%), 0 8px 24px rgba(0, 0, 0, 50%), 0 16px 32px rgba(0, 0, 0, 50%);--bg: #1a1a2e;--bg-secondary: #16162a;--header-bg: #16162a;--code-bg: rgba(var(--gray-light), .6);color-scheme:dark}body{font-family:var(--font-atkinson);margin:0;padding:0;text-align:left;background:var(--bg);background-image:linear-gradient(var(--gray-gradient));background-repeat:no-repeat;background-size:100% 600px;word-wrap:break-word;overflow-wrap:break-word;color:rgb(var(--gray-dark));font-size:20px;line-height:1.7;transition:background-color .3s,color .3s}main{width:720px;max-width:calc(100% - 2em);margin:auto;padding:3em 1em}h1,h2,h3,h4,h5,h6{margin:0 0 .5rem;color:rgb(var(--black));line-height:1.2}h1{font-size:3.052em}h2{font-size:2.441em}h3{font-size:1.953em}h4{font-size:1.563em}h5{font-size:1.25em}strong,b{font-weight:700}a,a:hover{color:var(--accent)}p{margin-bottom:1em}.prose p{margin-bottom:2em}.prose p:has(>img){margin-top:.5em;margin-bottom:.5em}textarea{width:100%;font-size:16px}input{font-size:16px}table{width:100%}img{max-width:100%;height:auto;border-radius:8px}code{padding:2px 5px;background-color:var(--code-bg);border-radius:2px}pre{padding:1.5em;border-radius:8px;overflow-x:auto;max-width:100%;font-size:15px}pre>code{all:unset}blockquote{border-left:4px solid var(--accent);padding:0 0 0 20px;margin:0;font-size:1.333em}hr{border:none;border-top:1px solid rgb(var(--gray-light))}@media(max-width:720px){body{font-size:18px}main{padding:1em}}.sr-only{border:0;padding:0;margin:0;position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px 1px 1px 1px);clip:rect(1px,1px,1px,1px);clip-path:inset(50%);white-space:nowrap}.prose p>em:only-child{display:block;font-size:.85em;color:rgb(var(--gray));margin-top:-.3em;margin-bottom:1.5em;text-align:center}footer[data-astro-cid-sz7xmlte]{padding:2em 1em 6em;background:linear-gradient(var(--gray-gradient)) no-repeat;color:rgb(var(--gray));text-align:center;transition:background-color .3s,color .3s}a[data-astro-cid-eimmu3lg]{display:inline-block;text-decoration:none}a[data-astro-cid-eimmu3lg].active{font-weight:bolder;text-decoration:underline}header[data-astro-cid-3ef6ksr2]{margin:0;padding:0 1em;background:var(--header-bg);box-shadow:0 2px 8px rgba(var(--black),5%);transition:background-color .3s}h2[data-astro-cid-3ef6ksr2]{margin:0;font-size:1em}h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2],h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none}nav[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;justify-content:space-between}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{padding:1em .5em;color:var(--black);border-bottom:4px solid transparent;text-decoration:none}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none;border-bottom-color:var(--accent)}.theme-toggle[data-astro-cid-3ef6ksr2]{background:none;border:none;cursor:pointer;padding:.5em;color:rgb(var(--black));display:flex;align-items:center;transition:color .3s}.theme-toggle[data-astro-cid-3ef6ksr2]:hover{color:var(--accent)}.dark .icon-sun[data-astro-cid-3ef6ksr2]{display:inline}.dark .icon-moon[data-astro-cid-3ef6ksr2],.icon-sun[data-astro-cid-3ef6ksr2]{display:none}.icon-moon[data-astro-cid-3ef6ksr2]{display:inline}
+main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.post-meta[data-astro-cid-bvzihdzo]{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:.5rem;flex-wrap:wrap}.hits-badge[data-astro-cid-bvzihdzo]{display:inline-flex;align-items:center}.hits-badge[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{height:20px;border-radius:4px}.post-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.8rem}.tag[data-astro-cid-bvzihdzo]{display:inline-block;font-size:.75rem;font-weight:600;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--accent));color:#fff;text-decoration:none;letter-spacing:.02em}.tag[data-astro-cid-bvzihdzo]:hover{background:var(--accent-dark)}.comments-section[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:3rem auto 2rem;padding:0 1em;border-top:1px solid rgb(var(--gray-light));padding-top:2rem}.comments-section[data-astro-cid-bvzihdzo] h3[data-astro-cid-bvzihdzo]{font-size:1.1rem;color:rgb(var(--gray-dark));margin-bottom:1.5rem}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/liber/" data-astro-cid-3ef6ksr2><img src="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp" srcset="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp 1x, /liber/_astro/liber-logo.DqNb0q2U_Z1NhCXk.webp 2x, /liber/_astro/liber-logo.DqNb0q2U_16RKps.webp 3x" alt="Liber" data-astro-cid-3ef6ksr2="true" loading="lazy" decoding="async" width="121" height="40"></a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/liber/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Home </a> <a href="/liber/blog/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Blog </a> <a href="/liber/about/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> About </a> <button class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환" data-astro-cid-3ef6ksr2> <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle><line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line><line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line><line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line><line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line></svg> <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path></svg> </button> </div> </nav> </header> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo> <img src="/liber/_astro/ai-ready-ui_hero_image.C9FEWQvQ_1qwUpm.webp" alt data-astro-cid-bvzihdzo="true" loading="lazy" decoding="async" width="1020" height="510"> </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-04-21T00:00:00.000Z"> Apr 21, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>AI-ready UI — AI 에이전트가 당신의 화면을 탐색하는 방식</h1> <div class="post-meta" data-astro-cid-bvzihdzo> <span class="hits-badge" data-astro-cid-bvzihdzo> <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Ftall190.github.io%2Fliber%2Fblog%2Fai-ready-ui%2F&#38;label=views&#38;labelColor=%23374151&#38;countColor=%236366f1&#38;style=flat" alt="조회수" loading="eager" data-astro-cid-bvzihdzo> </span> </div> <div class="post-tags" data-astro-cid-bvzihdzo> <a class="tag" href="/liber/blog/tags/AI-ready/" data-astro-cid-bvzihdzo>AI-ready</a><a class="tag" href="/liber/blog/tags/개발/" data-astro-cid-bvzihdzo>개발</a><a class="tag" href="/liber/blog/tags/FE/" data-astro-cid-bvzihdzo>FE</a><a class="tag" href="/liber/blog/tags/E2E/" data-astro-cid-bvzihdzo>E2E</a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>Playwright MCP로 AI 에이전트가 브라우저를 직접 조작하게 해봤을 때였어요. 버튼 클릭 하나가 계속 실패하는데, 이상한 건 그 버튼이 화면에 멀쩡히 보인다는 거였어요. AI는 버튼을 “찾지 못했다”고 했고, 저는 “왜?”라는 질문 앞에서 잠깐 멈췄어요.</p>
+<p>AI가 화면을 사람처럼 본다는 가정이 틀렸던 거예요.</p>
+<h2 id="ai-에이전트는-dom-전체를-읽지-않는다">AI 에이전트는 DOM 전체를 읽지 않는다</h2>
+<p>Playwright MCP, Claude Computer Use, Cursor의 UI 탐색 — 이것들이 화면을 어떻게 읽는지 실제로 살펴보면, 대부분 <strong>접근성 트리(Accessibility Tree)</strong> 를 기반으로 동작해요.</p>
+<p>접근성 트리는 브라우저가 시각 정보를 걷어내고 “의미 단위”로 재구성한 DOM의 요약본이에요. 스크린리더가 읽는 바로 그 구조예요. 시각 스타일, 레이아웃, z-index 같은 건 여기 없어요. “이게 버튼이고, 레이블은 이거고, 클릭 가능하다” — 이 정도만 있어요.</p>
+<p><a href="https://proofsource.ai/2026/01/agent-browser-the-accessibility-first-approach-to-browser-automation/">ProofSource.ai 연구</a>에서 AI 에이전트가 전체 DOM 대신 접근성 트리만 읽게 했을 때 컨텍스트 토큰이 93% 줄었어요. 전체 DOM이 얼마나 노이즈로 가득한지를 역설적으로 보여주는 수치예요.</p>
+<p>문제는 <strong>접근성 트리에 정보가 없으면, AI는 추측하거나 실패한다는 거예요.</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="tsx"><code><span class="line"><span style="color:#6A737D">// 접근성 트리에서 이렇게 보여요</span></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C;</span><span style="color:#85E89D">div</span><span style="color:#B392F0"> className</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"btn btn-primary"</span><span style="color:#B392F0"> onClick</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{handleClick}></span></span>
+<span class="line"><span style="color:#E1E4E8">  저장</span></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 접근성 트리 출력: role=generic, name="저장"</span></span>
+<span class="line"><span style="color:#6A737D">// → "저장"이라는 텍스트를 가진 클릭 가능한 무언가. 정체 불명.</span></span></code></pre>
+<p><code>div</code>는 시맨틱 역할이 없어요. 클릭 가능한지도 알 수 없어요. 접근성 트리에 역할이 없으면, AI 에이전트는 이 요소를 버튼으로 인식하지 못하거나 신뢰도가 낮은 추론에 의존해요.</p>
+<h2 id="ui-식별-방법-4가지의-실전-비교">UI 식별 방법 4가지의 실전 비교</h2>
+<p>“AI가 요소를 찾는 방법”은 선택지가 몇 가지 있어요. 각각 트레이드오프가 달라요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>방법</th><th>스타일 변경</th><th>i18n</th><th>리팩토링</th><th>AI 탐색 정확도</th></tr></thead><tbody><tr><td>CSS class</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td></tr><tr><td>텍스트 내용</td><td>✅</td><td>❌</td><td>⚠️</td><td>⚠️</td></tr><tr><td>aria-label</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr><tr><td>data-testid</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr></tbody></table>
+<p><strong>CSS class는 스타일과 식별자를 혼용한 거예요.</strong> <code>btn-primary</code>가 <code>btn-cta</code>로 바뀌는 순간 테스트가 깨지고, AI 에이전트도 찾지 못해요. Tailwind로 전환하면 클래스 자체가 사라지죠.</p>
+<p><strong>텍스트 기반 탐색은 다국어 서비스에서 바로 무너져요.</strong> “저장” → “Save” → “保存” — 언어별 분기를 테스트 코드에 넣거나, 모든 언어로 테스트를 중복 작성해야 해요. 유지보수 부채가 바로 쌓여요.</p>
+<p><strong>aria-label은 접근성을 위한 거예요.</strong> 스크린리더 사용자에게 의미를 전달하는 목적이 있어요. 자동화 식별자로 남용하면 접근성 의미가 오염돼요 — 예를 들어 <code>aria-label="campaign-42-edit-button"</code> 같은 label은 스크린리더 사용자한테 아무 의미가 없어요.</p>
+<p><strong>data-testid는 자동화를 명시적으로 표현하는 속성이에요.</strong> 스타일과 무관하고, 텍스트와 무관하고, 접근성 트리에도 올라가요. 목적이 명확해서 남용 여지가 없어요.</p>
+<p>결론: <strong>aria는 접근성 목적으로, data-testid는 자동화 목적으로 각각 써야 해요.</strong> 두 가지는 역할이 달라서 같이 쓰는 게 맞아요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="tsx"><code><span class="line"><span style="color:#6A737D">// 역할이 다른 두 속성</span></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C;</span><span style="color:#85E89D">button</span></span>
+<span class="line"><span style="color:#B392F0">  data-testid</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"confirm-delete-button"</span><span style="color:#6A737D">   // 자동화 앵커</span></span>
+<span class="line"><span style="color:#B392F0">  aria-label</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"캠페인 삭제 확인"</span><span style="color:#6A737D">           // 스크린리더 안내</span></span>
+<span class="line"><span style="color:#B392F0">  aria-describedby</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"delete-warning"</span></span>
+<span class="line"><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  삭제</span></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C;/</span><span style="color:#85E89D">button</span><span style="color:#E1E4E8">></span></span></code></pre>
+<p>그럼 실제 코드베이스에 어떻게 적용할지로 넘어갈게요.</p>
+<p><img alt="No testid vs With testid — AI가 UI를 이해하는 방식의 차이" loading="lazy" decoding="async"  width="2816" height="1536" src="/liber/_astro/ai-ready-ui_ai_understand_image.DctufNN3_X21ie.webp" ></p>
+<h2 id="네이밍-컨벤션--충돌-방지가-핵심이다">네이밍 컨벤션 — 충돌 방지가 핵심이다</h2>
+<p>data-testid를 처음 도입하면 금방 충돌이 생겨요. <code>submit-button</code>이 광고 등록 폼에도 있고, 캠페인 생성 폼에도 있고, 설정 페이지에도 있어요.</p>
+<p><strong>컨텍스트를 앞에 붙이는 게 원칙이에요.</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// ❌ 컨텍스트 없음 → 충돌 발생</span></span>
+<span class="line"><span>submit-button</span></span>
+<span class="line"><span>delete-button</span></span>
+<span class="line"><span>title-input</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>// ✅ 컨텍스트 포함 → 충돌 없음</span></span>
+<span class="line"><span>creative-form-submit-button</span></span>
+<span class="line"><span>campaign-42-delete-button</span></span>
+<span class="line"><span>ad-group-title-input</span></span></code></pre>
+<p>전체 패턴 체계:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>{page}-page                      # 페이지 루트</span></span>
+<span class="line"><span>{section}-section                # 영역 구분</span></span>
+<span class="line"><span>{entity}-list                    # 리스트 컨테이너</span></span>
+<span class="line"><span>{entity}-{id}-row                # 테이블 행 (인덱스 ❌, 데이터 ID ✅)</span></span>
+<span class="line"><span>{entity}-{id}-{field}            # 셀 안의 데이터</span></span>
+<span class="line"><span>{context}-{action}-button        # 액션 버튼</span></span>
+<span class="line"><span>{context}-{field}-input          # 입력 필드</span></span>
+<span class="line"><span>{context}-{field}-select         # 셀렉트</span></span>
+<span class="line"><span>{destination}-link               # 내비게이션 링크</span></span>
+<span class="line"><span>{name}-modal                     # 모달</span></span>
+<span class="line"><span>{name}-toast                     # 토스트</span></span></code></pre>
+<p>동적 리스트에서 인덱스 기반 testid는 정렬이나 필터링 한 번이면 바로 깨져요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="tsx"><code><span class="line"><span style="color:#6A737D">// ❌ 인덱스 기반 — 정렬하면 깨짐</span></span>
+<span class="line"><span style="color:#E1E4E8">{campaigns.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">campaign</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">index</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  &#x3C;</span><span style="color:#85E89D">tr</span><span style="color:#B392F0"> data-testid</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">`campaign-${</span><span style="color:#E1E4E8">index</span><span style="color:#9ECBFF">}-row`</span><span style="color:#E1E4E8">}></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">// ✅ 데이터 ID 기반 — 정렬/필터링에 안전</span></span>
+<span class="line"><span style="color:#E1E4E8">{campaigns.</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">campaign</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">  &#x3C;</span><span style="color:#85E89D">tr</span><span style="color:#B392F0"> data-testid</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">`campaign-${</span><span style="color:#E1E4E8">campaign</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">}-row`</span><span style="color:#E1E4E8">}></span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#85E89D">td</span><span style="color:#B392F0"> data-testid</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">`campaign-${</span><span style="color:#E1E4E8">campaign</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">}-name`</span><span style="color:#E1E4E8">}>{campaign.name}&#x3C;/</span><span style="color:#85E89D">td</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#85E89D">td</span><span style="color:#B392F0"> data-testid</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">`campaign-${</span><span style="color:#E1E4E8">campaign</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">}-status`</span><span style="color:#E1E4E8">}>{campaign.status}&#x3C;/</span><span style="color:#85E89D">td</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#85E89D">button</span><span style="color:#B392F0"> data-testid</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">`campaign-${</span><span style="color:#E1E4E8">campaign</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">}-edit-button`</span><span style="color:#E1E4E8">}>수정&#x3C;/</span><span style="color:#85E89D">button</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  &#x3C;/</span><span style="color:#85E89D">tr</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">))}</span></span></code></pre>
+<h2 id="eslint로-강제화하기--실제-동작하는-코드">ESLint로 강제화하기 — 실제 동작하는 코드</h2>
+<p>이 부분에서 잘못된 예시를 많이 봤어요. <code>local/require-testid</code>를 eslintrc에 선언만 해서는 작동 안 해요. 커스텀 룰은 플러그인 형태로 등록해야 해요.</p>
+<p>ESLint v9 flat config 기준:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// eslint.config.js</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> requireTestId</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  meta: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    type: </span><span style="color:#9ECBFF">'suggestion'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    messages: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      missing: </span><span style="color:#9ECBFF">'&#x3C;{{element}}> 에 data-testid가 필요해요.'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#B392F0">  create</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">context</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> INTERACTIVE</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Set</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'button'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'input'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'select'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'textarea'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'a'</span><span style="color:#E1E4E8">]);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">      JSXOpeningElement</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">node</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> name</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> node.name.name;</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#79B8FF">INTERACTIVE</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">has</span><span style="color:#E1E4E8">(name)) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        const</span><span style="color:#79B8FF"> hasTestId</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> node.attributes.</span><span style="color:#B392F0">some</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">          (</span><span style="color:#FFAB70">attr</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span></span>
+<span class="line"><span style="color:#E1E4E8">            attr.type </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'JSXAttribute'</span><span style="color:#F97583"> &#x26;&#x26;</span></span>
+<span class="line"><span style="color:#E1E4E8">            attr.name?.name </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'data-testid'</span></span>
+<span class="line"><span style="color:#E1E4E8">        );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">hasTestId) {</span></span>
+<span class="line"><span style="color:#E1E4E8">          context.</span><span style="color:#B392F0">report</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">            node,</span></span>
+<span class="line"><span style="color:#E1E4E8">            messageId: </span><span style="color:#9ECBFF">'missing'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">            data: { element: name },</span></span>
+<span class="line"><span style="color:#E1E4E8">          });</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    };</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#E1E4E8">    plugins: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      local: { rules: { </span><span style="color:#9ECBFF">'require-testid'</span><span style="color:#E1E4E8">: requireTestId } },</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    rules: {</span></span>
+<span class="line"><span style="color:#9ECBFF">      'local/require-testid'</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">'warn'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">];</span></span></code></pre>
+<p>ESLint v8(legacy config)이라면 <code>eslint-plugin-local</code> 패키지를 써서 같은 룰을 등록할 수 있어요.</p>
+<p><strong>단, 무조건 warn으로 시작하세요.</strong> error로 하면 레거시 파일이 많은 코드베이스에서 CI 전체가 즉시 막혀요.</p>
+<h2 id="production에-data-testid를-남겨도-될까">Production에 data-testid를 남겨도 될까</h2>
+<p>자주 나오는 질문이에요. 결론부터: <strong>대부분의 경우 괜찮아요.</strong></p>
+<p>data-testid는 HTML attribute예요. 기능에 영향 없고, 보안 취약점도 없어요. 100개 요소 기준 gzip 이후 추가되는 용량은 1KB 미만이에요.</p>
+<p>다만 제거하고 싶다면 두 가지 방법이 있어요.</p>
+<p><strong>방법 1: babel-plugin-react-remove-properties (CRA, 커스텀 babel 환경)</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> --save-dev</span><span style="color:#9ECBFF"> babel-plugin-react-remove-properties</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// babel.config.js</span></span>
+<span class="line"><span style="color:#79B8FF">module</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">exports</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  env: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    production: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      plugins: [</span></span>
+<span class="line"><span style="color:#E1E4E8">        [</span><span style="color:#9ECBFF">'react-remove-properties'</span><span style="color:#E1E4E8">, { properties: [</span><span style="color:#9ECBFF">'data-testid'</span><span style="color:#E1E4E8">] }],</span></span>
+<span class="line"><span style="color:#E1E4E8">      ],</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">};</span></span></code></pre>
+<p><strong>방법 2: Vite 환경에서 커스텀 플러그인</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// vite.config.ts</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { defineConfig } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'vite'</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#B392F0"> defineConfig</span><span style="color:#E1E4E8">(({ </span><span style="color:#FFAB70">mode</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">  plugins: [</span></span>
+<span class="line"><span style="color:#E1E4E8">    mode </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'production'</span><span style="color:#F97583"> &#x26;&#x26;</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">      name: </span><span style="color:#9ECBFF">'remove-testid'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">      transform</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">code</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#9ECBFF">/</span><span style="color:#85E89D;font-weight:bold">\.</span><span style="color:#79B8FF">[jt]</span><span style="color:#DBEDFF">sx</span><span style="color:#F97583">$</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">test</span><span style="color:#E1E4E8">(id)) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> code.</span><span style="color:#B392F0">replace</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">/</span><span style="color:#79B8FF">\s</span><span style="color:#F97583">+</span><span style="color:#DBEDFF">data-testid="</span><span style="color:#79B8FF">[</span><span style="color:#F97583">^</span><span style="color:#79B8FF">"]</span><span style="color:#F97583">*</span><span style="color:#DBEDFF">"</span><span style="color:#9ECBFF">/</span><span style="color:#F97583">g</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">''</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  ].</span><span style="color:#B392F0">filter</span><span style="color:#E1E4E8">(Boolean),</span></span>
+<span class="line"><span style="color:#E1E4E8">}));</span></span></code></pre>
+<p>저는 제거 안 하는 팀이 더 현실적이라고 봐요. 제거 플러그인 자체가 테스트 대상이 되고 (production 빌드에서 정말 제거됐는지 검증해야 하므로), 관리 포인트가 늘어요. 용량 절감 대비 유지보수 비용이 더 크거든요.</p>
+<h2 id="레거시-코드베이스-마이그레이션--200개-컴포넌트를-어떻게-하나">레거시 코드베이스 마이그레이션 — 200개 컴포넌트를 어떻게 하나</h2>
+<p>“새로운 컴포넌트에만 적용하면 되지 않나요?” — 이렇게 시작하면 6개월 뒤에 testid가 절반만 있는 어중간한 코드베이스가 돼요. AI 에이전트가 testid 있는 영역만 신뢰하고 나머지는 텍스트 추론으로 폴백하는 상황이 만들어져요.</p>
+<p>현실적인 마이그레이션 전략은 세 단계예요.</p>
+<p><strong>1단계: AI로 파일 단위 일괄 마이그레이션</strong></p>
+<p>Claude나 Cursor에게 파일 하나씩 넘기면서 이렇게 부탁해요:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>이 컴포넌트의 모든 button, input, select, a 요소에 data-testid를 추가해줘.</span></span>
+<span class="line"><span>규칙:</span></span>
+<span class="line"><span>- 이미 data-testid가 있는 요소는 건드리지 마</span></span>
+<span class="line"><span>- 네이밍 패턴: {context}-{action}-button, {context}-{field}-input</span></span>
+<span class="line"><span>- 동적 리스트의 경우 인덱스 대신 데이터 ID 사용 (e.g. campaign.id)</span></span>
+<span class="line"><span>- 페이지명은 파일 경로에서 추론해줘</span></span></code></pre>
+<p>파일 1개당 2-3분이면 돼요. 리뷰하면서 병렬로 진행하면 하루에 수십 개 처리할 수 있어요.</p>
+<p><strong>2단계: Boy Scout Rule 도입</strong></p>
+<p>ESLint warn 룰을 켜고, 팀에 공지해요: “본인이 수정한 파일의 testid 경고는 같은 PR에서 해결하기.” 강제가 아니라 자율로 시작하되, PR 리뷰에서 체크포인트로 삼는 거예요.</p>
+<p><strong>3단계: 핵심 Flow 우선 완료 후 CI error 전환</strong></p>
+<p>주요 사용자 흐름 (로그인, 핵심 업무 기능)의 testid가 완성되면, ESLint를 warn → error로 전환해요. 이후 신규 파일에서 testid가 빠지면 CI에서 막혀요.</p>
+<h2 id="실제로-뭐가-달라지나">실제로 뭐가 달라지나</h2>
+<p>접근성 트리가 풍부해지면 AI 에이전트의 동작이 눈에 띄게 달라져요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// testid 없는 환경 — AI의 selector 추론</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> page.</span><span style="color:#B392F0">locator</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'button:has-text("저장")'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">click</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#6A737D">// → 한국어 환경에서만 동작. 텍스트 변경에 취약.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// testid 있는 환경 — 안정적인 selector</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> page.</span><span style="color:#B392F0">getByTestId</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'creative-form-save-button'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">click</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#6A737D">// → 언어, 텍스트, 스타일 변경에 무관하게 동작.</span></span></code></pre>
+<p>AI 에이전트가 시나리오 단위로 동작할 때 차이가 더 커요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#6A737D">// AI가 실행하는 복잡한 시나리오</span></span>
+<span class="line"><span style="color:#B392F0">test</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'광고 소재 임시저장 후 재편집'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">page</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> page.</span><span style="color:#B392F0">getByTestId</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'creative-title-input'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">fill</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'여름 프로모션'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> page.</span><span style="color:#B392F0">getByTestId</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'creative-save-draft-button'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">click</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#B392F0"> expect</span><span style="color:#E1E4E8">(page.</span><span style="color:#B392F0">getByTestId</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'draft-saved-toast'</span><span style="color:#E1E4E8">)).</span><span style="color:#B392F0">toBeVisible</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // 목록으로 나갔다가 다시 들어옴</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> page.</span><span style="color:#B392F0">getByTestId</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'creative-list-link'</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">click</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#E1E4E8"> page.</span><span style="color:#B392F0">getByTestId</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`creative-${</span><span style="color:#E1E4E8">draftId</span><span style="color:#9ECBFF">}-edit-button`</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">click</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  await</span><span style="color:#B392F0"> expect</span><span style="color:#E1E4E8">(page.</span><span style="color:#B392F0">getByTestId</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'creative-title-input'</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#B392F0">toHaveValue</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'여름 프로모션'</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<p>testid 체계가 없는 코드베이스에서는 이 테스트가 텍스트 추론과 CSS 셀렉터로 뒤덮여요. 디자인 변경 한 번이면 절반이 깨지고, 고치는 데 testid 붙이는 것보다 더 많은 시간이 들어요.</p>
+<p><img alt="FE Development → data-testid → QA Automation — 전 사이클을 연결하는 공통 언어" loading="lazy" decoding="async"  width="2752" height="1536" src="/liber/_astro/ai-ready-ui_testid_image.O0ZLqckS_Z1zSXOp.webp" ></p>
+<h2 id="어디까지-해야-충분한가">어디까지 해야 충분한가</h2>
+<p>기준이 없으면 끝이 없어요. 실용적인 기준으로는 이렇게 잡아요.</p>
+<p><strong>필수 (반드시):</strong></p>
+<ul>
+<li>모든 <code>button</code>, <code>input</code>, <code>select</code>, <code>textarea</code></li>
+<li>페이지 루트와 주요 섹션 컨테이너</li>
+<li>동적 리스트의 행과 핵심 셀</li>
+</ul>
+<p><strong>권장 (중요한 UI):</strong></p>
+<ul>
+<li>모달, 토스트, 드롭다운</li>
+<li>페이지네이션 컨트롤</li>
+<li>상태 표시 배지 (상태값이 테스트 assertion 대상인 경우)</li>
+</ul>
+<p><strong>불필요:</strong></p>
+<ul>
+<li>순수 표시용 텍스트 (<code>&#x3C;p></code>, <code>&#x3C;span></code>)</li>
+<li>아이콘 (인터랙션 없는 경우)</li>
+<li>레이아웃 컨테이너 (의미 없는 <code>&#x3C;div></code> 중첩)</li>
+</ul>
+<hr>
+<p>AI가 코드를 잘 만들어주는 건 이미 됐어요. 다음 단계는 AI가 완성된 UI를 직접 검증하고, 회귀를 잡고, QA 싸이클 전체에 참여하는 거예요. 근데 그러려면 AI가 UI를 읽을 수 있어야 해요.</p>
+<p>testid는 “테스트를 위한 설정”이 아니에요. AI와 함께 일하는 FE 코드베이스의 기본 인프라예요. 지금 붙이지 않으면, 나중에 AI가 “왜 이 버튼을 못 찾냐”고 할 때 다시 돌아오게 돼요.</p>
+<p>컨벤션을 잡은 다음엔 실전 문제가 남아요. 동적으로 생성되는 항목엔 testid를 어떻게 조합하는지, 텍스트가 맞아도 잘못된 위치에서 매칭되는 문제, AI가 로딩 완료 시점을 정확히 잡게 하는 <code>aria-busy</code> 배치 전략까지 — 다음 글에서 다뤄요.</p>
+<p><a href="/liber/blog/ai-ready-ui-advanced">AI-ready UI 실전편 → 동적 testid 설계, 계층 구조, aria-busy 배치 전략</a></p>
+<hr>
+<p><em><a href="/liber/blog/ai-ready-e2e">AI-ready E2E — AI가 코드를 짜는 시대, 품질 검증은 누가 하나요?</a> — 같은 data-testid를 QA 관점에서. Playwright vs Selenium 비교와 aria-busy 패턴.</em></p>
+<p><em><a href="/liber/blog/geo-for-brands">AI-ready Marketing — 당신의 브랜드를 AI에게 설명할 준비가 되었나요?</a> — 개발팀이 아닌 브랜드가 주인공인 이야기.</em></p>  </div> </article> </main> <!-- 댓글 & 좋아요 (Giscus — GitHub Discussions 기반) --> <!-- 설정 방법: https://giscus.app 에서 tall190/liber 입력 후 REPO_ID, CATEGORY_ID 교체 --> <div class="comments-section" data-astro-cid-bvzihdzo> <h3 data-astro-cid-bvzihdzo>댓글</h3> <script>
+				(function() {
+					var isDark = document.documentElement.classList.contains('dark');
+					var s = document.createElement('script');
+					s.src = 'https://giscus.app/client.js';
+					s.setAttribute('data-repo', 'tall190/liber');
+					s.setAttribute('data-repo-id', 'R_kgDOSIJHDw');
+					s.setAttribute('data-category', 'Announcements');
+					s.setAttribute('data-category-id', 'DIC_kwDOSIJHD84C7Uy6');
+					s.setAttribute('data-mapping', 'pathname');
+					s.setAttribute('data-strict', '0');
+					s.setAttribute('data-reactions-enabled', '1');
+					s.setAttribute('data-emit-metadata', '0');
+					s.setAttribute('data-input-position', 'bottom');
+					s.setAttribute('data-theme', isDark ? 'dark' : 'light');
+					s.setAttribute('data-lang', 'ko');
+					s.setAttribute('crossorigin', 'anonymous');
+					s.async = true;
+					document.currentScript.parentElement.appendChild(s);
+				})();
+			</script> </div> <footer data-astro-cid-sz7xmlte>
+&copy; 2026 Liber. All rights reserved.
+</footer> </body></html>

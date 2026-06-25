@@ -1,0 +1,314 @@
+<!DOCTYPE html><html lang="ko" data-astro-cid-bvzihdzo> <head><!-- Dark mode: apply before render to prevent flash --><script>
+	(function() {
+		const theme = localStorage.getItem('theme');
+		if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark');
+		}
+	})();
+</script> <!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="/liber/favicon.png"><link rel="icon" type="image/svg+xml" href="/liber/favicon.svg"><link rel="icon" href="/liber/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Liber" href="https://tall190.github.io/rss.xml"><meta name="generator" content="Astro v6.1.8"><style>@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/fd137eb932fcc611.woff") format("woff");font-display:swap;font-weight:400;font-style:normal;}@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/5c86995be98976a1.woff") format("woff");font-display:swap;font-weight:700;font-style:normal;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}:root{--font-atkinson:Atkinson-c7f4c4e8b285552f,"Atkinson-c7f4c4e8b285552f fallback: Arial",sans-serif;}</style><link rel="preload" href="/liber/_astro/fonts/fd137eb932fcc611.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/liber/_astro/fonts/5c86995be98976a1.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://tall190.github.io/liber/blog/claude-plugin-guide/"><!-- Primary Meta Tags --><title>내가 만든 AI를 세상에 — Plugin으로 배포하고 마켓에 올리기</title><meta name="title" content="내가 만든 AI를 세상에 — Plugin으로 배포하고 마켓에 올리기"><meta name="description" content="Plugin은 Skill + MCP + Hooks를 묶어 팀과 세상에 배포하는 단위예요. Skill, MCP와의 관계, 마켓플레이스 구조, 팀 전용 배포까지 — AI 기능을 제품으로 만드는 법."><meta name="author" content="Liber"><meta name="keywords" content="AI, Claude, Plugin, 자동화, 배포, 실무"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://tall190.github.io/liber/blog/claude-plugin-guide/"><meta property="og:title" content="내가 만든 AI를 세상에 — Plugin으로 배포하고 마켓에 올리기"><meta property="og:description" content="Plugin은 Skill + MCP + Hooks를 묶어 팀과 세상에 배포하는 단위예요. Skill, MCP와의 관계, 마켓플레이스 구조, 팀 전용 배포까지 — AI 기능을 제품으로 만드는 법."><meta property="og:image" content="https://tall190.github.io/liber/_astro/claude-plugin-guide_hero_image.C3kmm50F.png"><meta property="og:locale" content="ko_KR"><meta property="article:published_time" content="2026-06-12T00:00:00.000Z"><meta property="article:tag" content="AI"><meta property="article:tag" content="Claude"><meta property="article:tag" content="Plugin"><meta property="article:tag" content="자동화"><meta property="article:tag" content="배포"><meta property="article:tag" content="실무"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://tall190.github.io/liber/blog/claude-plugin-guide/"><meta property="twitter:title" content="내가 만든 AI를 세상에 — Plugin으로 배포하고 마켓에 올리기"><meta property="twitter:description" content="Plugin은 Skill + MCP + Hooks를 묶어 팀과 세상에 배포하는 단위예요. Skill, MCP와의 관계, 마켓플레이스 구조, 팀 전용 배포까지 — AI 기능을 제품으로 만드는 법."><meta property="twitter:image" content="https://tall190.github.io/liber/_astro/claude-plugin-guide_hero_image.C3kmm50F.png"><!-- Theme toggle script --><script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const toggle = document.getElementById('theme-toggle');
+		if (!toggle) return;
+		toggle.addEventListener('click', function() {
+			const isDark = document.documentElement.classList.toggle('dark');
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
+			// Sync Giscus theme
+			const giscus = document.querySelector('iframe.giscus-frame');
+			if (giscus) {
+				giscus.contentWindow.postMessage(
+					{ giscus: { setConfig: { theme: isDark ? 'dark' : 'light' } } },
+					'https://giscus.app'
+				);
+			}
+		});
+	});
+</script><!-- Schema.org JSON-LD: AI가 이 글을 구조화된 데이터로 읽을 수 있어요 --><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"내가 만든 AI를 세상에 — Plugin으로 배포하고 마켓에 올리기","description":"Plugin은 Skill + MCP + Hooks를 묶어 팀과 세상에 배포하는 단위예요. Skill, MCP와의 관계, 마켓플레이스 구조, 팀 전용 배포까지 — AI 기능을 제품으로 만드는 법.","datePublished":"2026-06-12T00:00:00.000Z","dateModified":"2026-06-12T00:00:00.000Z","url":"https://tall190.github.io/liber/blog/claude-plugin-guide/","inLanguage":"ko-KR","mainEntityOfPage":{"@type":"WebPage","@id":"https://tall190.github.io/liber/blog/claude-plugin-guide/"},"author":{"@type":"Person","name":"Jayden","url":"https://tall190.github.io/liber/about/","sameAs":["https://github.com/tall190"]},"publisher":{"@type":"Organization","name":"Liber","url":"https://tall190.github.io/liber","logo":{"@type":"ImageObject","url":"https://tall190.github.io/liber/favicon.png"}},"keywords":"AI, Claude, Plugin, 자동화, 배포, 실무","image":"https://tall190.github.io/liber/_astro/claude-plugin-guide_hero_image.C3kmm50F.png"}</script><style>:root{--accent: #2337ff;--accent-dark: #000d8a;--black: 15, 18, 25;--gray: 96, 115, 159;--gray-light: 229, 233, 240;--gray-dark: 34, 41, 57;--gray-gradient: rgba(var(--gray-light), 50%), #fff;--box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);--bg: #fff;--bg-secondary: #f9fafb;--header-bg: white;--code-bg: rgb(var(--gray-light));color-scheme:light}:root.dark{--accent: #6b7cff;--accent-dark: #8b9aff;--black: 230, 230, 230;--gray: 155, 165, 190;--gray-light: 50, 55, 65;--gray-dark: 210, 215, 225;--gray-gradient: rgba(var(--gray-light), 50%), #1a1a2e;--box-shadow: 0 2px 6px rgba(0, 0, 0, 40%), 0 8px 24px rgba(0, 0, 0, 50%), 0 16px 32px rgba(0, 0, 0, 50%);--bg: #1a1a2e;--bg-secondary: #16162a;--header-bg: #16162a;--code-bg: rgba(var(--gray-light), .6);color-scheme:dark}body{font-family:var(--font-atkinson);margin:0;padding:0;text-align:left;background:var(--bg);background-image:linear-gradient(var(--gray-gradient));background-repeat:no-repeat;background-size:100% 600px;word-wrap:break-word;overflow-wrap:break-word;color:rgb(var(--gray-dark));font-size:20px;line-height:1.7;transition:background-color .3s,color .3s}main{width:720px;max-width:calc(100% - 2em);margin:auto;padding:3em 1em}h1,h2,h3,h4,h5,h6{margin:0 0 .5rem;color:rgb(var(--black));line-height:1.2}h1{font-size:3.052em}h2{font-size:2.441em}h3{font-size:1.953em}h4{font-size:1.563em}h5{font-size:1.25em}strong,b{font-weight:700}a,a:hover{color:var(--accent)}p{margin-bottom:1em}.prose p{margin-bottom:2em}.prose p:has(>img){margin-top:.5em;margin-bottom:.5em}textarea{width:100%;font-size:16px}input{font-size:16px}table{width:100%}img{max-width:100%;height:auto;border-radius:8px}code{padding:2px 5px;background-color:var(--code-bg);border-radius:2px}pre{padding:1.5em;border-radius:8px;overflow-x:auto;max-width:100%;font-size:15px}pre>code{all:unset}blockquote{border-left:4px solid var(--accent);padding:0 0 0 20px;margin:0;font-size:1.333em}hr{border:none;border-top:1px solid rgb(var(--gray-light))}@media(max-width:720px){body{font-size:18px}main{padding:1em}}.sr-only{border:0;padding:0;margin:0;position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px 1px 1px 1px);clip:rect(1px,1px,1px,1px);clip-path:inset(50%);white-space:nowrap}.prose p>em:only-child{display:block;font-size:.85em;color:rgb(var(--gray));margin-top:-.3em;margin-bottom:1.5em;text-align:center}footer[data-astro-cid-sz7xmlte]{padding:2em 1em 6em;background:linear-gradient(var(--gray-gradient)) no-repeat;color:rgb(var(--gray));text-align:center;transition:background-color .3s,color .3s}a[data-astro-cid-eimmu3lg]{display:inline-block;text-decoration:none}a[data-astro-cid-eimmu3lg].active{font-weight:bolder;text-decoration:underline}header[data-astro-cid-3ef6ksr2]{margin:0;padding:0 1em;background:var(--header-bg);box-shadow:0 2px 8px rgba(var(--black),5%);transition:background-color .3s}h2[data-astro-cid-3ef6ksr2]{margin:0;font-size:1em}h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2],h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none}nav[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;justify-content:space-between}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{padding:1em .5em;color:var(--black);border-bottom:4px solid transparent;text-decoration:none}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none;border-bottom-color:var(--accent)}.theme-toggle[data-astro-cid-3ef6ksr2]{background:none;border:none;cursor:pointer;padding:.5em;color:rgb(var(--black));display:flex;align-items:center;transition:color .3s}.theme-toggle[data-astro-cid-3ef6ksr2]:hover{color:var(--accent)}.dark .icon-sun[data-astro-cid-3ef6ksr2]{display:inline}.dark .icon-moon[data-astro-cid-3ef6ksr2],.icon-sun[data-astro-cid-3ef6ksr2]{display:none}.icon-moon[data-astro-cid-3ef6ksr2]{display:inline}
+main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.post-meta[data-astro-cid-bvzihdzo]{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:.5rem;flex-wrap:wrap}.hits-badge[data-astro-cid-bvzihdzo]{display:inline-flex;align-items:center}.hits-badge[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{height:20px;border-radius:4px}.post-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.8rem}.tag[data-astro-cid-bvzihdzo]{display:inline-block;font-size:.75rem;font-weight:600;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--accent));color:#fff;text-decoration:none;letter-spacing:.02em}.tag[data-astro-cid-bvzihdzo]:hover{background:var(--accent-dark)}.comments-section[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:3rem auto 2rem;padding:0 1em;border-top:1px solid rgb(var(--gray-light));padding-top:2rem}.comments-section[data-astro-cid-bvzihdzo] h3[data-astro-cid-bvzihdzo]{font-size:1.1rem;color:rgb(var(--gray-dark));margin-bottom:1.5rem}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/liber/" data-astro-cid-3ef6ksr2><img src="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp" srcset="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp 1x, /liber/_astro/liber-logo.DqNb0q2U_Z1NhCXk.webp 2x, /liber/_astro/liber-logo.DqNb0q2U_16RKps.webp 3x" alt="Liber" data-astro-cid-3ef6ksr2="true" loading="lazy" decoding="async" width="121" height="40"></a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/liber/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Home </a> <a href="/liber/blog/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Blog </a> <a href="/liber/about/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> About </a> <button class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환" data-astro-cid-3ef6ksr2> <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle><line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line><line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line><line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line><line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line></svg> <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path></svg> </button> </div> </nav> </header> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo> <img src="/liber/_astro/claude-plugin-guide_hero_image.C3kmm50F_QwTqx.webp" alt data-astro-cid-bvzihdzo="true" loading="lazy" decoding="async" width="1020" height="510"> </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-06-12T00:00:00.000Z"> Jun 12, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>내가 만든 AI를 세상에 — Plugin으로 배포하고 마켓에 올리기</h1> <div class="post-meta" data-astro-cid-bvzihdzo> <span class="hits-badge" data-astro-cid-bvzihdzo> <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Ftall190.github.io%2Fliber%2Fblog%2Fclaude-plugin-guide%2F&#38;label=views&#38;labelColor=%23374151&#38;countColor=%236366f1&#38;style=flat" alt="조회수" loading="eager" data-astro-cid-bvzihdzo> </span> </div> <div class="post-tags" data-astro-cid-bvzihdzo> <a class="tag" href="/liber/blog/tags/AI/" data-astro-cid-bvzihdzo>AI</a><a class="tag" href="/liber/blog/tags/Claude/" data-astro-cid-bvzihdzo>Claude</a><a class="tag" href="/liber/blog/tags/Plugin/" data-astro-cid-bvzihdzo>Plugin</a><a class="tag" href="/liber/blog/tags/자동화/" data-astro-cid-bvzihdzo>자동화</a><a class="tag" href="/liber/blog/tags/배포/" data-astro-cid-bvzihdzo>배포</a><a class="tag" href="/liber/blog/tags/실무/" data-astro-cid-bvzihdzo>실무</a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>Skill을 만들고, MCP 서버를 연결했어요. 그런데 팀원에게 “이거 써봐”라고 하려면 어떻게 해야 할까요?</p>
+<p>SKILL.md 파일을 보내고, MCP 설정을 공유하고, 훅 설정을 알려줘야 해요. 파일이 세 개, 설정이 두 군데 — 이걸 매번 수동으로 맞추면 금방 지쳐요.</p>
+<p><strong>Plugin</strong>은 이걸 한 방에 해결하는 방법이에요. Skill, MCP, Hooks, Agents를 하나의 패키지로 묶어서 설치 한 번으로 다 들어오게 해요. 팀에 배포할 수도 있고, Claude 마켓플레이스에 올려서 누구나 쓸 수 있게 할 수도 있어요.</p>
+<hr>
+<h2 id="plugin이-skill이나-mcp와-다른-점">Plugin이 Skill이나 MCP와 다른 점</h2>
+<p>이 셋을 비슷한 것으로 보는 경우가 많아요. 레이어가 달라요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Plugin (배포 단위, 컨테이너)</span></span>
+<span class="line"><span>  ├── Skills    Claude가 실행하는 절차적 지식</span></span>
+<span class="line"><span>  ├── MCP 서버  외부 도구와 데이터 연결</span></span>
+<span class="line"><span>  ├── Hooks     이벤트 기반 자동 실행</span></span>
+<span class="line"><span>  └── Agents    특화된 서브에이전트</span></span></code></pre>
+<p><strong>Skill</strong>은 SKILL.md 파일 하나예요. “이렇게 행동해라”는 지침이에요.</p>
+<p><strong>MCP</strong>는 외부 시스템(GitHub, Slack, DB)과 연결하는 프로토콜이에요.</p>
+<p><strong>Plugin</strong>은 이것들을 묶어서 배포하는 패키지예요. 플러그인 없이 Skill만 쓸 수도 있고, Skill 없이 MCP만 묶은 플러그인도 있어요.</p>
+<p>비유하자면 — Skill은 작업 매뉴얼, MCP는 USB 어댑터, Plugin은 이것들을 담아서 배포하는 앱 패키지예요.</p>
+<hr>
+<h2 id="plugin의-구조">Plugin의 구조</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>my-plugin/</span></span>
+<span class="line"><span>├── .claude-plugin/</span></span>
+<span class="line"><span>│   └── plugin.json        # 매니페스트 (이름, 버전, 설명)</span></span>
+<span class="line"><span>├── skills/</span></span>
+<span class="line"><span>│   ├── pr-review/</span></span>
+<span class="line"><span>│   │   └── SKILL.md</span></span>
+<span class="line"><span>│   └── deploy-check/</span></span>
+<span class="line"><span>│       └── SKILL.md</span></span>
+<span class="line"><span>├── .mcp.json              # 이 플러그인이 사용하는 MCP 서버</span></span>
+<span class="line"><span>└── hooks/</span></span>
+<span class="line"><span>    └── hooks.json         # 이벤트 핸들러</span></span></code></pre>
+<p><code>plugin.json</code> 예시:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"dev-toolkit"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"PR 리뷰, 배포 체크, GitHub 연동을 묶은 개발팀 툴킷"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "version"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"1.0.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "author"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Your Team"</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Plugin이 활성화되면 그 안의 Skills, MCP 서버, Hooks가 모두 같이 로드돼요. 설치 한 번으로 전부 들어와요.</p>
+<h3 id="skill-하나뿐이라면">Skill 하나뿐이라면</h3>
+<p>Skill이 하나뿐인 Plugin은 구조를 단순하게 할 수 있어요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>simple-plugin/</span></span>
+<span class="line"><span>├── .claude-plugin/</span></span>
+<span class="line"><span>│   └── plugin.json</span></span>
+<span class="line"><span>└── SKILL.md              # skills/ 디렉토리 없이 루트에</span></span></code></pre>
+<p>이 경우 <code>plugin.json</code>의 <code>name</code> 필드가 Skill 이름으로도 사용돼요.</p>
+<hr>
+<h2 id="plugin-vs-일반-skill--네임스페이스가-핵심">Plugin vs 일반 Skill — 네임스페이스가 핵심</h2>
+<p>Plugin이 일반 Skill과 가장 크게 다른 점은 <strong>네임스페이스</strong>예요.</p>
+<p>일반 Skill은 <code>/pr-review</code>처럼 이름 그대로 불러요.</p>
+<p>Plugin 안의 Skill은 <code>/dev-toolkit:pr-review</code>처럼 플러그인 이름이 앞에 붙어요.</p>
+<p>이게 왜 중요하냐면 — 여러 플러그인에 같은 이름의 Skill이 있어도 충돌이 없어요. 개인 Skill과 팀 Plugin의 Skill이 같은 이름이어도 덮어쓰지 않아요.</p>
+<hr>
+<h2 id="로컬에서-만들고-테스트하기">로컬에서 만들고 테스트하기</h2>
+<h3 id="빠르게-시작하기">빠르게 시작하기</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 새 플러그인 초기화</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> plugin</span><span style="color:#9ECBFF"> init</span><span style="color:#9ECBFF"> my-toolkit</span></span>
+<span class="line"><span style="color:#6A737D"># → ~/.claude/skills/my-toolkit/ 생성</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 로컬 디렉토리로 테스트</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#79B8FF"> --plugin-dir</span><span style="color:#9ECBFF"> ./my-toolkit</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 변경사항 바로 반영 (재시작 불필요)</span></span>
+<span class="line"><span style="color:#B392F0">/reload-plugins</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 배포 전 검증</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> plugin</span><span style="color:#9ECBFF"> validate</span></span></code></pre>
+<h3 id="개발-흐름">개발 흐름</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>1. claude plugin init &#x3C;이름>  →  디렉토리 생성</span></span>
+<span class="line"><span>2. SKILL.md 작성            →  핵심 기능 구현</span></span>
+<span class="line"><span>3. claude --plugin-dir ./   →  로컬에서 테스트</span></span>
+<span class="line"><span>4. /reload-plugins          →  변경사항 적용</span></span>
+<span class="line"><span>5. claude plugin validate   →  배포 전 검증</span></span>
+<span class="line"><span>6. 배포 (팀 공유 또는 마켓플레이스)</span></span></code></pre>
+<hr>
+<h2 id="배포-팀에게-또는-세상에">배포: 팀에게, 또는 세상에</h2>
+<p>Plugin을 만들었으면 어떻게 배포할까요? 범위에 따라 세 가지 방법이 있어요.</p>
+<h3 id="1-프로젝트-스코프로-팀-공유">1. 프로젝트 스코프로 팀 공유</h3>
+<p>가장 간단한 방법이에요. 플러그인 디렉토리를 git 레포에 커밋하고 settings.json에 등록해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#6A737D">// .claude/settings.json</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "enabledPlugins"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "dev-toolkit@project"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>레포를 클론한 팀원은 다음 Claude Code 실행 시 자동으로 플러그인이 로드돼요.</p>
+<h3 id="2-팀-전용-마켓플레이스">2. 팀 전용 마켓플레이스</h3>
+<p>여러 프로젝트에서 공통으로 쓰는 플러그인이라면 팀 마켓플레이스를 만들 수 있어요. GitHub 레포 하나를 마켓플레이스로 쓰는 방식이에요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#6A737D">// settings.json에 팀 마켓플레이스 등록</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "extraKnownMarketplaces"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "my-team-plugins"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "source"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"source"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"github"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"repo"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"myorg/claude-plugins"</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>등록하면 팀원이 <code>/plugin install &#x3C;플러그인명>@my-team-plugins</code>으로 설치할 수 있어요.</p>
+<h3 id="3-공개-마켓플레이스-제출">3. 공개 마켓플레이스 제출</h3>
+<p>더 많은 사람이 쓰면 좋겠다면 커뮤니티 마켓플레이스에 제출할 수 있어요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 로컬 검증</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> plugin</span><span style="color:#9ECBFF"> validate</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 제출</span></span>
+<span class="line"><span style="color:#6A737D"># → platform.claude.com/plugins/submit</span></span></code></pre>
+<p>Anthropic 자동화 안전 검사를 통과하면 <code>anthropics/claude-plugins-community</code> 카탈로그에 올라가요. 특정 커밋 SHA로 고정돼서 버전이 보장돼요.</p>
+<hr>
+<h2 id="claude-공식-마켓플레이스-플러그인들">Claude 공식 마켓플레이스 플러그인들</h2>
+<p>Anthropic이 직접 큐레이션하는 공식 마켓플레이스(<code>claude-plugins-official</code>)에 뭐가 있는지 알아두면 직접 만들지 않아도 돼요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>카테고리</th><th>플러그인 예시</th></tr></thead><tbody><tr><td><strong>코드 인텔리전스</strong></td><td>typescript-lsp, rust-analyzer-lsp, pyright-lsp</td></tr><tr><td><strong>외부 연동</strong></td><td>github, atlassian, slack, figma, vercel</td></tr><tr><td><strong>보안</strong></td><td>security-guidance (코드 작성 중 취약점 자동 리뷰)</td></tr><tr><td><strong>개발 워크플로우</strong></td><td>commit-commands, pr-review-toolkit</td></tr><tr><td><strong>출력 스타일</strong></td><td>explanatory-output-style, learning-output-style</td></tr></tbody></table>
+<p>이 중 LSP 플러그인들이 특히 강력해요. TypeScript나 Python을 쓴다면 해당 LSP를 연결하면 Claude가 코드 인텔리전스 정보(타입, 심볼 정의, 참조 등)에 접근할 수 있어요.</p>
+<hr>
+<h2 id="plugin-설치와-스코프-선택">Plugin 설치와 스코프 선택</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># 설치 (스코프 선택 UI가 나와요)</span></span>
+<span class="line"><span style="color:#B392F0">/plugin</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> github@claude-plugins-official</span></span></code></pre>
+<p>설치 시 스코프를 선택할 수 있어요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>스코프</th><th>범위</th><th>공유</th></tr></thead><tbody><tr><td><strong>User</strong></td><td>내 모든 프로젝트</td><td>나 혼자</td></tr><tr><td><strong>Project</strong></td><td>이 레포의 모든 협업자</td><td>팀 전체</td></tr><tr><td><strong>Local</strong></td><td>이 레포에서 나 혼자</td><td>없음</td></tr></tbody></table>
+<p>팀 전체가 써야 한다면 Project 스코프로 설치하고 settings.json을 git에 커밋해요.</p>
+<hr>
+<h2 id="chatgpt-gpts와-어떻게-다른가">ChatGPT GPTs와 어떻게 다른가</h2>
+<p>가끔 “ChatGPT 플러그인 같은 건가요?”라고 물어보는 경우가 있어요. ChatGPT 플러그인은 2024년에 종료됐고, 지금은 GPTs가 그 자리를 대신해요. 근데 Claude Code Plugin과는 완전히 다른 것이에요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th></th><th>ChatGPT GPTs</th><th>Claude Code Plugin</th></tr></thead><tbody><tr><td><strong>환경</strong></td><td>웹 브라우저, 대화 인터페이스</td><td>터미널, 로컬 개발 환경</td></tr><tr><td><strong>사용자</strong></td><td>일반 소비자 포함</td><td>주로 개발자</td></tr><tr><td><strong>핵심</strong></td><td>대화 패턴 커스터마이징</td><td>코딩 워크플로우 자동화</td></tr><tr><td><strong>코드 실행</strong></td><td>샌드박스 내 제한적</td><td>로컬 머신 전체 권한</td></tr><tr><td><strong>외부 연동</strong></td><td>Actions (OpenAPI spec)</td><td>MCP 서버 (표준 프로토콜)</td></tr><tr><td><strong>버전 관리</strong></td><td>없음</td><td>Git SHA로 고정</td></tr></tbody></table>
+<p>GPTs는 “AI 챗봇을 커스터마이징하는 것”이고, Claude Code Plugin은 “개발 워크플로우를 자동화하는 패키지”예요.</p>
+<hr>
+<h2 id="ai-생태계의-plugin-개념-지형도">AI 생태계의 Plugin 개념 지형도</h2>
+<p>“Plugin”이라는 단어를 플랫폼마다 다르게 써요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>플랫폼</th><th>확장 단위</th><th>핵심</th></tr></thead><tbody><tr><td><strong>Claude Code</strong></td><td>Plugin</td><td>Skills + MCP + Hooks 묶음</td></tr><tr><td><strong>ChatGPT</strong></td><td>GPTs</td><td>Instructions + Knowledge + Actions</td></tr><tr><td><strong>Gemini CLI</strong></td><td>Extension</td><td>Claude Plugin과 유사한 구조</td></tr><tr><td><strong>VS Code / JetBrains</strong></td><td>Extension/Plugin</td><td>에디터 자체를 확장하는 코드 패키지</td></tr><tr><td><strong>Cursor</strong></td><td>Skills</td><td>SKILL.md 표준 (Plugin 없이 Skill만)</td></tr></tbody></table>
+<p>IDE 플러그인(VS Code Extension, JetBrains Plugin)은 에디터 자체를 확장하는 완전히 다른 개념이에요. Claude Code Plugin과 이름이 비슷해서 혼동하기 쉬운데, 아예 다른 레이어예요.</p>
+<p>그리고 Skill 파일(SKILL.md) 자체는 <strong>agentskills.io 오픈 스탠다드</strong>를 따르기 때문에 Claude Code 외에 Codex CLI, Gemini CLI, GitHub Copilot에서도 호환돼요. Plugin이라는 포장은 각 플랫폼마다 다르지만, 그 안의 Skill 내용은 이식성이 있어요.</p>
+<hr>
+<p>Skill은 내 AI의 행동을 만들고, MCP는 연결을 만들고, Plugin은 그것들을 묶어서 나눌 수 있게 해줘요.</p>
+<p>팀의 코드 리뷰 기준, 배포 절차, 사내 시스템 연동 — 이것들을 Plugin 하나에 담아두면, 새로운 팀원이 와도 <code>/plugin install team-toolkit</code>으로 팀의 AI 환경 전체가 세팅돼요.</p>
+<hr>
+<p><strong>관련 글</strong></p>
+<ul>
+<li><a href="/liber/blog/claude-skill-guide">반복되는 AI 작업을 ’/‘로 끝내는 법 — Skill 생태계 구축 가이드</a> — 이 시리즈</li>
+<li><a href="/liber/blog/claude-mcp-guide">Claude의 손발을 설계하는 법 — MCP 가이드</a> — 이 시리즈</li>
+<li><a href="https://code.claude.com/docs/en/plugins">Claude Code Plugin 공식 문서</a> — Anthropic</li>
+<li><a href="https://agentskills.io">Agent Skills 오픈 스탠다드</a></li>
+<li><a href="https://claude.ai/directory">공식 플러그인 마켓플레이스</a></li>
+</ul>  </div> </article> </main> <!-- 댓글 & 좋아요 (Giscus — GitHub Discussions 기반) --> <!-- 설정 방법: https://giscus.app 에서 tall190/liber 입력 후 REPO_ID, CATEGORY_ID 교체 --> <div class="comments-section" data-astro-cid-bvzihdzo> <h3 data-astro-cid-bvzihdzo>댓글</h3> <script>
+				(function() {
+					var isDark = document.documentElement.classList.contains('dark');
+					var s = document.createElement('script');
+					s.src = 'https://giscus.app/client.js';
+					s.setAttribute('data-repo', 'tall190/liber');
+					s.setAttribute('data-repo-id', 'R_kgDOSIJHDw');
+					s.setAttribute('data-category', 'Announcements');
+					s.setAttribute('data-category-id', 'DIC_kwDOSIJHD84C7Uy6');
+					s.setAttribute('data-mapping', 'pathname');
+					s.setAttribute('data-strict', '0');
+					s.setAttribute('data-reactions-enabled', '1');
+					s.setAttribute('data-emit-metadata', '0');
+					s.setAttribute('data-input-position', 'bottom');
+					s.setAttribute('data-theme', isDark ? 'dark' : 'light');
+					s.setAttribute('data-lang', 'ko');
+					s.setAttribute('crossorigin', 'anonymous');
+					s.async = true;
+					document.currentScript.parentElement.appendChild(s);
+				})();
+			</script> </div> <footer data-astro-cid-sz7xmlte>
+&copy; 2026 Liber. All rights reserved.
+</footer> </body></html>

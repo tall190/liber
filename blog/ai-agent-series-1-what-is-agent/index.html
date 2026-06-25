@@ -1,0 +1,201 @@
+<!DOCTYPE html><html lang="ko" data-astro-cid-bvzihdzo> <head><!-- Dark mode: apply before render to prevent flash --><script>
+	(function() {
+		const theme = localStorage.getItem('theme');
+		if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark');
+		}
+	})();
+</script> <!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="/liber/favicon.png"><link rel="icon" type="image/svg+xml" href="/liber/favicon.svg"><link rel="icon" href="/liber/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Liber" href="https://tall190.github.io/rss.xml"><meta name="generator" content="Astro v6.1.8"><style>@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/fd137eb932fcc611.woff") format("woff");font-display:swap;font-weight:400;font-style:normal;}@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/5c86995be98976a1.woff") format("woff");font-display:swap;font-weight:700;font-style:normal;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}:root{--font-atkinson:Atkinson-c7f4c4e8b285552f,"Atkinson-c7f4c4e8b285552f fallback: Arial",sans-serif;}</style><link rel="preload" href="/liber/_astro/fonts/fd137eb932fcc611.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/liber/_astro/fonts/5c86995be98976a1.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://tall190.github.io/liber/blog/ai-agent-series-1-what-is-agent/"><!-- Primary Meta Tags --><title>AI Agent란 무엇인가: LLM이 행동하기 시작할 때</title><meta name="title" content="AI Agent란 무엇인가: LLM이 행동하기 시작할 때"><meta name="description" content="LLM이 단순한 텍스트 생성기에서 벗어나 실제로 행동하는 Agent가 되는 원리. Tool Use, Memory, Planning, Multi-agent 구조까지 기초부터 실무 패턴을 정리했어요."><meta name="author" content="Liber"><meta name="keywords" content="AI, Agent, LLM, 기술"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://tall190.github.io/liber/blog/ai-agent-series-1-what-is-agent/"><meta property="og:title" content="AI Agent란 무엇인가: LLM이 행동하기 시작할 때"><meta property="og:description" content="LLM이 단순한 텍스트 생성기에서 벗어나 실제로 행동하는 Agent가 되는 원리. Tool Use, Memory, Planning, Multi-agent 구조까지 기초부터 실무 패턴을 정리했어요."><meta property="og:image" content="https://tall190.github.io/liber/_astro/ai-agent-series-1-what-is-agent_hero_image.Byaw64He.png"><meta property="og:locale" content="ko_KR"><meta property="article:published_time" content="2026-05-21T00:00:00.000Z"><meta property="article:tag" content="AI"><meta property="article:tag" content="Agent"><meta property="article:tag" content="LLM"><meta property="article:tag" content="기술"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://tall190.github.io/liber/blog/ai-agent-series-1-what-is-agent/"><meta property="twitter:title" content="AI Agent란 무엇인가: LLM이 행동하기 시작할 때"><meta property="twitter:description" content="LLM이 단순한 텍스트 생성기에서 벗어나 실제로 행동하는 Agent가 되는 원리. Tool Use, Memory, Planning, Multi-agent 구조까지 기초부터 실무 패턴을 정리했어요."><meta property="twitter:image" content="https://tall190.github.io/liber/_astro/ai-agent-series-1-what-is-agent_hero_image.Byaw64He.png"><!-- Theme toggle script --><script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const toggle = document.getElementById('theme-toggle');
+		if (!toggle) return;
+		toggle.addEventListener('click', function() {
+			const isDark = document.documentElement.classList.toggle('dark');
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
+			// Sync Giscus theme
+			const giscus = document.querySelector('iframe.giscus-frame');
+			if (giscus) {
+				giscus.contentWindow.postMessage(
+					{ giscus: { setConfig: { theme: isDark ? 'dark' : 'light' } } },
+					'https://giscus.app'
+				);
+			}
+		});
+	});
+</script><!-- Schema.org JSON-LD: AI가 이 글을 구조화된 데이터로 읽을 수 있어요 --><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"AI Agent란 무엇인가: LLM이 행동하기 시작할 때","description":"LLM이 단순한 텍스트 생성기에서 벗어나 실제로 행동하는 Agent가 되는 원리. Tool Use, Memory, Planning, Multi-agent 구조까지 기초부터 실무 패턴을 정리했어요.","datePublished":"2026-05-21T00:00:00.000Z","dateModified":"2026-05-21T00:00:00.000Z","url":"https://tall190.github.io/liber/blog/ai-agent-series-1-what-is-agent/","inLanguage":"ko-KR","mainEntityOfPage":{"@type":"WebPage","@id":"https://tall190.github.io/liber/blog/ai-agent-series-1-what-is-agent/"},"author":{"@type":"Person","name":"Jayden","url":"https://tall190.github.io/liber/about/","sameAs":["https://github.com/tall190"]},"publisher":{"@type":"Organization","name":"Liber","url":"https://tall190.github.io/liber","logo":{"@type":"ImageObject","url":"https://tall190.github.io/liber/favicon.png"}},"keywords":"AI, Agent, LLM, 기술","image":"https://tall190.github.io/liber/_astro/ai-agent-series-1-what-is-agent_hero_image.Byaw64He.png"}</script><style>:root{--accent: #2337ff;--accent-dark: #000d8a;--black: 15, 18, 25;--gray: 96, 115, 159;--gray-light: 229, 233, 240;--gray-dark: 34, 41, 57;--gray-gradient: rgba(var(--gray-light), 50%), #fff;--box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);--bg: #fff;--bg-secondary: #f9fafb;--header-bg: white;--code-bg: rgb(var(--gray-light));color-scheme:light}:root.dark{--accent: #6b7cff;--accent-dark: #8b9aff;--black: 230, 230, 230;--gray: 155, 165, 190;--gray-light: 50, 55, 65;--gray-dark: 210, 215, 225;--gray-gradient: rgba(var(--gray-light), 50%), #1a1a2e;--box-shadow: 0 2px 6px rgba(0, 0, 0, 40%), 0 8px 24px rgba(0, 0, 0, 50%), 0 16px 32px rgba(0, 0, 0, 50%);--bg: #1a1a2e;--bg-secondary: #16162a;--header-bg: #16162a;--code-bg: rgba(var(--gray-light), .6);color-scheme:dark}body{font-family:var(--font-atkinson);margin:0;padding:0;text-align:left;background:var(--bg);background-image:linear-gradient(var(--gray-gradient));background-repeat:no-repeat;background-size:100% 600px;word-wrap:break-word;overflow-wrap:break-word;color:rgb(var(--gray-dark));font-size:20px;line-height:1.7;transition:background-color .3s,color .3s}main{width:720px;max-width:calc(100% - 2em);margin:auto;padding:3em 1em}h1,h2,h3,h4,h5,h6{margin:0 0 .5rem;color:rgb(var(--black));line-height:1.2}h1{font-size:3.052em}h2{font-size:2.441em}h3{font-size:1.953em}h4{font-size:1.563em}h5{font-size:1.25em}strong,b{font-weight:700}a,a:hover{color:var(--accent)}p{margin-bottom:1em}.prose p{margin-bottom:2em}.prose p:has(>img){margin-top:.5em;margin-bottom:.5em}textarea{width:100%;font-size:16px}input{font-size:16px}table{width:100%}img{max-width:100%;height:auto;border-radius:8px}code{padding:2px 5px;background-color:var(--code-bg);border-radius:2px}pre{padding:1.5em;border-radius:8px;overflow-x:auto;max-width:100%;font-size:15px}pre>code{all:unset}blockquote{border-left:4px solid var(--accent);padding:0 0 0 20px;margin:0;font-size:1.333em}hr{border:none;border-top:1px solid rgb(var(--gray-light))}@media(max-width:720px){body{font-size:18px}main{padding:1em}}.sr-only{border:0;padding:0;margin:0;position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px 1px 1px 1px);clip:rect(1px,1px,1px,1px);clip-path:inset(50%);white-space:nowrap}.prose p>em:only-child{display:block;font-size:.85em;color:rgb(var(--gray));margin-top:-.3em;margin-bottom:1.5em;text-align:center}footer[data-astro-cid-sz7xmlte]{padding:2em 1em 6em;background:linear-gradient(var(--gray-gradient)) no-repeat;color:rgb(var(--gray));text-align:center;transition:background-color .3s,color .3s}a[data-astro-cid-eimmu3lg]{display:inline-block;text-decoration:none}a[data-astro-cid-eimmu3lg].active{font-weight:bolder;text-decoration:underline}header[data-astro-cid-3ef6ksr2]{margin:0;padding:0 1em;background:var(--header-bg);box-shadow:0 2px 8px rgba(var(--black),5%);transition:background-color .3s}h2[data-astro-cid-3ef6ksr2]{margin:0;font-size:1em}h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2],h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none}nav[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;justify-content:space-between}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{padding:1em .5em;color:var(--black);border-bottom:4px solid transparent;text-decoration:none}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none;border-bottom-color:var(--accent)}.theme-toggle[data-astro-cid-3ef6ksr2]{background:none;border:none;cursor:pointer;padding:.5em;color:rgb(var(--black));display:flex;align-items:center;transition:color .3s}.theme-toggle[data-astro-cid-3ef6ksr2]:hover{color:var(--accent)}.dark .icon-sun[data-astro-cid-3ef6ksr2]{display:inline}.dark .icon-moon[data-astro-cid-3ef6ksr2],.icon-sun[data-astro-cid-3ef6ksr2]{display:none}.icon-moon[data-astro-cid-3ef6ksr2]{display:inline}
+main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.post-meta[data-astro-cid-bvzihdzo]{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:.5rem;flex-wrap:wrap}.hits-badge[data-astro-cid-bvzihdzo]{display:inline-flex;align-items:center}.hits-badge[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{height:20px;border-radius:4px}.post-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.8rem}.tag[data-astro-cid-bvzihdzo]{display:inline-block;font-size:.75rem;font-weight:600;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--accent));color:#fff;text-decoration:none;letter-spacing:.02em}.tag[data-astro-cid-bvzihdzo]:hover{background:var(--accent-dark)}.comments-section[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:3rem auto 2rem;padding:0 1em;border-top:1px solid rgb(var(--gray-light));padding-top:2rem}.comments-section[data-astro-cid-bvzihdzo] h3[data-astro-cid-bvzihdzo]{font-size:1.1rem;color:rgb(var(--gray-dark));margin-bottom:1.5rem}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/liber/" data-astro-cid-3ef6ksr2><img src="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp" srcset="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp 1x, /liber/_astro/liber-logo.DqNb0q2U_Z1NhCXk.webp 2x, /liber/_astro/liber-logo.DqNb0q2U_16RKps.webp 3x" alt="Liber" data-astro-cid-3ef6ksr2="true" loading="lazy" decoding="async" width="121" height="40"></a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/liber/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Home </a> <a href="/liber/blog/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Blog </a> <a href="/liber/about/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> About </a> <button class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환" data-astro-cid-3ef6ksr2> <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle><line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line><line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line><line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line><line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line></svg> <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path></svg> </button> </div> </nav> </header> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo> <img src="/liber/_astro/ai-agent-series-1-what-is-agent_hero_image.Byaw64He_Z20X0So.webp" alt data-astro-cid-bvzihdzo="true" loading="lazy" decoding="async" width="1020" height="510"> </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-05-21T00:00:00.000Z"> May 21, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>AI Agent란 무엇인가: LLM이 행동하기 시작할 때</h1> <div class="post-meta" data-astro-cid-bvzihdzo> <span class="hits-badge" data-astro-cid-bvzihdzo> <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Ftall190.github.io%2Fliber%2Fblog%2Fai-agent-series-1-what-is-agent%2F&#38;label=views&#38;labelColor=%23374151&#38;countColor=%236366f1&#38;style=flat" alt="조회수" loading="eager" data-astro-cid-bvzihdzo> </span> </div> <div class="post-tags" data-astro-cid-bvzihdzo> <a class="tag" href="/liber/blog/tags/AI/" data-astro-cid-bvzihdzo>AI</a><a class="tag" href="/liber/blog/tags/Agent/" data-astro-cid-bvzihdzo>Agent</a><a class="tag" href="/liber/blog/tags/LLM/" data-astro-cid-bvzihdzo>LLM</a><a class="tag" href="/liber/blog/tags/기술/" data-astro-cid-bvzihdzo>기술</a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>LLM을 처음 프로덕션에 붙여봤을 때 곧 벽에 부딪혀요. 사용자가 “지금 주문 상태 알려줘”라고 하면 LLM은 훌륭한 문장으로 “저는 실시간 데이터에 접근할 수 없어요”라고 답해요. 모델은 분명 영리한데, 실제로는 아무것도 할 수 없죠.</p>
+<p>이게 LLM의 근본적인 한계예요. 텍스트를 이해하고 생성하는 건 잘 하지만, 세상과 상호작용하지는 못해요.</p>
+<p>이 글에서는 LLM이 단순한 텍스트 생성기에서 벗어나 실제로 행동하는 Agent가 되는 원리를 다뤄요. [AI Agent 완전정복] 시리즈 1편으로, 기초 개념부터 실무 패턴까지 한 번에 정리해볼게요.</p>
+<h2 id="llm과-agent-무엇이-다른가">LLM과 Agent: 무엇이 다른가</h2>
+<p>LLM과 Agent를 나누는 기준은 하나예요: <strong>행동 가능성(Actability)</strong>.</p>
+<p>LLM은 입력을 받아 출력을 생성해요. 반면 Agent는 같은 LLM을 두뇌로 사용하면서, 외부 세계와 상호작용하는 행동 루프를 추가한 시스템이에요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>기능</th><th>LLM 단독</th><th>Agent</th></tr></thead><tbody><tr><td>외부 데이터 접근</td><td>✗</td><td>✓ (Tool 통해)</td></tr><tr><td>코드 실행</td><td>✗</td><td>✓</td></tr><tr><td>파일 읽기/쓰기</td><td>✗</td><td>✓</td></tr><tr><td>다단계 계획 실행</td><td>✗</td><td>✓</td></tr><tr><td>세션 간 기억 유지</td><td>✗</td><td>✓ (External Memory)</td></tr></tbody></table>
+<p>“오늘 팀 캘린더 빈 시간 찾아서 회의 잡아줘”는 LLM 단독으로는 불가능해요. Agent는 캘린더 API를 호출하고, 가능한 슬롯을 확인하고, 미팅을 직접 생성할 수 있어요.</p>
+<h2 id="agent의-4가지-핵심-구성요소">Agent의 4가지 핵심 구성요소</h2>
+<h3 id="1-tool-use">1. Tool Use</h3>
+<p>Tool은 Agent가 외부 세계와 상호작용하는 인터페이스예요. 함수 하나가 Tool 하나예요.</p>
+<p>LLM이 사용자 입력을 보고 어떤 Tool을 어떤 인자로 호출할지 결정하면, 실제 실행은 코드로 이뤄지고, 결과가 다시 LLM에 전달돼요.</p>
+<p>프로덕션에서 자주 쓰이는 Tool 유형:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>유형</th><th>예시</th></tr></thead><tbody><tr><td>검색</td><td>웹 검색, DB 조회, 벡터 검색</td></tr><tr><td>코드 실행</td><td>Python interpreter, 쉘 커맨드</td></tr><tr><td>파일 처리</td><td>읽기, 쓰기, PDF 파싱</td></tr><tr><td>외부 API</td><td>결제, 캘린더, Slack, 날씨</td></tr><tr><td>컴퓨터 제어</td><td>브라우저 자동화, 마우스/키보드</td></tr></tbody></table>
+<h3 id="2-memory">2. Memory</h3>
+<p>Agent의 메모리는 4가지 층위로 나뉘어요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>유형</th><th>내용</th><th>구현</th></tr></thead><tbody><tr><td>Working Memory</td><td>현재 실행 중인 컨텍스트</td><td>프롬프트 내 텍스트</td></tr><tr><td>Episodic Memory</td><td>타임스탬프가 있는 과거 경험</td><td>벡터 DB (외부)</td></tr><tr><td>Semantic Memory</td><td>사실 기반 도메인 지식</td><td>벡터 DB, 지식 그래프</td></tr><tr><td>Procedural Memory</td><td>규칙과 스킬</td><td>코드, 파인튜닝</td></tr></tbody></table>
+<p>실무에서 가장 자주 마주치는 건 Working Memory와 Episodic Memory예요. Working Memory는 컨텍스트 윈도우 크기에 제약이 있고, 긴 작업일수록 오버플로우 위험이 생겨요. Episodic Memory는 세션 간 기억을 유지하기 위해 외부 저장소에 저장해야 해요.</p>
+<h3 id="3-planning">3. Planning</h3>
+<p>Planning은 복잡한 목표를 여러 단계로 나눠 실행하는 방식이에요. 가장 널리 쓰이는 패턴이 <strong>ReAct</strong>예요.</p>
+<p><strong>ReAct (Reasoning + Acting)</strong> 는 생각 → 행동 → 관찰을 반복해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Thought: 사용자가 "서울 내일 날씨 알려줘"라고 했다. 날씨 API를 호출해야 한다.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Action: get_weather(city="서울", date="tomorrow")</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Observation: {"temp": 18, "condition": "맑음", "humidity": 45}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Thought: 정보를 받았다. 자연스럽게 전달한다.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Final Answer: 내일 서울은 맑고 18°C 예정이에요. 습도는 45%예요.</span></span></code></pre>
+<p>LLM이 답을 바로 생성하는 게 아니라, 매 스텝에서 “지금 뭘 해야 하는가”를 추론해요. 중간에 예상과 다른 정보가 나오면 계획을 수정하기도 해요.</p>
+<h3 id="4-multi-agent-구조">4. Multi-agent 구조</h3>
+<p>태스크가 복잡해지면 단일 Agent로는 한계가 생겨요. Multi-agent는 여러 Agent가 역할을 나눠 협력하는 구조예요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[Orchestrator]</span></span>
+<span class="line"><span>      ↓</span></span>
+<span class="line"><span>┌─────┼─────┐</span></span>
+<span class="line"><span>[검색] [분석] [작성]</span></span></code></pre>
+<p>Orchestrator가 전체 계획을 세우고, 각 Sub-agent에게 구체적인 태스크를 위임해요. Sub-agent는 독립적인 컨텍스트 윈도우를 유지하기 때문에 병렬 처리가 가능하고, 최종 결과만 Orchestrator로 돌아와요.</p>
+<p>이 구조가 중요한 이유는 단순해요. 하나의 Agent가 긴 작업을 처리하면 컨텍스트가 과부하되지만, Multi-agent로 나누면 각자 집중해서 처리할 수 있어요.</p>
+<h2 id="agent-loop-실제-동작-흐름">Agent Loop: 실제 동작 흐름</h2>
+<p>이 4가지 요소가 합쳐진 Agent는 다음 루프로 동작해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>1. 사용자 입력</span></span>
+<span class="line"><span>2. LLM이 다음 행동 결정</span></span>
+<span class="line"><span>   ├── Tool 호출 필요 → 실행 → 결과를 컨텍스트에 추가 → 2로 이동</span></span>
+<span class="line"><span>   └── 충분한 정보 확보 → 최종 답변 생성 → 종료</span></span></code></pre>
+<p>LLM이 “충분하다”고 판단하기 전까지 Tool 호출과 관찰을 반복해요. 이 루프가 Agent와 단순 LLM 호출의 차이예요.</p>
+<h2 id="프로덕션에서-검증된-사용-사례">프로덕션에서 검증된 사용 사례</h2>
+<p>2025년 기준 실무에서 검증된 Agent 활용 예시예요.</p>
+<ul>
+<li><strong>코드 리뷰 자동화</strong>: PR을 읽고, 관련 코드 파일을 탐색하고, 개선점 제안</li>
+<li><strong>데이터 분석</strong>: 자연어 질문 → SQL 변환 → 실행 → 결과 해석 → 시각화</li>
+<li><strong>고객 지원</strong>: CRM 조회 → 주문 확인 → 환불 처리 → 이메일 발송 자동화</li>
+<li><strong>리서치 자동화</strong>: 웹 검색 → 문서 요약 → 보고서 작성</li>
+<li><strong>DevOps</strong>: 알림 수신 → 로그 분석 → 원인 파악 → Slack 공유</li>
+</ul>
+<p>이 작업들의 공통점은 여러 단계의 행동이 필요하다는 거예요. LLM 단독으로는 불가능하지만, Tool과 Planning이 갖춰진 Agent에서는 가능해요.</p>
+<h2 id="정리">정리</h2>
+<p>LLM과 Agent의 차이는 결국 “생각하냐 vs 행동하냐”예요. Tool로 외부 세계와 연결하고, Memory로 상태를 유지하고, Planning으로 복잡한 목표를 달성해요.</p>
+<p>다음 편에서는 “어떤 프레임워크로 만들어야 하는가”를 다뤄볼게요. LangGraph, CrewAI, AutoGen, Claude Agent SDK, AWS Strands를 한 자리에서 비교해봐요.</p>  </div> </article> </main> <!-- 댓글 & 좋아요 (Giscus — GitHub Discussions 기반) --> <!-- 설정 방법: https://giscus.app 에서 tall190/liber 입력 후 REPO_ID, CATEGORY_ID 교체 --> <div class="comments-section" data-astro-cid-bvzihdzo> <h3 data-astro-cid-bvzihdzo>댓글</h3> <script>
+				(function() {
+					var isDark = document.documentElement.classList.contains('dark');
+					var s = document.createElement('script');
+					s.src = 'https://giscus.app/client.js';
+					s.setAttribute('data-repo', 'tall190/liber');
+					s.setAttribute('data-repo-id', 'R_kgDOSIJHDw');
+					s.setAttribute('data-category', 'Announcements');
+					s.setAttribute('data-category-id', 'DIC_kwDOSIJHD84C7Uy6');
+					s.setAttribute('data-mapping', 'pathname');
+					s.setAttribute('data-strict', '0');
+					s.setAttribute('data-reactions-enabled', '1');
+					s.setAttribute('data-emit-metadata', '0');
+					s.setAttribute('data-input-position', 'bottom');
+					s.setAttribute('data-theme', isDark ? 'dark' : 'light');
+					s.setAttribute('data-lang', 'ko');
+					s.setAttribute('crossorigin', 'anonymous');
+					s.async = true;
+					document.currentScript.parentElement.appendChild(s);
+				})();
+			</script> </div> <footer data-astro-cid-sz7xmlte>
+&copy; 2026 Liber. All rights reserved.
+</footer> </body></html>

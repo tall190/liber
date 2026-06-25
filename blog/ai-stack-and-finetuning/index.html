@@ -1,0 +1,182 @@
+<!DOCTYPE html><html lang="ko" data-astro-cid-bvzihdzo> <head><!-- Dark mode: apply before render to prevent flash --><script>
+	(function() {
+		const theme = localStorage.getItem('theme');
+		if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark');
+		}
+	})();
+</script> <!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="/liber/favicon.png"><link rel="icon" type="image/svg+xml" href="/liber/favicon.svg"><link rel="icon" href="/liber/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Liber" href="https://tall190.github.io/rss.xml"><meta name="generator" content="Astro v6.1.8"><style>@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/fd137eb932fcc611.woff") format("woff");font-display:swap;font-weight:400;font-style:normal;}@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/5c86995be98976a1.woff") format("woff");font-display:swap;font-weight:700;font-style:normal;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}:root{--font-atkinson:Atkinson-c7f4c4e8b285552f,"Atkinson-c7f4c4e8b285552f fallback: Arial",sans-serif;}</style><link rel="preload" href="/liber/_astro/fonts/fd137eb932fcc611.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/liber/_astro/fonts/5c86995be98976a1.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://tall190.github.io/liber/blog/ai-stack-and-finetuning/"><!-- Primary Meta Tags --><title>AI를 쌓는 순서 — 프롬프트에서 파인튜닝까지, 각 기술이 놓일 자리</title><meta name="title" content="AI를 쌓는 순서 — 프롬프트에서 파인튜닝까지, 각 기술이 놓일 자리"><meta name="description" content="파인튜닝부터 찾는 팀들의 가장 흔한 실수. 실제 AI 도입 여정은 프롬프트 → 스킬 → MCP → 에이전트 → RAG 순서고, 파인튜닝은 그 끝에 있어요. 그리고 셀프호스팅은 파인튜닝이 아니에요."><meta name="author" content="Liber"><meta name="keywords" content="AI, LLM, Fine-tuning, RAG, 실무, 의사결정"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://tall190.github.io/liber/blog/ai-stack-and-finetuning/"><meta property="og:title" content="AI를 쌓는 순서 — 프롬프트에서 파인튜닝까지, 각 기술이 놓일 자리"><meta property="og:description" content="파인튜닝부터 찾는 팀들의 가장 흔한 실수. 실제 AI 도입 여정은 프롬프트 → 스킬 → MCP → 에이전트 → RAG 순서고, 파인튜닝은 그 끝에 있어요. 그리고 셀프호스팅은 파인튜닝이 아니에요."><meta property="og:image" content="https://tall190.github.io/liber/_astro/ft-rag-pe-decision_hero_image.DpnNo45c.png"><meta property="og:locale" content="ko_KR"><meta property="article:published_time" content="2026-06-11T00:00:00.000Z"><meta property="article:tag" content="AI"><meta property="article:tag" content="LLM"><meta property="article:tag" content="Fine-tuning"><meta property="article:tag" content="RAG"><meta property="article:tag" content="실무"><meta property="article:tag" content="의사결정"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://tall190.github.io/liber/blog/ai-stack-and-finetuning/"><meta property="twitter:title" content="AI를 쌓는 순서 — 프롬프트에서 파인튜닝까지, 각 기술이 놓일 자리"><meta property="twitter:description" content="파인튜닝부터 찾는 팀들의 가장 흔한 실수. 실제 AI 도입 여정은 프롬프트 → 스킬 → MCP → 에이전트 → RAG 순서고, 파인튜닝은 그 끝에 있어요. 그리고 셀프호스팅은 파인튜닝이 아니에요."><meta property="twitter:image" content="https://tall190.github.io/liber/_astro/ft-rag-pe-decision_hero_image.DpnNo45c.png"><!-- Theme toggle script --><script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const toggle = document.getElementById('theme-toggle');
+		if (!toggle) return;
+		toggle.addEventListener('click', function() {
+			const isDark = document.documentElement.classList.toggle('dark');
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
+			// Sync Giscus theme
+			const giscus = document.querySelector('iframe.giscus-frame');
+			if (giscus) {
+				giscus.contentWindow.postMessage(
+					{ giscus: { setConfig: { theme: isDark ? 'dark' : 'light' } } },
+					'https://giscus.app'
+				);
+			}
+		});
+	});
+</script><!-- Schema.org JSON-LD: AI가 이 글을 구조화된 데이터로 읽을 수 있어요 --><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"AI를 쌓는 순서 — 프롬프트에서 파인튜닝까지, 각 기술이 놓일 자리","description":"파인튜닝부터 찾는 팀들의 가장 흔한 실수. 실제 AI 도입 여정은 프롬프트 → 스킬 → MCP → 에이전트 → RAG 순서고, 파인튜닝은 그 끝에 있어요. 그리고 셀프호스팅은 파인튜닝이 아니에요.","datePublished":"2026-06-11T00:00:00.000Z","dateModified":"2026-06-11T00:00:00.000Z","url":"https://tall190.github.io/liber/blog/ai-stack-and-finetuning/","inLanguage":"ko-KR","mainEntityOfPage":{"@type":"WebPage","@id":"https://tall190.github.io/liber/blog/ai-stack-and-finetuning/"},"author":{"@type":"Person","name":"Jayden","url":"https://tall190.github.io/liber/about/","sameAs":["https://github.com/tall190"]},"publisher":{"@type":"Organization","name":"Liber","url":"https://tall190.github.io/liber","logo":{"@type":"ImageObject","url":"https://tall190.github.io/liber/favicon.png"}},"keywords":"AI, LLM, Fine-tuning, RAG, 실무, 의사결정","image":"https://tall190.github.io/liber/_astro/ft-rag-pe-decision_hero_image.DpnNo45c.png"}</script><style>:root{--accent: #2337ff;--accent-dark: #000d8a;--black: 15, 18, 25;--gray: 96, 115, 159;--gray-light: 229, 233, 240;--gray-dark: 34, 41, 57;--gray-gradient: rgba(var(--gray-light), 50%), #fff;--box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);--bg: #fff;--bg-secondary: #f9fafb;--header-bg: white;--code-bg: rgb(var(--gray-light));color-scheme:light}:root.dark{--accent: #6b7cff;--accent-dark: #8b9aff;--black: 230, 230, 230;--gray: 155, 165, 190;--gray-light: 50, 55, 65;--gray-dark: 210, 215, 225;--gray-gradient: rgba(var(--gray-light), 50%), #1a1a2e;--box-shadow: 0 2px 6px rgba(0, 0, 0, 40%), 0 8px 24px rgba(0, 0, 0, 50%), 0 16px 32px rgba(0, 0, 0, 50%);--bg: #1a1a2e;--bg-secondary: #16162a;--header-bg: #16162a;--code-bg: rgba(var(--gray-light), .6);color-scheme:dark}body{font-family:var(--font-atkinson);margin:0;padding:0;text-align:left;background:var(--bg);background-image:linear-gradient(var(--gray-gradient));background-repeat:no-repeat;background-size:100% 600px;word-wrap:break-word;overflow-wrap:break-word;color:rgb(var(--gray-dark));font-size:20px;line-height:1.7;transition:background-color .3s,color .3s}main{width:720px;max-width:calc(100% - 2em);margin:auto;padding:3em 1em}h1,h2,h3,h4,h5,h6{margin:0 0 .5rem;color:rgb(var(--black));line-height:1.2}h1{font-size:3.052em}h2{font-size:2.441em}h3{font-size:1.953em}h4{font-size:1.563em}h5{font-size:1.25em}strong,b{font-weight:700}a,a:hover{color:var(--accent)}p{margin-bottom:1em}.prose p{margin-bottom:2em}.prose p:has(>img){margin-top:.5em;margin-bottom:.5em}textarea{width:100%;font-size:16px}input{font-size:16px}table{width:100%}img{max-width:100%;height:auto;border-radius:8px}code{padding:2px 5px;background-color:var(--code-bg);border-radius:2px}pre{padding:1.5em;border-radius:8px;overflow-x:auto;max-width:100%;font-size:15px}pre>code{all:unset}blockquote{border-left:4px solid var(--accent);padding:0 0 0 20px;margin:0;font-size:1.333em}hr{border:none;border-top:1px solid rgb(var(--gray-light))}@media(max-width:720px){body{font-size:18px}main{padding:1em}}.sr-only{border:0;padding:0;margin:0;position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px 1px 1px 1px);clip:rect(1px,1px,1px,1px);clip-path:inset(50%);white-space:nowrap}.prose p>em:only-child{display:block;font-size:.85em;color:rgb(var(--gray));margin-top:-.3em;margin-bottom:1.5em;text-align:center}footer[data-astro-cid-sz7xmlte]{padding:2em 1em 6em;background:linear-gradient(var(--gray-gradient)) no-repeat;color:rgb(var(--gray));text-align:center;transition:background-color .3s,color .3s}a[data-astro-cid-eimmu3lg]{display:inline-block;text-decoration:none}a[data-astro-cid-eimmu3lg].active{font-weight:bolder;text-decoration:underline}header[data-astro-cid-3ef6ksr2]{margin:0;padding:0 1em;background:var(--header-bg);box-shadow:0 2px 8px rgba(var(--black),5%);transition:background-color .3s}h2[data-astro-cid-3ef6ksr2]{margin:0;font-size:1em}h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2],h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none}nav[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;justify-content:space-between}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{padding:1em .5em;color:var(--black);border-bottom:4px solid transparent;text-decoration:none}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none;border-bottom-color:var(--accent)}.theme-toggle[data-astro-cid-3ef6ksr2]{background:none;border:none;cursor:pointer;padding:.5em;color:rgb(var(--black));display:flex;align-items:center;transition:color .3s}.theme-toggle[data-astro-cid-3ef6ksr2]:hover{color:var(--accent)}.dark .icon-sun[data-astro-cid-3ef6ksr2]{display:inline}.dark .icon-moon[data-astro-cid-3ef6ksr2],.icon-sun[data-astro-cid-3ef6ksr2]{display:none}.icon-moon[data-astro-cid-3ef6ksr2]{display:inline}
+main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.post-meta[data-astro-cid-bvzihdzo]{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:.5rem;flex-wrap:wrap}.hits-badge[data-astro-cid-bvzihdzo]{display:inline-flex;align-items:center}.hits-badge[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{height:20px;border-radius:4px}.post-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.8rem}.tag[data-astro-cid-bvzihdzo]{display:inline-block;font-size:.75rem;font-weight:600;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--accent));color:#fff;text-decoration:none;letter-spacing:.02em}.tag[data-astro-cid-bvzihdzo]:hover{background:var(--accent-dark)}.comments-section[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:3rem auto 2rem;padding:0 1em;border-top:1px solid rgb(var(--gray-light));padding-top:2rem}.comments-section[data-astro-cid-bvzihdzo] h3[data-astro-cid-bvzihdzo]{font-size:1.1rem;color:rgb(var(--gray-dark));margin-bottom:1.5rem}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/liber/" data-astro-cid-3ef6ksr2><img src="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp" srcset="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp 1x, /liber/_astro/liber-logo.DqNb0q2U_Z1NhCXk.webp 2x, /liber/_astro/liber-logo.DqNb0q2U_16RKps.webp 3x" alt="Liber" data-astro-cid-3ef6ksr2="true" loading="lazy" decoding="async" width="121" height="40"></a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/liber/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Home </a> <a href="/liber/blog/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Blog </a> <a href="/liber/about/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> About </a> <button class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환" data-astro-cid-3ef6ksr2> <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle><line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line><line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line><line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line><line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line></svg> <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path></svg> </button> </div> </nav> </header> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo> <img src="/liber/_astro/ft-rag-pe-decision_hero_image.DpnNo45c_iS8wQ.webp" alt data-astro-cid-bvzihdzo="true" loading="lazy" decoding="async" width="1020" height="510"> </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-06-11T00:00:00.000Z"> Jun 11, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>AI를 쌓는 순서 — 프롬프트에서 파인튜닝까지, 각 기술이 놓일 자리</h1> <div class="post-meta" data-astro-cid-bvzihdzo> <span class="hits-badge" data-astro-cid-bvzihdzo> <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Ftall190.github.io%2Fliber%2Fblog%2Fai-stack-and-finetuning%2F&#38;label=views&#38;labelColor=%23374151&#38;countColor=%236366f1&#38;style=flat" alt="조회수" loading="eager" data-astro-cid-bvzihdzo> </span> </div> <div class="post-tags" data-astro-cid-bvzihdzo> <a class="tag" href="/liber/blog/tags/AI/" data-astro-cid-bvzihdzo>AI</a><a class="tag" href="/liber/blog/tags/LLM/" data-astro-cid-bvzihdzo>LLM</a><a class="tag" href="/liber/blog/tags/Fine-tuning/" data-astro-cid-bvzihdzo>Fine-tuning</a><a class="tag" href="/liber/blog/tags/RAG/" data-astro-cid-bvzihdzo>RAG</a><a class="tag" href="/liber/blog/tags/실무/" data-astro-cid-bvzihdzo>실무</a><a class="tag" href="/liber/blog/tags/의사결정/" data-astro-cid-bvzihdzo>의사결정</a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>AI 도입을 검토하다 보면 어느 순간 “파인튜닝을 해야 하나요?”라는 질문이 나와요. 보통 프롬프트를 며칠 써보고, 결과가 마음에 안 들면 바로 이 질문으로 넘어가는 경우가 많더라고요.</p>
+<p>근데 파인튜닝은 여정의 끝에 있는 선택이에요. 끝까지 가봐야 파인튜닝이 진짜로 필요한지 아닌지가 보여요. 대부분의 문제는 그 전 단계에서 해결돼요.</p>
+<p>그 여정이 어떻게 생겼는지, 각 기술이 어디에 놓이는지 — 그리고 파인튜닝과 셀프호스팅을 혼동하지 않는 방법까지 정리했어요.</p>
+<hr>
+<h2 id="실제-여정은-이렇게-생겼어요">실제 여정은 이렇게 생겼어요</h2>
+<p>실무에서 AI 기술을 쌓아가는 순서는 대개 이렇게 흘러요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>프롬프트 엔지니어링</span></span>
+<span class="line"><span>    ↓ (반복 작업이 생기면)</span></span>
+<span class="line"><span>스킬 / 매크로</span></span>
+<span class="line"><span>    ↓ (외부 도구 연결이 필요하면)</span></span>
+<span class="line"><span>MCP / Tool Use</span></span>
+<span class="line"><span>    ↓ (자율 실행이 필요하면)</span></span>
+<span class="line"><span>에이전트</span></span>
+<span class="line"><span>    ↓ (지식 문제가 있으면 언제든)</span></span>
+<span class="line"><span>RAG</span></span>
+<span class="line"><span>    ↓ (행동 패턴 변경이 필요하면)</span></span>
+<span class="line"><span>파인튜닝</span></span>
+<span class="line"><span>    ↓ (비용/보안/오프라인이 중요하면)</span></span>
+<span class="line"><span>셀프호스팅</span></span></code></pre>
+<p>“프롬프트 → RAG → 파인튜닝”으로 이해하는 분들이 많은데, 그건 ML 연구자 관점이에요. 실무에서는 스킬과 MCP, 에이전트가 그 사이에 들어와요. 그리고 RAG는 지식 문제가 생기는 시점이면 언제든 붙일 수 있는 레이어예요 — 파인튜닝 전후와 상관없이요.</p>
+<p>각 단계가 어떤 문제를 풀고, 언제 다음 단계로 가야 하는지 살펴볼게요.</p>
+<h2 id="각-단계에서-실제로-무슨-일이-일어나는가">각 단계에서 실제로 무슨 일이 일어나는가</h2>
+<h3 id="프롬프트-엔지니어링--시작점">프롬프트 엔지니어링 — 시작점</h3>
+<p>API를 처음 연결하면 대부분 여기서 시작해요. 역할을 주고, 형식을 정하고, 예시를 넣고, 출력을 제어하는 법을 익혀요.</p>
+<p>이 단계를 벗어나야 할 신호가 있어요. 같은 종류의 작업에 매번 긴 지시어를 반복하고 있을 때예요. “오늘도 어제와 같은 프롬프트 조합을 복사해서 쓰고 있다”가 느껴지면 다음 단계를 볼 때가 됐어요.</p>
+<p>프롬프트 기법 자체가 궁금하다면 이 블로그의 <a href="/liber/blog/prompt-engineering-bible">프롬프트 엔지니어링 바이블</a>을 보시면 돼요.</p>
+<h3 id="스킬--매크로--재사용-가능한-패턴">스킬 / 매크로 — 재사용 가능한 패턴</h3>
+<p>반복되는 프롬프트 조합을 하나의 스킬로 패키징해요. “계약서 요약”, “이메일 초안 작성”, “코드 리뷰” 같은 작업이 대표적이에요. Claude Code나 팀 내 도구에서 <code>/리뷰</code>처럼 호출하면 지정된 프롬프트 패턴이 실행되는 구조예요.</p>
+<p>이 단계의 핵심은 <strong>지식을 외부에서 가져오지 않아도 되는 작업</strong>이에요. 모델 자체가 알고 있는 지식으로 충분한 작업들이죠.</p>
+<h3 id="mcp--tool-use--외부-세계와-연결">MCP / Tool Use — 외부 세계와 연결</h3>
+<p>모델이 실시간 정보나 사내 시스템에 접근해야 할 때 MCP(Model Context Protocol)나 Tool Use를 붙여요. Slack 메시지를 읽거나, 데이터베이스를 쿼리하거나, 캘린더에 일정을 추가하는 것들이에요.</p>
+<p>여기서부터 모델이 “읽기와 쓰기” 모두를 할 수 있게 되기 때문에 <strong>권한 범위 설계</strong>가 중요해져요. 처음엔 읽기 전용 Tool부터 시작하는 게 안전해요.</p>
+<h3 id="에이전트--자율-실행">에이전트 — 자율 실행</h3>
+<p>사람이 매번 중간에 개입하지 않아도 여러 단계를 스스로 처리하는 구조예요. “이슈를 발견하면 → 원인 분석하고 → Slack에 보고하고 → Jira 티켓 생성”처럼요.</p>
+<p>에이전트가 필요하다는 신호는 명확해요. 사람이 중간 확인자 역할을 반복적으로 하고 있을 때예요. 모델이 A를 보고 B를 판단해서 C를 실행하는 흐름이 자주 반복된다면 에이전트로 만들 수 있어요.</p>
+<p>에이전트 설계와 구현에 대한 내용은 이 시리즈에서 별도로 다루고 있어요.</p>
+<h3 id="rag--지식-레이어">RAG — 지식 레이어</h3>
+<p>RAG(Retrieval-Augmented Generation)는 어느 단계에서도 붙일 수 있어요. 단, 풀려는 문제가 명확할 때 붙여야 해요.</p>
+<p><strong>RAG가 필요한 신호</strong>: 모델이 사내 문서를 모르거나, 최신 정보를 모르거나, 수백 페이지짜리 참조 문서가 있을 때예요.</p>
+<p><strong>RAG가 필요없는데 붙이는 경우</strong>: 응답 스타일이나 말투가 일관되지 않는 문제예요. 그건 지식 문제가 아니라 행동 문제거든요.</p>
+<hr>
+<h2 id="rag와-파인튜닝--풀려는-문제가-다르다">RAG와 파인튜닝 — 풀려는 문제가 다르다</h2>
+<p>이 둘을 같은 선택지로 보는 경우가 많은데, 원래부터 다른 문제를 풀고 있어요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th></th><th>RAG</th><th>파인튜닝</th></tr></thead><tbody><tr><td>해결하는 문제</td><td>지식 없음</td><td>행동 패턴</td></tr><tr><td>적용 대상</td><td>모델이 모르는 정보</td><td>스타일, 형식, 말투</td></tr><tr><td>지식 업데이트</td><td>문서만 교체하면 됨</td><td>재학습 필요</td></tr><tr><td>설명 가능성</td><td>출처 추적 가능</td><td>왜 그렇게 반응하는지 불투명</td></tr></tbody></table>
+<p>“RAG를 붙이면 파인튜닝이 필요 없다”는 말은 반은 맞고 반은 틀려요. 지식 문제라면 RAG로 충분해요. 하지만 모델의 기본 행동 방식을 바꾸고 싶다면 RAG로는 안 돼요. 두 가지가 같은 스택에 함께 있는 것도 완전히 정상이에요.</p>
+<hr>
+<h2 id="파인튜닝의-실체--언제-얼마나-어떻게">파인튜닝의 실체 — 언제, 얼마나, 어떻게</h2>
+<p>파인튜닝은 모델에게 추가 학습을 시켜서 특정 행동 패턴이 기본값이 되게 하는 거예요. 프롬프트를 매번 길게 써야 했던 지시사항이, 아무 말 안 해도 그렇게 동작하게 되는 거죠.</p>
+<h3 id="파인튜닝이-진짜로-필요한-케이스">파인튜닝이 진짜로 필요한 케이스</h3>
+<p><strong>① 스타일이 강하게 고정되어야 하는 경우</strong></p>
+<p>법률 문서 작성, 의료 기록 요약, 금융 보고서처럼 특정 도메인의 언어와 형식이 엄격하게 정해져 있을 때예요. 프롬프트로도 어느 정도 제어가 되지만, 대규모 트래픽에서 일관성을 유지하려면 파인튜닝이 더 안정적이에요.</p>
+<p><strong>② 보안 때문에 컨텍스트에 데이터를 못 넣는 경우</strong></p>
+<p>의료 정보나 금융 거래 데이터처럼 API 요청에 담을 수 없는 민감한 정보가 있을 때예요. 모델이 그 패턴을 학습해서 내재화하는 방식으로 접근하는 거예요.</p>
+<p><strong>③ 매 요청마다 수천 토큰의 지시어를 반복하는 경우</strong></p>
+<p>시스템 프롬프트가 매우 길고, 이미 Prompt Caching을 적용했는데도 비용이 크다면 파인튜닝으로 지시어 자체를 줄이는 걸 검토할 수 있어요. 단, 이 경우는 Prompt Caching으로 먼저 해결되는 경우가 더 많아요.</p>
+<h3 id="파인튜닝이-필요없는데-하려는-오해">파인튜닝이 필요없는데 하려는 오해</h3>
+<p><strong>“응답이 들쭉날쭉해서”</strong> — Temperature를 낮추거나, 출력 형식을 구체적으로 명세하면 해결되는 경우가 대부분이에요.</p>
+<p><strong>“최신 정보를 모르는 것 같아서”</strong> — 지식 문제예요. RAG가 맞는 해법이에요. 파인튜닝으로 새 지식을 넣으려면 데이터를 다시 준비하고 재학습해야 해요. 지식이 자주 바뀐다면 파인튜닝은 유지보수 악몽이 돼요.</p>
+<p><strong>“사내 도메인 용어를 모르는 것 같아서”</strong> — 사내 용어집을 RAG로 제공하거나, 시스템 프롬프트에 용어 정의를 담는 게 먼저예요. 파인튜닝보다 훨씬 빠르게 해결돼요.</p>
+<h3 id="파인튜닝의-비용-구조">파인튜닝의 비용 구조</h3>
+<p>파인튜닝은 <strong>초기 비용</strong>과 <strong>운영 비용</strong> 모두 높아요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>데이터 준비</span></span>
+<span class="line"><span>  형식·말투 조정: 입출력 쌍 50~100개</span></span>
+<span class="line"><span>  도메인 지식 내재화: 500~1,000개 이상</span></span>
+<span class="line"><span>  행동 방식 전반 변경: 수천 개 이상</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>학습 비용 (API 기반, OpenAI 기준)</span></span>
+<span class="line"><span>  gpt-4o-mini 학습: $0.003 / 1K tokens</span></span>
+<span class="line"><span>  학습 데이터 1,000개 × 평균 500 tokens = 약 $1.5</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>운영 비용</span></span>
+<span class="line"><span>  파인튜닝된 모델은 base 모델보다 비쌈 (gpt-4o-mini 기준 약 1.5배)</span></span>
+<span class="line"><span>  트래픽이 충분히 많아야 장기적으로 수지가 맞음</span></span></code></pre>
+<p>데이터 준비가 항상 학습보다 더 많은 시간이 걸려요. 레이블링, 검증, 정제까지 — 이 과정이 몇 달씩 걸리는 경우가 흔해요. 나쁜 데이터 1,000개보다 좋은 데이터 100개가 낫거든요.</p>
+<hr>
+<h2 id="셀프호스팅--파인튜닝">셀프호스팅 ≠ 파인튜닝</h2>
+<p>이게 가장 자주 혼동되는 부분이에요.</p>
+<p><strong>셀프호스팅</strong>은 Llama, Mistral 같은 오픈소스 모델을 직접 서버에 올려서 쓰는 거예요. 모델 자체는 그대로예요. 훈련을 추가로 하는 게 아니라, 이미 학습된 모델을 인터넷 연결 없이 내 인프라에서 실행하는 거예요.</p>
+<p><strong>파인튜닝</strong>은 그 모델에 내 데이터로 추가 학습을 시키는 거예요. 셀프호스팅 모델 위에 파인튜닝을 할 수도 있지만, 셀프호스팅 자체가 파인튜닝은 아니에요.</p>
+<p>셀프호스팅이 맞는 상황이 있어요.</p>
+<ul>
+<li><strong>비용</strong>: 트래픽이 매우 많아서 API 비용이 감당이 안 될 때</li>
+<li><strong>데이터 프라이버시</strong>: 요청 내용이 외부 서버에 나가면 안 될 때</li>
+<li><strong>오프라인</strong>: 인터넷 연결이 없는 환경에서 써야 할 때</li>
+<li><strong>단순 작업</strong>: Claude나 GPT가 과할 정도로 간단한 요약, 분류, 번역 작업</li>
+</ul>
+<p>중요한 건 셀프호스팅 모델(Llama 8B, Llama 70B 등)은 상용 API보다 성능이 낮다는 거예요. 비용을 줄이는 대신 품질을 일정 부분 포기하는 거예요. 파인튜닝을 해서 그 격차를 줄일 수 있지만, 그 파인튜닝 자체가 또 다른 프로젝트가 돼요.</p>
+<hr>
+<h2 id="그래서-어디서-시작해야-하냐면">그래서 어디서 시작해야 하냐면</h2>
+<p>처음엔 항상 프롬프트예요. 빠르고, 저렴하고, 즉시 실험할 수 있어요.</p>
+<p>결과를 반복해서 쓰게 되면 스킬로 만들고, 외부 도구가 필요하면 MCP를 붙이고, 자율 실행이 필요하면 에이전트를 만들어요. 그 과정에서 지식 문제가 생기면 RAG를 붙여요.</p>
+<p>파인튜닝은 프롬프트와 RAG로 해결이 안 되는 <strong>행동 문제</strong>가 있을 때, <strong>데이터</strong>가 충분히 준비됐을 때, <strong>지식이 자주 바뀌지 않을 때</strong> 검토해요.</p>
+<p>셀프호스팅은 API 비용이나 데이터 프라이버시 문제가 실제로 생겼을 때 고려해요.</p>
+<p>세 가지 기술이 경쟁하는 게 아니에요. 각자 다른 레이어의 문제를 풀고, 여정의 다른 지점에 놓여요. 지금 있는 문제가 어느 레이어에 있는지를 먼저 보는 게 출발점이에요.</p>
+<hr>
+<p><strong>관련 글</strong></p>
+<ul>
+<li><a href="/liber/blog/ai-maturity-map">AI 도입 성숙도 맵: L1~L5</a> — 이 블로그</li>
+<li><a href="/liber/blog/prompt-engineering-bible">프롬프트 엔지니어링 바이블</a> — 이 블로그</li>
+<li><a href="/liber/blog/vector-db-basics">벡터 DB 기초: AI가 문서를 찾는 방법</a> — 이 블로그</li>
+<li><a href="/liber/blog/ai-agent-series-4-production">Agent를 Production으로 보내기</a> — 이 블로그</li>
+<li><a href="https://platform.openai.com/docs/guides/fine-tuning">OpenAI Fine-tuning Guide</a> — 데이터 요구량·비용·best practice</li>
+<li><a href="https://www.anthropic.com/news/prompt-caching">Anthropic Prompt Caching</a> — 시스템 프롬프트 비용 90% 절감</li>
+</ul>  </div> </article> </main> <!-- 댓글 & 좋아요 (Giscus — GitHub Discussions 기반) --> <!-- 설정 방법: https://giscus.app 에서 tall190/liber 입력 후 REPO_ID, CATEGORY_ID 교체 --> <div class="comments-section" data-astro-cid-bvzihdzo> <h3 data-astro-cid-bvzihdzo>댓글</h3> <script>
+				(function() {
+					var isDark = document.documentElement.classList.contains('dark');
+					var s = document.createElement('script');
+					s.src = 'https://giscus.app/client.js';
+					s.setAttribute('data-repo', 'tall190/liber');
+					s.setAttribute('data-repo-id', 'R_kgDOSIJHDw');
+					s.setAttribute('data-category', 'Announcements');
+					s.setAttribute('data-category-id', 'DIC_kwDOSIJHD84C7Uy6');
+					s.setAttribute('data-mapping', 'pathname');
+					s.setAttribute('data-strict', '0');
+					s.setAttribute('data-reactions-enabled', '1');
+					s.setAttribute('data-emit-metadata', '0');
+					s.setAttribute('data-input-position', 'bottom');
+					s.setAttribute('data-theme', isDark ? 'dark' : 'light');
+					s.setAttribute('data-lang', 'ko');
+					s.setAttribute('crossorigin', 'anonymous');
+					s.async = true;
+					document.currentScript.parentElement.appendChild(s);
+				})();
+			</script> </div> <footer data-astro-cid-sz7xmlte>
+&copy; 2026 Liber. All rights reserved.
+</footer> </body></html>

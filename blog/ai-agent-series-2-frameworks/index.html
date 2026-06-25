@@ -1,0 +1,385 @@
+<!DOCTYPE html><html lang="ko" data-astro-cid-bvzihdzo> <head><!-- Dark mode: apply before render to prevent flash --><script>
+	(function() {
+		const theme = localStorage.getItem('theme');
+		if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark');
+		}
+	})();
+</script> <!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="/liber/favicon.png"><link rel="icon" type="image/svg+xml" href="/liber/favicon.svg"><link rel="icon" href="/liber/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Liber" href="https://tall190.github.io/rss.xml"><meta name="generator" content="Astro v6.1.8"><style>@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/fd137eb932fcc611.woff") format("woff");font-display:swap;font-weight:400;font-style:normal;}@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/5c86995be98976a1.woff") format("woff");font-display:swap;font-weight:700;font-style:normal;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}:root{--font-atkinson:Atkinson-c7f4c4e8b285552f,"Atkinson-c7f4c4e8b285552f fallback: Arial",sans-serif;}</style><link rel="preload" href="/liber/_astro/fonts/fd137eb932fcc611.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/liber/_astro/fonts/5c86995be98976a1.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://tall190.github.io/liber/blog/ai-agent-series-2-frameworks/"><!-- Primary Meta Tags --><title>Agent 프레임워크 완전 비교: LangGraph, CrewAI, AutoGen, Claude SDK, Strands</title><meta name="title" content="Agent 프레임워크 완전 비교: LangGraph, CrewAI, AutoGen, Claude SDK, Strands"><meta name="description" content="2025~2026년 기준 주요 Agent 프레임워크 5개를 설계 철학부터 실제 사용 사례까지 비교해요. 어떤 상황에 어떤 프레임워크를 선택해야 하는지 기준을 정리했어요."><meta name="author" content="Liber"><meta name="keywords" content="AI, Agent, LangGraph, CrewAI, Strands, 프레임워크"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://tall190.github.io/liber/blog/ai-agent-series-2-frameworks/"><meta property="og:title" content="Agent 프레임워크 완전 비교: LangGraph, CrewAI, AutoGen, Claude SDK, Strands"><meta property="og:description" content="2025~2026년 기준 주요 Agent 프레임워크 5개를 설계 철학부터 실제 사용 사례까지 비교해요. 어떤 상황에 어떤 프레임워크를 선택해야 하는지 기준을 정리했어요."><meta property="og:image" content="https://tall190.github.io/liber/_astro/ai-agent-series-2-frameworks_hero_image.DRSGYf65.png"><meta property="og:locale" content="ko_KR"><meta property="article:published_time" content="2026-05-22T00:00:00.000Z"><meta property="article:tag" content="AI"><meta property="article:tag" content="Agent"><meta property="article:tag" content="LangGraph"><meta property="article:tag" content="CrewAI"><meta property="article:tag" content="Strands"><meta property="article:tag" content="프레임워크"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://tall190.github.io/liber/blog/ai-agent-series-2-frameworks/"><meta property="twitter:title" content="Agent 프레임워크 완전 비교: LangGraph, CrewAI, AutoGen, Claude SDK, Strands"><meta property="twitter:description" content="2025~2026년 기준 주요 Agent 프레임워크 5개를 설계 철학부터 실제 사용 사례까지 비교해요. 어떤 상황에 어떤 프레임워크를 선택해야 하는지 기준을 정리했어요."><meta property="twitter:image" content="https://tall190.github.io/liber/_astro/ai-agent-series-2-frameworks_hero_image.DRSGYf65.png"><!-- Theme toggle script --><script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const toggle = document.getElementById('theme-toggle');
+		if (!toggle) return;
+		toggle.addEventListener('click', function() {
+			const isDark = document.documentElement.classList.toggle('dark');
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
+			// Sync Giscus theme
+			const giscus = document.querySelector('iframe.giscus-frame');
+			if (giscus) {
+				giscus.contentWindow.postMessage(
+					{ giscus: { setConfig: { theme: isDark ? 'dark' : 'light' } } },
+					'https://giscus.app'
+				);
+			}
+		});
+	});
+</script><!-- Schema.org JSON-LD: AI가 이 글을 구조화된 데이터로 읽을 수 있어요 --><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Agent 프레임워크 완전 비교: LangGraph, CrewAI, AutoGen, Claude SDK, Strands","description":"2025~2026년 기준 주요 Agent 프레임워크 5개를 설계 철학부터 실제 사용 사례까지 비교해요. 어떤 상황에 어떤 프레임워크를 선택해야 하는지 기준을 정리했어요.","datePublished":"2026-05-22T00:00:00.000Z","dateModified":"2026-05-22T00:00:00.000Z","url":"https://tall190.github.io/liber/blog/ai-agent-series-2-frameworks/","inLanguage":"ko-KR","mainEntityOfPage":{"@type":"WebPage","@id":"https://tall190.github.io/liber/blog/ai-agent-series-2-frameworks/"},"author":{"@type":"Person","name":"Jayden","url":"https://tall190.github.io/liber/about/","sameAs":["https://github.com/tall190"]},"publisher":{"@type":"Organization","name":"Liber","url":"https://tall190.github.io/liber","logo":{"@type":"ImageObject","url":"https://tall190.github.io/liber/favicon.png"}},"keywords":"AI, Agent, LangGraph, CrewAI, Strands, 프레임워크","image":"https://tall190.github.io/liber/_astro/ai-agent-series-2-frameworks_hero_image.DRSGYf65.png"}</script><style>:root{--accent: #2337ff;--accent-dark: #000d8a;--black: 15, 18, 25;--gray: 96, 115, 159;--gray-light: 229, 233, 240;--gray-dark: 34, 41, 57;--gray-gradient: rgba(var(--gray-light), 50%), #fff;--box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);--bg: #fff;--bg-secondary: #f9fafb;--header-bg: white;--code-bg: rgb(var(--gray-light));color-scheme:light}:root.dark{--accent: #6b7cff;--accent-dark: #8b9aff;--black: 230, 230, 230;--gray: 155, 165, 190;--gray-light: 50, 55, 65;--gray-dark: 210, 215, 225;--gray-gradient: rgba(var(--gray-light), 50%), #1a1a2e;--box-shadow: 0 2px 6px rgba(0, 0, 0, 40%), 0 8px 24px rgba(0, 0, 0, 50%), 0 16px 32px rgba(0, 0, 0, 50%);--bg: #1a1a2e;--bg-secondary: #16162a;--header-bg: #16162a;--code-bg: rgba(var(--gray-light), .6);color-scheme:dark}body{font-family:var(--font-atkinson);margin:0;padding:0;text-align:left;background:var(--bg);background-image:linear-gradient(var(--gray-gradient));background-repeat:no-repeat;background-size:100% 600px;word-wrap:break-word;overflow-wrap:break-word;color:rgb(var(--gray-dark));font-size:20px;line-height:1.7;transition:background-color .3s,color .3s}main{width:720px;max-width:calc(100% - 2em);margin:auto;padding:3em 1em}h1,h2,h3,h4,h5,h6{margin:0 0 .5rem;color:rgb(var(--black));line-height:1.2}h1{font-size:3.052em}h2{font-size:2.441em}h3{font-size:1.953em}h4{font-size:1.563em}h5{font-size:1.25em}strong,b{font-weight:700}a,a:hover{color:var(--accent)}p{margin-bottom:1em}.prose p{margin-bottom:2em}.prose p:has(>img){margin-top:.5em;margin-bottom:.5em}textarea{width:100%;font-size:16px}input{font-size:16px}table{width:100%}img{max-width:100%;height:auto;border-radius:8px}code{padding:2px 5px;background-color:var(--code-bg);border-radius:2px}pre{padding:1.5em;border-radius:8px;overflow-x:auto;max-width:100%;font-size:15px}pre>code{all:unset}blockquote{border-left:4px solid var(--accent);padding:0 0 0 20px;margin:0;font-size:1.333em}hr{border:none;border-top:1px solid rgb(var(--gray-light))}@media(max-width:720px){body{font-size:18px}main{padding:1em}}.sr-only{border:0;padding:0;margin:0;position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px 1px 1px 1px);clip:rect(1px,1px,1px,1px);clip-path:inset(50%);white-space:nowrap}.prose p>em:only-child{display:block;font-size:.85em;color:rgb(var(--gray));margin-top:-.3em;margin-bottom:1.5em;text-align:center}footer[data-astro-cid-sz7xmlte]{padding:2em 1em 6em;background:linear-gradient(var(--gray-gradient)) no-repeat;color:rgb(var(--gray));text-align:center;transition:background-color .3s,color .3s}a[data-astro-cid-eimmu3lg]{display:inline-block;text-decoration:none}a[data-astro-cid-eimmu3lg].active{font-weight:bolder;text-decoration:underline}header[data-astro-cid-3ef6ksr2]{margin:0;padding:0 1em;background:var(--header-bg);box-shadow:0 2px 8px rgba(var(--black),5%);transition:background-color .3s}h2[data-astro-cid-3ef6ksr2]{margin:0;font-size:1em}h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2],h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none}nav[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;justify-content:space-between}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{padding:1em .5em;color:var(--black);border-bottom:4px solid transparent;text-decoration:none}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none;border-bottom-color:var(--accent)}.theme-toggle[data-astro-cid-3ef6ksr2]{background:none;border:none;cursor:pointer;padding:.5em;color:rgb(var(--black));display:flex;align-items:center;transition:color .3s}.theme-toggle[data-astro-cid-3ef6ksr2]:hover{color:var(--accent)}.dark .icon-sun[data-astro-cid-3ef6ksr2]{display:inline}.dark .icon-moon[data-astro-cid-3ef6ksr2],.icon-sun[data-astro-cid-3ef6ksr2]{display:none}.icon-moon[data-astro-cid-3ef6ksr2]{display:inline}
+main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.post-meta[data-astro-cid-bvzihdzo]{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:.5rem;flex-wrap:wrap}.hits-badge[data-astro-cid-bvzihdzo]{display:inline-flex;align-items:center}.hits-badge[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{height:20px;border-radius:4px}.post-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.8rem}.tag[data-astro-cid-bvzihdzo]{display:inline-block;font-size:.75rem;font-weight:600;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--accent));color:#fff;text-decoration:none;letter-spacing:.02em}.tag[data-astro-cid-bvzihdzo]:hover{background:var(--accent-dark)}.comments-section[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:3rem auto 2rem;padding:0 1em;border-top:1px solid rgb(var(--gray-light));padding-top:2rem}.comments-section[data-astro-cid-bvzihdzo] h3[data-astro-cid-bvzihdzo]{font-size:1.1rem;color:rgb(var(--gray-dark));margin-bottom:1.5rem}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/liber/" data-astro-cid-3ef6ksr2><img src="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp" srcset="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp 1x, /liber/_astro/liber-logo.DqNb0q2U_Z1NhCXk.webp 2x, /liber/_astro/liber-logo.DqNb0q2U_16RKps.webp 3x" alt="Liber" data-astro-cid-3ef6ksr2="true" loading="lazy" decoding="async" width="121" height="40"></a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/liber/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Home </a> <a href="/liber/blog/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Blog </a> <a href="/liber/about/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> About </a> <button class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환" data-astro-cid-3ef6ksr2> <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle><line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line><line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line><line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line><line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line></svg> <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path></svg> </button> </div> </nav> </header> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo> <img src="/liber/_astro/ai-agent-series-2-frameworks_hero_image.DRSGYf65_Z2sMsGE.webp" alt data-astro-cid-bvzihdzo="true" loading="lazy" decoding="async" width="1020" height="510"> </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-05-22T00:00:00.000Z"> May 22, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>Agent 프레임워크 완전 비교: LangGraph, CrewAI, AutoGen, Claude SDK, Strands</h1> <div class="post-meta" data-astro-cid-bvzihdzo> <span class="hits-badge" data-astro-cid-bvzihdzo> <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Ftall190.github.io%2Fliber%2Fblog%2Fai-agent-series-2-frameworks%2F&#38;label=views&#38;labelColor=%23374151&#38;countColor=%236366f1&#38;style=flat" alt="조회수" loading="eager" data-astro-cid-bvzihdzo> </span> </div> <div class="post-tags" data-astro-cid-bvzihdzo> <a class="tag" href="/liber/blog/tags/AI/" data-astro-cid-bvzihdzo>AI</a><a class="tag" href="/liber/blog/tags/Agent/" data-astro-cid-bvzihdzo>Agent</a><a class="tag" href="/liber/blog/tags/LangGraph/" data-astro-cid-bvzihdzo>LangGraph</a><a class="tag" href="/liber/blog/tags/CrewAI/" data-astro-cid-bvzihdzo>CrewAI</a><a class="tag" href="/liber/blog/tags/Strands/" data-astro-cid-bvzihdzo>Strands</a><a class="tag" href="/liber/blog/tags/프레임워크/" data-astro-cid-bvzihdzo>프레임워크</a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>Agent를 만들기로 결정하고 나면 곧 두 번째 질문이 생겨요. “어떤 프레임워크로 만들어야 할까?”</p>
+<p>LangGraph, CrewAI, AutoGen, Claude Agent SDK, AWS Strands — 다들 “가장 쉽고 강력하다”고 주장해요. 직접 써보기 전에는 판단하기 어렵고, 잘못 선택하면 나중에 마이그레이션 비용이 만만치 않죠.</p>
+<p>이 글에서는 2025~2026년 기준 주요 Agent 프레임워크 5개를 비교해볼게요. 각 프레임워크의 설계 철학, 핵심 기능, 장단점, 그리고 어떤 상황에 적합한지를 정리했어요.</p>
+<h2 id="5개-프레임워크-한눈에-보기">5개 프레임워크 한눈에 보기</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>프레임워크</th><th>제작사</th><th>설계 철학</th><th>GitHub Stars</th></tr></thead><tbody><tr><td>LangGraph</td><td>LangChain</td><td>그래프 기반 상태 머신</td><td>12k+</td></tr><tr><td>CrewAI</td><td>CrewAI Inc.</td><td>역할 기반 팀 협업</td><td>30k+</td></tr><tr><td>AutoGen → MAF</td><td>Microsoft</td><td>대화 기반 멀티에이전트</td><td>40k+</td></tr><tr><td>Claude Agent SDK</td><td>Anthropic</td><td>코드 기반 오케스트레이션</td><td>—</td></tr><tr><td>Strands Agents</td><td>AWS</td><td>모델 주도 최소 설정</td><td>6k+</td></tr></tbody></table>
+<p>이제 각각을 자세히 살펴볼게요.</p>
+<hr>
+<h2 id="1-langgraph">1. LangGraph</h2>
+<h3 id="설계-철학-명시적인-그래프로-흐름을-제어한다">설계 철학: 명시적인 그래프로 흐름을 제어한다</h3>
+<p>LangGraph는 Agent 워크플로우를 <strong>노드(실행 단위)와 엣지(전이 조건)로 구성된 그래프</strong>로 표현해요. “Build resilient agents”가 공식 슬로건인 만큼, 복잡한 분기와 루프를 정확하게 제어하는 게 핵심이에요.</p>
+<p>2025년 10월 v1.0 GA 출시 이후 Uber, LinkedIn, Klarna 같은 대형 프로덕션 환경에서 사용 중이에요.</p>
+<h3 id="핵심-기능">핵심 기능</h3>
+<p><strong>Durable Execution</strong>: 체크포인팅으로 모든 상태 전이를 영속화해요. 실패하면 중단된 지점부터 재개할 수 있어요.</p>
+<p><strong>Human-in-the-loop</strong>: <code>interrupt</code> 메커니즘으로 그래프 실행을 일시정지하고, 사람의 입력을 받은 뒤 재개할 수 있어요. 스레드를 블로킹하지 않아요.</p>
+<p><strong>Time-travel 디버깅</strong>: 체크포인트 기반으로 과거 상태로 되돌려 디버깅할 수 있어요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langgraph.graph </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> StateGraph</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langgraph.checkpoint.memory </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> MemorySaver</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> call_llm</span><span style="color:#E1E4E8">(state): </span><span style="color:#79B8FF">...</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> use_tool</span><span style="color:#E1E4E8">(state): </span><span style="color:#79B8FF">...</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> should_use_tool</span><span style="color:#E1E4E8">(state): </span><span style="color:#79B8FF">...</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">graph </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> StateGraph(AgentState)</span></span>
+<span class="line"><span style="color:#E1E4E8">graph.add_node(</span><span style="color:#9ECBFF">"llm"</span><span style="color:#E1E4E8">, call_llm)</span></span>
+<span class="line"><span style="color:#E1E4E8">graph.add_node(</span><span style="color:#9ECBFF">"tool"</span><span style="color:#E1E4E8">, use_tool)</span></span>
+<span class="line"><span style="color:#E1E4E8">graph.add_conditional_edges(</span><span style="color:#9ECBFF">"llm"</span><span style="color:#E1E4E8">, should_use_tool)</span></span>
+<span class="line"><span style="color:#E1E4E8">app </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> graph.compile(</span><span style="color:#FFAB70">checkpointer</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">MemorySaver())</span></span></code></pre>
+<h3 id="장단점">장단점</h3>
+<p><strong>장점</strong></p>
+<ul>
+<li>복잡한 조건 분기와 루프를 그래프로 명시적 표현</li>
+<li>Human-in-the-loop이 프레임워크 수준에서 기본 지원</li>
+<li>실패 복구와 재시도가 내장 (v1.1부터 지수 백오프 retry middleware 포함)</li>
+<li>Uber, LinkedIn, Klarna 등 대규모 프로덕션 검증</li>
+</ul>
+<p><strong>단점</strong></p>
+<ul>
+<li>그래프 DSL 학습 곡선이 있어요</li>
+<li>단순한 선형 워크플로우에는 오버엔지니어링이 될 수 있어요</li>
+</ul>
+<p><strong>적합한 상황</strong>: 복잡한 조건 분기, Human approval이 필요한 프로덕션 워크플로우, 장시간 실행 태스크, RAG + Agent 결합 아키텍처</p>
+<hr>
+<h2 id="2-crewai">2. CrewAI</h2>
+<h3 id="설계-철학-ai-에이전트를-팀원처럼-구성한다">설계 철학: AI 에이전트를 팀원처럼 구성한다</h3>
+<p>CrewAI는 각 에이전트에 **역할(Role), 목표(Goal), 배경(Backstory)**을 부여해요. “리서치 담당”, “작성 담당”, “검토 담당”처럼 팀 구성을 모델링하는 방식이에요.</p>
+<p>LangChain에 의존하지 않는 순수 Python 프레임워크고, 2025년 10월 v1.1.0 기준으로 GitHub Stars 30k+를 기록했어요.</p>
+<h3 id="핵심-구조">핵심 구조</h3>
+<ul>
+<li><strong>Crew</strong>: 에이전트 집합 + 실행 프로세스</li>
+<li><strong>Agent</strong>: 역할, 목표, 도구를 가진 AI 행위자</li>
+<li><strong>Task</strong>: 구체적인 작업 단위 (기대 출력 포함)</li>
+<li><strong>Process</strong>: Sequential / Hierarchical 중 선택</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> crewai </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Agent, Task, Crew, Process</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">researcher </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Agent(</span></span>
+<span class="line"><span style="color:#FFAB70">    role</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"Senior Researcher"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    goal</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"Find key facts about </span><span style="color:#79B8FF">{topic}</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    backstory</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"You're an expert researcher with 10 years of experience."</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    tools</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[search_tool]</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">writer </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Agent(</span></span>
+<span class="line"><span style="color:#FFAB70">    role</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"Content Writer"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    goal</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"Write a clear summary based on research"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    backstory</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"You simplify complex topics for engineers."</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">crew </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Crew(</span></span>
+<span class="line"><span style="color:#FFAB70">    agents</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[researcher, writer],</span></span>
+<span class="line"><span style="color:#FFAB70">    tasks</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[research_task, write_task],</span></span>
+<span class="line"><span style="color:#FFAB70">    process</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">Process.sequential</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> crew.kickoff(</span><span style="color:#FFAB70">inputs</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">"topic"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"AI Agents"</span><span style="color:#E1E4E8">})</span></span></code></pre>
+<h3 id="장단점-1">장단점</h3>
+<p><strong>장점</strong></p>
+<ul>
+<li>역할 기반 설계로 팀 시뮬레이션에 직관적</li>
+<li>빠른 프로토타이핑에 유리</li>
+<li>LangChain 비의존으로 의존성 경량</li>
+</ul>
+<p><strong>단점</strong></p>
+<ul>
+<li>복잡한 상태 관리는 LangGraph 대비 표현력이 낮아요</li>
+<li>Hierarchical 프로세스에서 매니저 LLM 비용이 추가 발생해요</li>
+<li>에이전트 행동 예측성이 낮아 프로덕션 디버깅이 어려울 수 있어요</li>
+</ul>
+<p><strong>적합한 상황</strong>: 리서치 → 작성 → 검토 파이프라인, 콘텐츠 생성 자동화, 빠른 PoC</p>
+<hr>
+<h2 id="3-autogen--microsoft-agent-framework-maf">3. AutoGen → Microsoft Agent Framework (MAF)</h2>
+<h3 id="중요한-맥락-autogen은-이제-유지보수-모드예요">중요한 맥락: AutoGen은 이제 유지보수 모드예요</h3>
+<p>AutoGen은 Microsoft가 만든 대화 기반 멀티에이전트 프레임워크예요. 그런데 2026년 4월, Microsoft는 AutoGen과 Semantic Kernel을 합쳐 <strong>Microsoft Agent Framework(MAF) 1.0을 GA로 출시</strong>했어요. 이후 AutoGen은 버그 수정과 보안 패치만 받고, 신규 기능 개발은 중단됐어요.</p>
+<p>새 프로젝트라면 MAF를 선택하는 게 맞아요.</p>
+<h3 id="maf의-핵심">MAF의 핵심</h3>
+<p>MAF는 AutoGen의 단순한 에이전트 추상화에 Semantic Kernel의 엔터프라이즈 기능을 결합했어요.</p>
+<ul>
+<li>세션 기반 상태 관리와 타입 안전성 강화</li>
+<li>OpenTelemetry observability 내장</li>
+<li>Python + .NET 크로스 언어 지원</li>
+<li>MCP 프로토콜 기본 내장</li>
+<li>5가지 오케스트레이션 패턴 제공</li>
+</ul>
+<p><strong>적합한 상황</strong>: 기존 Microsoft 생태계(Azure, .NET) 팀, 엔터프라이즈 환경, 코드 생성 에이전트</p>
+<hr>
+<h2 id="4-claude-agent-sdk-anthropic">4. Claude Agent SDK (Anthropic)</h2>
+<h3 id="설계-철학-코드로-오케스트레이션을-표현한다">설계 철학: 코드로 오케스트레이션을 표현한다</h3>
+<p>Claude Agent SDK는 Claude Code의 내부 인프라를 라이브러리로 공개한 형태예요. 복잡한 워크플로우 DSL 대신 <strong>Python 코드로 도구 호출과 에이전트 간 흐름을 직접 표현</strong>해요.</p>
+<h3 id="핵심-기능-1">핵심 기능</h3>
+<ul>
+<li><strong>컨텍스트 수집</strong>: 파일시스템 탐색, 시맨틱 검색, 자동 컴팩션 (컨텍스트 오버플로우 방지)</li>
+<li><strong>MCP 통합</strong>: Model Context Protocol로 외부 서비스 연결 표준화</li>
+<li><strong>Sub-agent</strong>: 독립 컨텍스트 윈도우로 병렬 처리와 격리</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> anthropic</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> anthropic.Anthropic()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Sub-agent에 독립 태스크 위임</span></span>
+<span class="line"><span style="color:#E1E4E8">subagent_response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> client.messages.create(</span></span>
+<span class="line"><span style="color:#FFAB70">    model</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"claude-haiku-4-5-20251001"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    max_tokens</span><span style="color:#F97583">=</span><span style="color:#79B8FF">4096</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    system</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"You are a specialized research agent."</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    messages</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[{</span><span style="color:#9ECBFF">"role"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"content"</span><span style="color:#E1E4E8">: task_description}]</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre>
+<h3 id="장단점-2">장단점</h3>
+<p><strong>장점</strong></p>
+<ul>
+<li>Claude Code 실제 운영 인프라 기반 — 실전 검증된 아키텍처</li>
+<li>MCP로 외부 서비스 연결 표준화</li>
+<li>Anthropic 모델 최적화 (구조화 출력, 도구 사용)</li>
+</ul>
+<p><strong>단점</strong></p>
+<ul>
+<li>Anthropic 생태계 종속 (타 LLM 연동은 추가 작업 필요)</li>
+<li>Observability, 상태 영속성은 직접 구축 필요</li>
+</ul>
+<p><strong>적합한 상황</strong>: Claude 중심 스택, MCP 기반 외부 서비스 통합, 코드 실행 에이전트</p>
+<hr>
+<h2 id="5-aws-strands-agents">5. AWS Strands Agents</h2>
+<h3 id="설계-철학-모델이-알아서-하게-코드는-최소로">설계 철학: 모델이 알아서 하게, 코드는 최소로</h3>
+<p>2025년 5월 16일 GA 출시한 AWS의 오픈소스 Agent 프레임워크예요. 현재 누적 다운로드 1,400만+, v1.40.0(2026년 5월 기준)까지 출시됐어요. Apache 2.0 라이선스예요.</p>
+<p>핵심 철학은 **“Model-driven approach”**예요. 복잡한 워크플로우 설계 대신, 현대 LLM의 네이티브 추론과 도구 사용 능력을 그대로 활용해요. 에이전트 정의에 필요한 건 딱 3가지예요: <strong>모델 + 도구 + 프롬프트</strong>.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Agent, tool</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands_tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> calculator, web_search</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 기본 에이전트 — 3줄</span></span>
+<span class="line"><span style="color:#E1E4E8">agent </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Agent(</span><span style="color:#FFAB70">tools</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[calculator, web_search])</span></span>
+<span class="line"><span style="color:#E1E4E8">response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agent(</span><span style="color:#9ECBFF">"AI 칩 시장 점유율 조사하고 M2 Ultra vs H100 성능 비교해줘"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 커스텀 Tool 정의</span></span>
+<span class="line"><span style="color:#B392F0">@tool</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> word_count</span><span style="color:#E1E4E8">(text: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">) -> </span><span style="color:#79B8FF">int</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    """텍스트의 단어 수를 세어요."""</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> len</span><span style="color:#E1E4E8">(text.split())</span></span></code></pre>
+<h3 id="amazon-bedrock-연동">Amazon Bedrock 연동</h3>
+<p>Strands의 기본 모델 프로바이더는 Amazon Bedrock이에요. Tool use와 스트리밍을 지원하는 모든 Bedrock 모델과 호환되고, Bedrock Guardrails로 안전 거버넌스도 적용할 수 있어요. Bedrock 외에도 Anthropic, OpenAI, Ollama 같은 외부 프로바이더도 지원해요.</p>
+<p>Amazon 내부에서 Amazon Q Developer, AWS Glue, VPC Reachability Analyzer에 실제로 사용 중이에요.</p>
+<h3 id="다른-프레임워크와-차별점">다른 프레임워크와 차별점</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>항목</th><th>Strands</th><th>LangGraph</th><th>CrewAI</th></tr></thead><tbody><tr><td>Bedrock 통합</td><td>네이티브 기본값</td><td>추가 설정</td><td>추가 설정</td></tr><tr><td>코드량</td><td>최소 (3줄)</td><td>중간~높음</td><td>중간</td></tr><tr><td>MCP 지원</td><td>내장</td><td>별도 통합</td><td>별도 통합</td></tr><tr><td>OpenTelemetry</td><td>내장</td><td>LangSmith 별도</td><td>별도</td></tr><tr><td>Hook 시스템</td><td>내장</td><td>커스텀 노드</td><td>제한적</td></tr></tbody></table>
+<h3 id="장단점-3">장단점</h3>
+<p><strong>장점</strong></p>
+<ul>
+<li>AWS/Bedrock 스택에 네이티브 통합</li>
+<li>최소 코드로 시작 가능 (진입 장벽 가장 낮음)</li>
+<li>OpenTelemetry 기반 observability 내장</li>
+<li>Amazon 프로덕션에서 추출된 실전 검증 코드</li>
+</ul>
+<p><strong>단점</strong></p>
+<ul>
+<li>2025년 5월 출시로 커뮤니티가 LangGraph/CrewAI 대비 작아요</li>
+<li>복잡한 상태 흐름 제어는 LangGraph 대비 표현력이 아직 부족해요</li>
+</ul>
+<p><strong>적합한 상황</strong>: AWS/Bedrock 중심 스택, 빠른 프로토타이핑, MCP 기반 통합, 최소 코드 선호</p>
+<hr>
+<h2 id="어떤-걸-선택해야-할까">어떤 걸 선택해야 할까</h2>
+<p>5개를 비교해봤을 때, 선택 기준을 이렇게 정리할 수 있어요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Q1: AWS/Bedrock 스택을 주로 쓰나요?</span></span>
+<span class="line"><span>  → Yes → Strands Agents</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Q2: 복잡한 조건 분기와 Human approval이 필요한가요?</span></span>
+<span class="line"><span>  → Yes → LangGraph</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Q3: Microsoft 생태계(.NET, Azure)에 있나요?</span></span>
+<span class="line"><span>  → Yes → Microsoft Agent Framework</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Q4: Claude/Anthropic 중심으로 빠르게 만들고 싶나요?</span></span>
+<span class="line"><span>  → Yes → Claude Agent SDK</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Q5: 역할 기반 팀 구조가 직관적으로 맞나요?</span></span>
+<span class="line"><span>  → Yes → CrewAI</span></span></code></pre>
+<h3 id="종합-비교">종합 비교</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>항목</th><th>LangGraph</th><th>CrewAI</th><th>MAF</th><th>Claude SDK</th><th>Strands</th></tr></thead><tbody><tr><td>진입 장벽</td><td>높음</td><td>낮음</td><td>중간</td><td>중간</td><td>낮음</td></tr><tr><td>상태 제어</td><td>최고</td><td>낮음</td><td>높음</td><td>중간</td><td>중간</td></tr><tr><td>Bedrock 통합</td><td>추가 작업</td><td>추가 작업</td><td>Azure 중심</td><td>추가 작업</td><td>네이티브</td></tr><tr><td>Human-in-loop</td><td>내장</td><td>제한</td><td>내장</td><td>직접 구현</td><td>내장</td></tr><tr><td>커뮤니티</td><td>큼</td><td>큼</td><td>중간</td><td>성장 중</td><td>성장 중</td></tr><tr><td>Observability</td><td>LangSmith</td><td>별도</td><td>OTEL 내장</td><td>직접 구현</td><td>OTEL 내장</td></tr></tbody></table>
+<p>프레임워크를 고르는 데 많은 시간을 쓰는 것보다, 팀의 기존 스택과 주요 사용 LLM을 기준으로 빠르게 결정하는 게 낫더라고요. 초기 선택이 완벽할 필요는 없어요. 작게 시작하고, 실제 문제가 생기면 그때 마이그레이션을 고려하면 돼요.</p>
+<p>다음 편에서는 실제 코드로 Agent를 만들어볼게요. 단일 Tool 에이전트부터 시작해서 Multi-agent 구조까지 단계적으로 구현해봐요.</p>  </div> </article> </main> <!-- 댓글 & 좋아요 (Giscus — GitHub Discussions 기반) --> <!-- 설정 방법: https://giscus.app 에서 tall190/liber 입력 후 REPO_ID, CATEGORY_ID 교체 --> <div class="comments-section" data-astro-cid-bvzihdzo> <h3 data-astro-cid-bvzihdzo>댓글</h3> <script>
+				(function() {
+					var isDark = document.documentElement.classList.contains('dark');
+					var s = document.createElement('script');
+					s.src = 'https://giscus.app/client.js';
+					s.setAttribute('data-repo', 'tall190/liber');
+					s.setAttribute('data-repo-id', 'R_kgDOSIJHDw');
+					s.setAttribute('data-category', 'Announcements');
+					s.setAttribute('data-category-id', 'DIC_kwDOSIJHD84C7Uy6');
+					s.setAttribute('data-mapping', 'pathname');
+					s.setAttribute('data-strict', '0');
+					s.setAttribute('data-reactions-enabled', '1');
+					s.setAttribute('data-emit-metadata', '0');
+					s.setAttribute('data-input-position', 'bottom');
+					s.setAttribute('data-theme', isDark ? 'dark' : 'light');
+					s.setAttribute('data-lang', 'ko');
+					s.setAttribute('crossorigin', 'anonymous');
+					s.async = true;
+					document.currentScript.parentElement.appendChild(s);
+				})();
+			</script> </div> <footer data-astro-cid-sz7xmlte>
+&copy; 2026 Liber. All rights reserved.
+</footer> </body></html>

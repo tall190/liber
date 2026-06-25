@@ -1,0 +1,159 @@
+<!DOCTYPE html><html lang="ko" data-astro-cid-bvzihdzo> <head><!-- Dark mode: apply before render to prevent flash --><script>
+	(function() {
+		const theme = localStorage.getItem('theme');
+		if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark');
+		}
+	})();
+</script> <!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="/liber/favicon.png"><link rel="icon" type="image/svg+xml" href="/liber/favicon.svg"><link rel="icon" href="/liber/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Liber" href="https://tall190.github.io/rss.xml"><meta name="generator" content="Astro v6.1.8"><style>@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/fd137eb932fcc611.woff") format("woff");font-display:swap;font-weight:400;font-style:normal;}@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/5c86995be98976a1.woff") format("woff");font-display:swap;font-weight:700;font-style:normal;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}:root{--font-atkinson:Atkinson-c7f4c4e8b285552f,"Atkinson-c7f4c4e8b285552f fallback: Arial",sans-serif;}</style><link rel="preload" href="/liber/_astro/fonts/fd137eb932fcc611.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/liber/_astro/fonts/5c86995be98976a1.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://tall190.github.io/liber/blog/ootb-ocmp-agent-era/"><!-- Primary Meta Tags --><title>OOTB + OCMP + Agent: AI 에이전트를 실제 서비스에 바로 쓰는 법</title><meta name="title" content="OOTB + OCMP + Agent: AI 에이전트를 실제 서비스에 바로 쓰는 법"><meta name="description" content="AI 에이전트 도입이 어렵다는 건 옛말이에요. OOTB(즉시 사용 가능) + OCMP(통합 플랫폼) + Agent 조합으로 복잡한 개발 없이 실제 서비스에 자율 AI를 붙이는 방법, 그리고 95%가 실패하는 이유까지 정리했어요."><meta name="author" content="Liber"><meta name="keywords" content="AI, Agent, LLM, 실무, 자동화"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://tall190.github.io/liber/blog/ootb-ocmp-agent-era/"><meta property="og:title" content="OOTB + OCMP + Agent: AI 에이전트를 실제 서비스에 바로 쓰는 법"><meta property="og:description" content="AI 에이전트 도입이 어렵다는 건 옛말이에요. OOTB(즉시 사용 가능) + OCMP(통합 플랫폼) + Agent 조합으로 복잡한 개발 없이 실제 서비스에 자율 AI를 붙이는 방법, 그리고 95%가 실패하는 이유까지 정리했어요."><meta property="og:image" content="https://tall190.github.io/liber/_astro/ootb-ocmp-agent-era_hero_image.Cm3LgoR5.png"><meta property="og:locale" content="ko_KR"><meta property="article:published_time" content="2026-06-10T00:00:00.000Z"><meta property="article:tag" content="AI"><meta property="article:tag" content="Agent"><meta property="article:tag" content="LLM"><meta property="article:tag" content="실무"><meta property="article:tag" content="자동화"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://tall190.github.io/liber/blog/ootb-ocmp-agent-era/"><meta property="twitter:title" content="OOTB + OCMP + Agent: AI 에이전트를 실제 서비스에 바로 쓰는 법"><meta property="twitter:description" content="AI 에이전트 도입이 어렵다는 건 옛말이에요. OOTB(즉시 사용 가능) + OCMP(통합 플랫폼) + Agent 조합으로 복잡한 개발 없이 실제 서비스에 자율 AI를 붙이는 방법, 그리고 95%가 실패하는 이유까지 정리했어요."><meta property="twitter:image" content="https://tall190.github.io/liber/_astro/ootb-ocmp-agent-era_hero_image.Cm3LgoR5.png"><!-- Theme toggle script --><script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const toggle = document.getElementById('theme-toggle');
+		if (!toggle) return;
+		toggle.addEventListener('click', function() {
+			const isDark = document.documentElement.classList.toggle('dark');
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
+			// Sync Giscus theme
+			const giscus = document.querySelector('iframe.giscus-frame');
+			if (giscus) {
+				giscus.contentWindow.postMessage(
+					{ giscus: { setConfig: { theme: isDark ? 'dark' : 'light' } } },
+					'https://giscus.app'
+				);
+			}
+		});
+	});
+</script><!-- Schema.org JSON-LD: AI가 이 글을 구조화된 데이터로 읽을 수 있어요 --><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"OOTB + OCMP + Agent: AI 에이전트를 실제 서비스에 바로 쓰는 법","description":"AI 에이전트 도입이 어렵다는 건 옛말이에요. OOTB(즉시 사용 가능) + OCMP(통합 플랫폼) + Agent 조합으로 복잡한 개발 없이 실제 서비스에 자율 AI를 붙이는 방법, 그리고 95%가 실패하는 이유까지 정리했어요.","datePublished":"2026-06-10T00:00:00.000Z","dateModified":"2026-06-10T00:00:00.000Z","url":"https://tall190.github.io/liber/blog/ootb-ocmp-agent-era/","inLanguage":"ko-KR","mainEntityOfPage":{"@type":"WebPage","@id":"https://tall190.github.io/liber/blog/ootb-ocmp-agent-era/"},"author":{"@type":"Person","name":"Jayden","url":"https://tall190.github.io/liber/about/","sameAs":["https://github.com/tall190"]},"publisher":{"@type":"Organization","name":"Liber","url":"https://tall190.github.io/liber","logo":{"@type":"ImageObject","url":"https://tall190.github.io/liber/favicon.png"}},"keywords":"AI, Agent, LLM, 실무, 자동화","image":"https://tall190.github.io/liber/_astro/ootb-ocmp-agent-era_hero_image.Cm3LgoR5.png"}</script><style>:root{--accent: #2337ff;--accent-dark: #000d8a;--black: 15, 18, 25;--gray: 96, 115, 159;--gray-light: 229, 233, 240;--gray-dark: 34, 41, 57;--gray-gradient: rgba(var(--gray-light), 50%), #fff;--box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);--bg: #fff;--bg-secondary: #f9fafb;--header-bg: white;--code-bg: rgb(var(--gray-light));color-scheme:light}:root.dark{--accent: #6b7cff;--accent-dark: #8b9aff;--black: 230, 230, 230;--gray: 155, 165, 190;--gray-light: 50, 55, 65;--gray-dark: 210, 215, 225;--gray-gradient: rgba(var(--gray-light), 50%), #1a1a2e;--box-shadow: 0 2px 6px rgba(0, 0, 0, 40%), 0 8px 24px rgba(0, 0, 0, 50%), 0 16px 32px rgba(0, 0, 0, 50%);--bg: #1a1a2e;--bg-secondary: #16162a;--header-bg: #16162a;--code-bg: rgba(var(--gray-light), .6);color-scheme:dark}body{font-family:var(--font-atkinson);margin:0;padding:0;text-align:left;background:var(--bg);background-image:linear-gradient(var(--gray-gradient));background-repeat:no-repeat;background-size:100% 600px;word-wrap:break-word;overflow-wrap:break-word;color:rgb(var(--gray-dark));font-size:20px;line-height:1.7;transition:background-color .3s,color .3s}main{width:720px;max-width:calc(100% - 2em);margin:auto;padding:3em 1em}h1,h2,h3,h4,h5,h6{margin:0 0 .5rem;color:rgb(var(--black));line-height:1.2}h1{font-size:3.052em}h2{font-size:2.441em}h3{font-size:1.953em}h4{font-size:1.563em}h5{font-size:1.25em}strong,b{font-weight:700}a,a:hover{color:var(--accent)}p{margin-bottom:1em}.prose p{margin-bottom:2em}.prose p:has(>img){margin-top:.5em;margin-bottom:.5em}textarea{width:100%;font-size:16px}input{font-size:16px}table{width:100%}img{max-width:100%;height:auto;border-radius:8px}code{padding:2px 5px;background-color:var(--code-bg);border-radius:2px}pre{padding:1.5em;border-radius:8px;overflow-x:auto;max-width:100%;font-size:15px}pre>code{all:unset}blockquote{border-left:4px solid var(--accent);padding:0 0 0 20px;margin:0;font-size:1.333em}hr{border:none;border-top:1px solid rgb(var(--gray-light))}@media(max-width:720px){body{font-size:18px}main{padding:1em}}.sr-only{border:0;padding:0;margin:0;position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px 1px 1px 1px);clip:rect(1px,1px,1px,1px);clip-path:inset(50%);white-space:nowrap}.prose p>em:only-child{display:block;font-size:.85em;color:rgb(var(--gray));margin-top:-.3em;margin-bottom:1.5em;text-align:center}footer[data-astro-cid-sz7xmlte]{padding:2em 1em 6em;background:linear-gradient(var(--gray-gradient)) no-repeat;color:rgb(var(--gray));text-align:center;transition:background-color .3s,color .3s}a[data-astro-cid-eimmu3lg]{display:inline-block;text-decoration:none}a[data-astro-cid-eimmu3lg].active{font-weight:bolder;text-decoration:underline}header[data-astro-cid-3ef6ksr2]{margin:0;padding:0 1em;background:var(--header-bg);box-shadow:0 2px 8px rgba(var(--black),5%);transition:background-color .3s}h2[data-astro-cid-3ef6ksr2]{margin:0;font-size:1em}h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2],h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none}nav[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;justify-content:space-between}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{padding:1em .5em;color:var(--black);border-bottom:4px solid transparent;text-decoration:none}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none;border-bottom-color:var(--accent)}.theme-toggle[data-astro-cid-3ef6ksr2]{background:none;border:none;cursor:pointer;padding:.5em;color:rgb(var(--black));display:flex;align-items:center;transition:color .3s}.theme-toggle[data-astro-cid-3ef6ksr2]:hover{color:var(--accent)}.dark .icon-sun[data-astro-cid-3ef6ksr2]{display:inline}.dark .icon-moon[data-astro-cid-3ef6ksr2],.icon-sun[data-astro-cid-3ef6ksr2]{display:none}.icon-moon[data-astro-cid-3ef6ksr2]{display:inline}
+main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.post-meta[data-astro-cid-bvzihdzo]{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:.5rem;flex-wrap:wrap}.hits-badge[data-astro-cid-bvzihdzo]{display:inline-flex;align-items:center}.hits-badge[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{height:20px;border-radius:4px}.post-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.8rem}.tag[data-astro-cid-bvzihdzo]{display:inline-block;font-size:.75rem;font-weight:600;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--accent));color:#fff;text-decoration:none;letter-spacing:.02em}.tag[data-astro-cid-bvzihdzo]:hover{background:var(--accent-dark)}.comments-section[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:3rem auto 2rem;padding:0 1em;border-top:1px solid rgb(var(--gray-light));padding-top:2rem}.comments-section[data-astro-cid-bvzihdzo] h3[data-astro-cid-bvzihdzo]{font-size:1.1rem;color:rgb(var(--gray-dark));margin-bottom:1.5rem}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/liber/" data-astro-cid-3ef6ksr2><img src="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp" srcset="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp 1x, /liber/_astro/liber-logo.DqNb0q2U_Z1NhCXk.webp 2x, /liber/_astro/liber-logo.DqNb0q2U_16RKps.webp 3x" alt="Liber" data-astro-cid-3ef6ksr2="true" loading="lazy" decoding="async" width="121" height="40"></a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/liber/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Home </a> <a href="/liber/blog/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Blog </a> <a href="/liber/about/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> About </a> <button class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환" data-astro-cid-3ef6ksr2> <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle><line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line><line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line><line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line><line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line></svg> <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path></svg> </button> </div> </nav> </header> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo> <img src="/liber/_astro/ootb-ocmp-agent-era_hero_image.Cm3LgoR5_ZUueGu.webp" alt data-astro-cid-bvzihdzo="true" loading="lazy" decoding="async" width="1020" height="510"> </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-06-10T00:00:00.000Z"> Jun 10, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>OOTB + OCMP + Agent: AI 에이전트를 실제 서비스에 바로 쓰는 법</h1> <div class="post-meta" data-astro-cid-bvzihdzo> <span class="hits-badge" data-astro-cid-bvzihdzo> <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Ftall190.github.io%2Fliber%2Fblog%2Footb-ocmp-agent-era%2F&#38;label=views&#38;labelColor=%23374151&#38;countColor=%236366f1&#38;style=flat" alt="조회수" loading="eager" data-astro-cid-bvzihdzo> </span> </div> <div class="post-tags" data-astro-cid-bvzihdzo> <a class="tag" href="/liber/blog/tags/AI/" data-astro-cid-bvzihdzo>AI</a><a class="tag" href="/liber/blog/tags/Agent/" data-astro-cid-bvzihdzo>Agent</a><a class="tag" href="/liber/blog/tags/LLM/" data-astro-cid-bvzihdzo>LLM</a><a class="tag" href="/liber/blog/tags/실무/" data-astro-cid-bvzihdzo>실무</a><a class="tag" href="/liber/blog/tags/자동화/" data-astro-cid-bvzihdzo>자동화</a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>“AI 써서 생산성 올렸다”는 이야기는 요즘 어디서든 들려요. 근데 막상 팀에서 도입하려고 하면 이야기가 달라지죠. 데이터 연동에 몇 달, 보안 검토에 몇 주, 커스터마이징에 또 몇 달… 결국 파일럿은 성공했는데 프로덕션에 못 올리는 상황. 많이 겪어보셨죠?</p>
+<p><a href="https://servicepath.co/2025/09/ai-integration-crisis-enterprise-hybrid-ai/">ServicePath의 2025년 분석</a>에 따르면 <strong>기업 AI 파일럿의 95%가 측정 가능한 ROI를 만들어내지 못해요.</strong> 모델이 나빠서가 아니에요. 통합, 데이터, 거버넌스 문제 때문이에요.</p>
+<p>이 글은 그 벽을 어떻게 넘는지에 대한 이야기예요. OOTB, OCMP, Agent 세 가지 개념이 결합되면서 만들어지는 새로운 도입 방식과, 실제로 작동하는 전략을 정리해볼게요.</p>
+<h2 id="왜-지금까지-ai-도입이-어려웠나">왜 지금까지 AI 도입이 어려웠나</h2>
+<p>전통적인 AI 도입 경로를 생각해볼게요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>모델 선택 → API 연동 → 데이터 파이프라인 구축 → </span></span>
+<span class="line"><span>레거시 시스템 연동 → 보안/컴플라이언스 검토 → </span></span>
+<span class="line"><span>UI 개발 → 배포 → 유지보수</span></span></code></pre>
+<p>각 단계마다 전문 인력이 필요하고, 시스템 하나 붙이는 데 6개월 이상이에요. 그리고 이 긴 여정 끝에도 “그래서 실제로 뭐가 달라졌냐”는 질문에 명확히 답하기 어렵죠.</p>
+<p>문제의 핵심은 두 가지예요.</p>
+<p>첫 번째는 <strong>단절된 시스템</strong>이에요. 고객 데이터는 CRM에, 주문 데이터는 ERP에, 대화 이력은 상담 솔루션에 흩어져 있어요. AI가 이걸 다 참조하면서 일관된 응대를 하려면 통합이 먼저인데, 통합 자체가 대형 프로젝트예요.</p>
+<p>두 번째는 <strong>실행 능력 부재</strong>예요. LLM은 텍스트를 생성하는 건 잘 하지만, “주문 상태 확인해서 고객한테 알려줘”처럼 실제 시스템에 접근하고 행동하는 건 별도 구조가 필요해요. 그게 바로 Agent예요.</p>
+<h2 id="ootb--ocmp--agent-세-가지가-만나면-달라지는-것">OOTB + OCMP + Agent: 세 가지가 만나면 달라지는 것</h2>
+<p>이 세 가지 개념이 각각 위에서 말한 문제들을 해결해요.</p>
+<h3 id="ootb-설치하면-바로-작동하는-ai">OOTB: 설치하면 바로 작동하는 AI</h3>
+<p><strong>Out of the Box</strong>는 복잡한 커스터마이징 없이 API 연결만으로 작동하는 사전 구축 AI 솔루션을 뜻해요. 예전엔 AI 도입 = 모델부터 직접 파인튜닝이라는 인식이 있었는데, 지금은 달라졌어요.</p>
+<p>Microsoft Copilot Studio, Aisera, MindStudio 같은 플랫폼들은 CS 응대, 문서 요약, 회의록 정리, 데이터 분석 같은 업무별 에이전트를 이미 만들어놨어요. MindStudio 기준으로 <strong>평균 빌드 타임이 15분에서 1시간</strong> 이에요. 개발팀 없이 비즈니스 팀이 직접 붙일 수 있는 수준이죠.</p>
+<p>OOTB의 핵심 가치는 “검증된 패턴을 재사용한다”는 거예요. 상담 에이전트를 만들 때 인텐트 분류, 대화 흐름, 에스컬레이션 로직을 처음부터 설계할 필요 없이 검증된 템플릿에서 시작해요. 시간과 리스크를 동시에 줄여줘요.</p>
+<h3 id="ocmp-흩어진-데이터를-하나로">OCMP: 흩어진 데이터를 하나로</h3>
+<p><strong>One Core Multi-Platform</strong>은 여러 채널과 시스템을 하나의 코어 엔진으로 연결하는 아키텍처예요. AI가 일관된 맥락을 가지고 일하려면, 데이터가 통합돼 있어야 해요.</p>
+<p>실제 사례를 보면 이게 얼마나 중요한지 알 수 있어요. Morgan Stanley 어드바이저 팀에서 AI 에이전트를 도입했는데, 미팅이 끝나면 자동으로 후속 노트가 작성되고 액션 아이템이 추출되고 Salesforce CRM에 동기화까지 처리돼요. 결과적으로 <strong>어드바이저 팀 98%가 도입</strong>했어요.</p>
+<p>데이터가 통합되지 않은 상태에서 에이전트를 붙이면, 에이전트는 절반의 맥락만으로 판단해요. 통합이 먼저예요.</p>
+<h3 id="agent-말만-하던-ai가-실제로-행동한다">Agent: 말만 하던 AI가 실제로 행동한다</h3>
+<p>챗봇과 에이전트를 가르는 기준은 하나예요. <strong>실행 여부</strong>예요.</p>
+<p>챗봇은 “주문이 배송 중입니다”라고 답해요. 에이전트는 배송 API를 호출해서 실시간 위치를 확인하고, 지연이 감지되면 고객에게 먼저 알림을 보내고, 필요하면 쿠폰을 발행해요. 사람이 개입하지 않아도요.</p>
+<p>이 차이가 생산성 수치로 나타나요. <a href="https://aimonk.com/agentic-ai-examples-enterprise-roi-case-studies/">Klarna는 2025년 AI 에이전트가 853명의 업무량을 처리하며 6,000만 달러를 절감</a>했어요. <a href="https://aimonk.com/agentic-ai-examples-enterprise-roi-case-studies/">Morgan Stanley는 DevGen.AI로 레거시 코드 9백만 줄을 분석하고 개발자 28만 시간을 절약</a>했어요.</p>
+<p>숫자가 크게 느껴지지만 원리는 단순해요. 반복적이고 규칙 기반인 업무를 에이전트가 맡고, 사람은 판단과 예외 처리에 집중하는 거예요.</p>
+<hr>
+<h2 id="실제로-어떻게-시작하나">실제로 어떻게 시작하나</h2>
+<p>좋은 이야기는 많은데, 내 팀에서는 어디서부터 시작해야 하는지가 더 중요한 질문이에요.</p>
+<h3 id="1단계-반복-업무-목록-뽑기">1단계: 반복 업무 목록 뽑기</h3>
+<p>에이전트가 가장 빠른 ROI를 내는 건 <strong>반복적이고, 규칙이 명확하고, 사람이 하기 지루한 작업</strong>이에요.</p>
+<p>팀 내에서 이런 질문을 해보세요.</p>
+<ul>
+<li>“이 작업, 매주 몇 번 반복되나?”</li>
+<li>“이 작업, 신입도 매뉴얼 보면 할 수 있나?”</li>
+<li>“이 작업, 실수하면 어떤 결과가 나오나?”</li>
+</ul>
+<p>마지막 질문이 중요해요. 실수 시 임팩트가 낮은 작업부터 에이전트에게 맡기는 게 맞아요. 고객 응대 요약, 내부 FAQ 답변, 데이터 분류 같은 것들이 좋은 시작점이에요.</p>
+<h3 id="2단계-작게-완전히-만들기">2단계: 작게, 완전히 만들기</h3>
+<p><a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai">McKinsey는 워크플로우 재설계가 AI ROI를 만드는 가장 강한 요인</a>이라고 해요. 에이전트를 붙인다고 ROI가 생기는 게 아니라, 업무 흐름 자체를 에이전트에 맞게 재설계해야 해요.</p>
+<p>흔한 실수는 기존 프로세스 위에 AI를 “얹는” 거예요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>❌ Before: 사람이 하던 방식 그대로 + AI가 중간에 도움</span></span>
+<span class="line"><span>→ 병목이 사라지지 않음, 사람의 컨펌 단계가 그대로 남음</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>✅ After: AI가 처음부터 끝까지 처리, 예외만 사람에게 전달</span></span>
+<span class="line"><span>→ 처리 속도 10배, 사람은 진짜 판단이 필요한 케이스만</span></span></code></pre>
+<p>범위를 좁게 잡고, 그 안에서 완전히 작동하는 에이전트를 먼저 만들어요. “CS 문의 전체 자동화”보다 “배송 지연 문의에 대한 자동 응대”가 먼저예요.</p>
+<h3 id="3단계-측정-기준을-사전에-정의">3단계: 측정 기준을 사전에 정의</h3>
+<p><a href="https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027">Gartner는 2027년까지 에이전트 AI 프로젝트의 40% 이상이 취소될 것</a>이라고 예측했어요. 이유는 “불명확한 비즈니스 가치”예요.</p>
+<p>도입 전에 이걸 정해둬야 해요.</p>
+<ul>
+<li>성공 기준은 뭔가? (처리 시간 50% 감소, CS 에스컬레이션 30% 감소 등)</li>
+<li>언제까지 측정할 것인가?</li>
+<li>실패 기준은 뭔가?</li>
+</ul>
+<p>측정 기준이 없으면 “느낌적으로 좋은 것 같은데”로 끝나요. <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai">McKinsey에 따르면 AI와 워크플로우 재설계를 결합한 기업들은 20-60% 생산성 향상과 20-40% 시간 절약</a>을 보고하는데, 이 수치가 나오려면 베이스라인 측정이 선행돼야 해요.</p>
+<hr>
+<h2 id="95가-실패하는-이유-그리고-5가-하는-것">95%가 실패하는 이유, 그리고 5%가 하는 것</h2>
+<p>파일럿이 프로덕션으로 못 가는 가장 흔한 이유들이에요.</p>
+<p><strong>레거시 시스템 통합 실패</strong>: AI 리더들이 공통적으로 꼽는 가장 큰 장벽이에요. 에이전트가 참조할 데이터가 사일로에 갇혀 있으면, OOTB 솔루션을 써도 반쪽짜리가 돼요. OCMP 구조를 먼저 잡는 이유가 여기에 있어요.</p>
+<p><strong>파일럿 환경과 프로덕션의 차이</strong>: 통제된 환경에서 잘 되던 에이전트가 실제 트래픽, 실제 데이터 노이즈, 예외 케이스들 앞에서 무너지는 경우예요. 파일럿 단계부터 실제 데이터로 검증해야 해요.</p>
+<p><strong>거버넌스 부재</strong>: 에이전트가 어떤 결정을 내릴 수 있고, 어떤 건 사람에게 넘겨야 하는지 명확하지 않으면 신뢰가 무너져요. 특히 금융이나 의료처럼 규제가 있는 영역에서는 에이전트의 행동 범위를 처음부터 정의해야 해요.</p>
+<p>반면 성공하는 팀들에게는 공통점이 있어요. <strong>좁게 시작해서 완전히 작동하는 걸 먼저 만들고, 거기서 얻은 신뢰로 범위를 확장해요.</strong> <a href="https://aimonk.com/agentic-ai-examples-enterprise-roi-case-studies/">조사에 따르면 AI로 ROI를 달성한 기업의 74%가 첫 1년 안에 성과를 확인</a>했는데, 이게 가능한 이유는 처음부터 큰 그림을 그리지 않았기 때문이에요.</p>
+<h2 id="어디서부터-시작할-것인가">어디서부터 시작할 것인가</h2>
+<p>구체적인 첫 번째 스텝을 제안하면 이래요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>시작점</th><th>도구</th><th>예상 기간</th></tr></thead><tbody><tr><td>내부 FAQ/지식 베이스</td><td>Microsoft Copilot, Aisera</td><td>2-4주</td></tr><tr><td>회의록 자동화</td><td>Notion AI, Fireflies + CRM 연동</td><td>1-2주</td></tr><tr><td>데이터 리포트 요약</td><td>GPT-4 + 스프레드시트 연동</td><td>1주</td></tr><tr><td>CS 1차 응대 자동화</td><td>Zendesk AI, Intercom</td><td>4-8주</td></tr></tbody></table>
+<p>이 중에서 팀이 <strong>가장 자주 하고, 가장 지루해하는 작업</strong>을 골라서 시작하세요. 기술적으로 완벽한 첫 번째보다 팀이 실제로 쓰는 첫 번째가 더 중요해요.</p>
+<p>Gartner는 <strong>2026년 말까지 기업 애플리케이션의 40%가 태스크 특화 AI 에이전트를 탑재할 것</strong>이라고 예측했어요. 지금 5%에서 40%로 가는 여정의 초입이에요. 먼저 시작한 팀이 노하우를 쌓고, 나중에 시작한 팀이 그 방법론을 도입하는 식으로 갭이 벌어질 거예요.</p>
+<p>OOTB로 빠르게 시작하고, OCMP로 데이터를 통합하고, Agent로 실제 행동을 만들어내는 것. 이 세 가지가 맞물릴 때 AI 도입이 “파일럿 프로젝트”에서 “실제 비즈니스 인프라”로 바뀌어요.</p>
+<hr>
+<p><strong>참고 자료</strong></p>
+<ul>
+<li><a href="https://aimonk.com/agentic-ai-examples-enterprise-roi-case-studies/">12 Agentic AI Examples With Measurable ROI: Enterprise Case Studies From 2025-2026</a> — AI Monk</li>
+<li><a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai">The state of AI in 2025: Agents, innovation, and transformation</a> — McKinsey</li>
+<li><a href="https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027">Gartner Predicts Over 40% of Agentic AI Projects Will Be Canceled by End of 2027</a> — Gartner</li>
+<li><a href="https://www.gartner.com/en/newsroom/press-releases/2025-08-26-gartner-predicts-40-percent-of-enterprise-apps-will-feature-task-specific-ai-agents-by-2026-up-from-less-than-5-percent-in-2025">Gartner Predicts 40% of Enterprise Apps Will Feature Task-Specific AI Agents by 2026</a> — Gartner</li>
+<li><a href="https://servicepath.co/2025/09/ai-integration-crisis-enterprise-hybrid-ai/">The AI Integration Crisis: Why 95% of Enterprise Pilots Fail</a> — ServicePath</li>
+<li><a href="https://chronus.com/blog/why-ai-adoption-fails-enterprise-barriers-to-ai-leaders-ignore">Why AI Adoption Fails: Enterprise Barriers AI Leaders Ignore</a> — Chronus</li>
+<li><a href="https://www.konverso.ai/en/blog/top-ai-agent-platform-in-2025">Top AI Agent No-Code Platforms in 2025</a> — Konverso</li>
+</ul>  </div> </article> </main> <!-- 댓글 & 좋아요 (Giscus — GitHub Discussions 기반) --> <!-- 설정 방법: https://giscus.app 에서 tall190/liber 입력 후 REPO_ID, CATEGORY_ID 교체 --> <div class="comments-section" data-astro-cid-bvzihdzo> <h3 data-astro-cid-bvzihdzo>댓글</h3> <script>
+				(function() {
+					var isDark = document.documentElement.classList.contains('dark');
+					var s = document.createElement('script');
+					s.src = 'https://giscus.app/client.js';
+					s.setAttribute('data-repo', 'tall190/liber');
+					s.setAttribute('data-repo-id', 'R_kgDOSIJHDw');
+					s.setAttribute('data-category', 'Announcements');
+					s.setAttribute('data-category-id', 'DIC_kwDOSIJHD84C7Uy6');
+					s.setAttribute('data-mapping', 'pathname');
+					s.setAttribute('data-strict', '0');
+					s.setAttribute('data-reactions-enabled', '1');
+					s.setAttribute('data-emit-metadata', '0');
+					s.setAttribute('data-input-position', 'bottom');
+					s.setAttribute('data-theme', isDark ? 'dark' : 'light');
+					s.setAttribute('data-lang', 'ko');
+					s.setAttribute('crossorigin', 'anonymous');
+					s.async = true;
+					document.currentScript.parentElement.appendChild(s);
+				})();
+			</script> </div> <footer data-astro-cid-sz7xmlte>
+&copy; 2026 Liber. All rights reserved.
+</footer> </body></html>

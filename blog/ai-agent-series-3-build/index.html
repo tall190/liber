@@ -1,0 +1,321 @@
+<!DOCTYPE html><html lang="ko" data-astro-cid-bvzihdzo> <head><!-- Dark mode: apply before render to prevent flash --><script>
+	(function() {
+		const theme = localStorage.getItem('theme');
+		if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark');
+		}
+	})();
+</script> <!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="/liber/favicon.png"><link rel="icon" type="image/svg+xml" href="/liber/favicon.svg"><link rel="icon" href="/liber/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Liber" href="https://tall190.github.io/rss.xml"><meta name="generator" content="Astro v6.1.8"><style>@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/fd137eb932fcc611.woff") format("woff");font-display:swap;font-weight:400;font-style:normal;}@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/5c86995be98976a1.woff") format("woff");font-display:swap;font-weight:700;font-style:normal;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}:root{--font-atkinson:Atkinson-c7f4c4e8b285552f,"Atkinson-c7f4c4e8b285552f fallback: Arial",sans-serif;}</style><link rel="preload" href="/liber/_astro/fonts/fd137eb932fcc611.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/liber/_astro/fonts/5c86995be98976a1.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://tall190.github.io/liber/blog/ai-agent-series-3-build/"><!-- Primary Meta Tags --><title>실제로 Agent 만들어보기: 단일 Tool에서 Multi-agent까지</title><meta name="title" content="실제로 Agent 만들어보기: 단일 Tool에서 Multi-agent까지"><meta name="description" content="동작하는 코드로 배우는 Agent 구현. 단일 Tool 에이전트부터 Multi-tool, Multi-agent 구조까지 단계별로 만들어보고, 흔한 실수와 해결 방법도 정리했어요."><meta name="author" content="Liber"><meta name="keywords" content="AI, Agent, Python, Anthropic, 코드"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://tall190.github.io/liber/blog/ai-agent-series-3-build/"><meta property="og:title" content="실제로 Agent 만들어보기: 단일 Tool에서 Multi-agent까지"><meta property="og:description" content="동작하는 코드로 배우는 Agent 구현. 단일 Tool 에이전트부터 Multi-tool, Multi-agent 구조까지 단계별로 만들어보고, 흔한 실수와 해결 방법도 정리했어요."><meta property="og:image" content="https://tall190.github.io/liber/_astro/ai-agent-series-3-build_hero_image.CxJqDafY.png"><meta property="og:locale" content="ko_KR"><meta property="article:published_time" content="2026-05-23T00:00:00.000Z"><meta property="article:tag" content="AI"><meta property="article:tag" content="Agent"><meta property="article:tag" content="Python"><meta property="article:tag" content="Anthropic"><meta property="article:tag" content="코드"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://tall190.github.io/liber/blog/ai-agent-series-3-build/"><meta property="twitter:title" content="실제로 Agent 만들어보기: 단일 Tool에서 Multi-agent까지"><meta property="twitter:description" content="동작하는 코드로 배우는 Agent 구현. 단일 Tool 에이전트부터 Multi-tool, Multi-agent 구조까지 단계별로 만들어보고, 흔한 실수와 해결 방법도 정리했어요."><meta property="twitter:image" content="https://tall190.github.io/liber/_astro/ai-agent-series-3-build_hero_image.CxJqDafY.png"><!-- Theme toggle script --><script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const toggle = document.getElementById('theme-toggle');
+		if (!toggle) return;
+		toggle.addEventListener('click', function() {
+			const isDark = document.documentElement.classList.toggle('dark');
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
+			// Sync Giscus theme
+			const giscus = document.querySelector('iframe.giscus-frame');
+			if (giscus) {
+				giscus.contentWindow.postMessage(
+					{ giscus: { setConfig: { theme: isDark ? 'dark' : 'light' } } },
+					'https://giscus.app'
+				);
+			}
+		});
+	});
+</script><!-- Schema.org JSON-LD: AI가 이 글을 구조화된 데이터로 읽을 수 있어요 --><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"실제로 Agent 만들어보기: 단일 Tool에서 Multi-agent까지","description":"동작하는 코드로 배우는 Agent 구현. 단일 Tool 에이전트부터 Multi-tool, Multi-agent 구조까지 단계별로 만들어보고, 흔한 실수와 해결 방법도 정리했어요.","datePublished":"2026-05-23T00:00:00.000Z","dateModified":"2026-05-23T00:00:00.000Z","url":"https://tall190.github.io/liber/blog/ai-agent-series-3-build/","inLanguage":"ko-KR","mainEntityOfPage":{"@type":"WebPage","@id":"https://tall190.github.io/liber/blog/ai-agent-series-3-build/"},"author":{"@type":"Person","name":"Jayden","url":"https://tall190.github.io/liber/about/","sameAs":["https://github.com/tall190"]},"publisher":{"@type":"Organization","name":"Liber","url":"https://tall190.github.io/liber","logo":{"@type":"ImageObject","url":"https://tall190.github.io/liber/favicon.png"}},"keywords":"AI, Agent, Python, Anthropic, 코드","image":"https://tall190.github.io/liber/_astro/ai-agent-series-3-build_hero_image.CxJqDafY.png"}</script><style>:root{--accent: #2337ff;--accent-dark: #000d8a;--black: 15, 18, 25;--gray: 96, 115, 159;--gray-light: 229, 233, 240;--gray-dark: 34, 41, 57;--gray-gradient: rgba(var(--gray-light), 50%), #fff;--box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);--bg: #fff;--bg-secondary: #f9fafb;--header-bg: white;--code-bg: rgb(var(--gray-light));color-scheme:light}:root.dark{--accent: #6b7cff;--accent-dark: #8b9aff;--black: 230, 230, 230;--gray: 155, 165, 190;--gray-light: 50, 55, 65;--gray-dark: 210, 215, 225;--gray-gradient: rgba(var(--gray-light), 50%), #1a1a2e;--box-shadow: 0 2px 6px rgba(0, 0, 0, 40%), 0 8px 24px rgba(0, 0, 0, 50%), 0 16px 32px rgba(0, 0, 0, 50%);--bg: #1a1a2e;--bg-secondary: #16162a;--header-bg: #16162a;--code-bg: rgba(var(--gray-light), .6);color-scheme:dark}body{font-family:var(--font-atkinson);margin:0;padding:0;text-align:left;background:var(--bg);background-image:linear-gradient(var(--gray-gradient));background-repeat:no-repeat;background-size:100% 600px;word-wrap:break-word;overflow-wrap:break-word;color:rgb(var(--gray-dark));font-size:20px;line-height:1.7;transition:background-color .3s,color .3s}main{width:720px;max-width:calc(100% - 2em);margin:auto;padding:3em 1em}h1,h2,h3,h4,h5,h6{margin:0 0 .5rem;color:rgb(var(--black));line-height:1.2}h1{font-size:3.052em}h2{font-size:2.441em}h3{font-size:1.953em}h4{font-size:1.563em}h5{font-size:1.25em}strong,b{font-weight:700}a,a:hover{color:var(--accent)}p{margin-bottom:1em}.prose p{margin-bottom:2em}.prose p:has(>img){margin-top:.5em;margin-bottom:.5em}textarea{width:100%;font-size:16px}input{font-size:16px}table{width:100%}img{max-width:100%;height:auto;border-radius:8px}code{padding:2px 5px;background-color:var(--code-bg);border-radius:2px}pre{padding:1.5em;border-radius:8px;overflow-x:auto;max-width:100%;font-size:15px}pre>code{all:unset}blockquote{border-left:4px solid var(--accent);padding:0 0 0 20px;margin:0;font-size:1.333em}hr{border:none;border-top:1px solid rgb(var(--gray-light))}@media(max-width:720px){body{font-size:18px}main{padding:1em}}.sr-only{border:0;padding:0;margin:0;position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px 1px 1px 1px);clip:rect(1px,1px,1px,1px);clip-path:inset(50%);white-space:nowrap}.prose p>em:only-child{display:block;font-size:.85em;color:rgb(var(--gray));margin-top:-.3em;margin-bottom:1.5em;text-align:center}footer[data-astro-cid-sz7xmlte]{padding:2em 1em 6em;background:linear-gradient(var(--gray-gradient)) no-repeat;color:rgb(var(--gray));text-align:center;transition:background-color .3s,color .3s}a[data-astro-cid-eimmu3lg]{display:inline-block;text-decoration:none}a[data-astro-cid-eimmu3lg].active{font-weight:bolder;text-decoration:underline}header[data-astro-cid-3ef6ksr2]{margin:0;padding:0 1em;background:var(--header-bg);box-shadow:0 2px 8px rgba(var(--black),5%);transition:background-color .3s}h2[data-astro-cid-3ef6ksr2]{margin:0;font-size:1em}h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2],h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none}nav[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;justify-content:space-between}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{padding:1em .5em;color:var(--black);border-bottom:4px solid transparent;text-decoration:none}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none;border-bottom-color:var(--accent)}.theme-toggle[data-astro-cid-3ef6ksr2]{background:none;border:none;cursor:pointer;padding:.5em;color:rgb(var(--black));display:flex;align-items:center;transition:color .3s}.theme-toggle[data-astro-cid-3ef6ksr2]:hover{color:var(--accent)}.dark .icon-sun[data-astro-cid-3ef6ksr2]{display:inline}.dark .icon-moon[data-astro-cid-3ef6ksr2],.icon-sun[data-astro-cid-3ef6ksr2]{display:none}.icon-moon[data-astro-cid-3ef6ksr2]{display:inline}
+main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.post-meta[data-astro-cid-bvzihdzo]{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:.5rem;flex-wrap:wrap}.hits-badge[data-astro-cid-bvzihdzo]{display:inline-flex;align-items:center}.hits-badge[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{height:20px;border-radius:4px}.post-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.8rem}.tag[data-astro-cid-bvzihdzo]{display:inline-block;font-size:.75rem;font-weight:600;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--accent));color:#fff;text-decoration:none;letter-spacing:.02em}.tag[data-astro-cid-bvzihdzo]:hover{background:var(--accent-dark)}.comments-section[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:3rem auto 2rem;padding:0 1em;border-top:1px solid rgb(var(--gray-light));padding-top:2rem}.comments-section[data-astro-cid-bvzihdzo] h3[data-astro-cid-bvzihdzo]{font-size:1.1rem;color:rgb(var(--gray-dark));margin-bottom:1.5rem}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/liber/" data-astro-cid-3ef6ksr2><img src="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp" srcset="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp 1x, /liber/_astro/liber-logo.DqNb0q2U_Z1NhCXk.webp 2x, /liber/_astro/liber-logo.DqNb0q2U_16RKps.webp 3x" alt="Liber" data-astro-cid-3ef6ksr2="true" loading="lazy" decoding="async" width="121" height="40"></a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/liber/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Home </a> <a href="/liber/blog/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Blog </a> <a href="/liber/about/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> About </a> <button class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환" data-astro-cid-3ef6ksr2> <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle><line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line><line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line><line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line><line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line></svg> <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path></svg> </button> </div> </nav> </header> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo> <img src="/liber/_astro/ai-agent-series-3-build_hero_image.CxJqDafY_Z1h1L2I.webp" alt data-astro-cid-bvzihdzo="true" loading="lazy" decoding="async" width="1020" height="510"> </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-05-23T00:00:00.000Z"> May 23, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>실제로 Agent 만들어보기: 단일 Tool에서 Multi-agent까지</h1> <div class="post-meta" data-astro-cid-bvzihdzo> <span class="hits-badge" data-astro-cid-bvzihdzo> <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Ftall190.github.io%2Fliber%2Fblog%2Fai-agent-series-3-build%2F&#38;label=views&#38;labelColor=%23374151&#38;countColor=%236366f1&#38;style=flat" alt="조회수" loading="eager" data-astro-cid-bvzihdzo> </span> </div> <div class="post-tags" data-astro-cid-bvzihdzo> <a class="tag" href="/liber/blog/tags/AI/" data-astro-cid-bvzihdzo>AI</a><a class="tag" href="/liber/blog/tags/Agent/" data-astro-cid-bvzihdzo>Agent</a><a class="tag" href="/liber/blog/tags/Python/" data-astro-cid-bvzihdzo>Python</a><a class="tag" href="/liber/blog/tags/Anthropic/" data-astro-cid-bvzihdzo>Anthropic</a><a class="tag" href="/liber/blog/tags/코드/" data-astro-cid-bvzihdzo>코드</a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>개념과 프레임워크는 알겠는데, 막상 만들려고 하면 어디서 시작해야 할지 막막해요. 튜토리얼은 너무 단순하고, 실제 코드는 너무 복잡하죠.</p>
+<p>이 글에서는 실제로 동작하는 Agent를 단계별로 만들어볼게요. 단일 Tool 에이전트부터 Multi-agent 구조까지, 코드 중심으로 설명해요.</p>
+<h2 id="환경-세팅">환경 세팅</h2>
+<p>Python 3.11+ 환경과 Anthropic API 키가 필요해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">pip</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> anthropic</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> ANTHROPIC_API_KEY</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"sk-ant-..."</span></span></code></pre>
+<p>이 글의 예시는 Anthropic Python SDK를 기준으로 해요. Tool Use 패턴 자체는 LangGraph나 Strands에서도 동일하게 적용돼요.</p>
+<h2 id="step-1-단일-tool-에이전트">Step 1: 단일 Tool 에이전트</h2>
+<p>가장 단순한 형태부터 시작해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> anthropic</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> json</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> anthropic.Anthropic()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">tools </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#9ECBFF">        "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"get_weather"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"특정 도시의 현재 날씨를 조회한다"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "input_schema"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"object"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            "properties"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                "city"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                    "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                    "description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"도시 이름 (예: 서울, Tokyo)"</span></span>
+<span class="line"><span style="color:#E1E4E8">                }</span></span>
+<span class="line"><span style="color:#E1E4E8">            },</span></span>
+<span class="line"><span style="color:#9ECBFF">            "required"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"city"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> get_weather</span><span style="color:#E1E4E8">(city: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">) -> </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D">    # 실제 구현에서는 외부 날씨 API 호출</span></span>
+<span class="line"><span style="color:#E1E4E8">    mock_data </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">        "서울"</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">"temp"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">22</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"condition"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"맑음"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"humidity"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">60</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#9ECBFF">        "Tokyo"</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">"temp"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">18</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"condition"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"흐림"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"humidity"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">75</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> mock_data.get(city, {</span><span style="color:#9ECBFF">"temp"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">20</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"condition"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"알 수 없음"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"humidity"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">50</span><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> run_agent</span><span style="color:#E1E4E8">(user_message: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">) -> </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    messages </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [{</span><span style="color:#9ECBFF">"role"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"content"</span><span style="color:#E1E4E8">: user_message}]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    while</span><span style="color:#79B8FF"> True</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> client.messages.create(</span></span>
+<span class="line"><span style="color:#FFAB70">            model</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"claude-sonnet-4-6"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            max_tokens</span><span style="color:#F97583">=</span><span style="color:#79B8FF">1024</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            tools</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">tools,</span></span>
+<span class="line"><span style="color:#FFAB70">            messages</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">messages</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # 최종 답변이면 종료</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> response.stop_reason </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> "end_turn"</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#79B8FF"> next</span><span style="color:#E1E4E8">(b.text </span><span style="color:#F97583">for</span><span style="color:#E1E4E8"> b </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> response.content </span><span style="color:#F97583">if</span><span style="color:#79B8FF"> hasattr</span><span style="color:#E1E4E8">(b, </span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Tool 호출이면 실행하고 루프 계속</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> response.stop_reason </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> "tool_use"</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">            tool_block </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> next</span><span style="color:#E1E4E8">(b </span><span style="color:#F97583">for</span><span style="color:#E1E4E8"> b </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> response.content </span><span style="color:#F97583">if</span><span style="color:#E1E4E8"> b.type </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> "tool_use"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">            result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> get_weather(</span><span style="color:#F97583">**</span><span style="color:#E1E4E8">tool_block.input)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">            messages.append({</span><span style="color:#9ECBFF">"role"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"assistant"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"content"</span><span style="color:#E1E4E8">: response.content})</span></span>
+<span class="line"><span style="color:#E1E4E8">            messages.append({</span></span>
+<span class="line"><span style="color:#9ECBFF">                "role"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                "content"</span><span style="color:#E1E4E8">: [{</span></span>
+<span class="line"><span style="color:#9ECBFF">                    "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"tool_result"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                    "tool_use_id"</span><span style="color:#E1E4E8">: tool_block.id,</span></span>
+<span class="line"><span style="color:#9ECBFF">                    "content"</span><span style="color:#E1E4E8">: json.dumps(result, </span><span style="color:#FFAB70">ensure_ascii</span><span style="color:#F97583">=</span><span style="color:#79B8FF">False</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">                }]</span></span>
+<span class="line"><span style="color:#E1E4E8">            })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(run_agent(</span><span style="color:#9ECBFF">"서울 날씨 어때?"</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#6A737D"># 출력: 현재 서울은 맑고 22°C예요. 습도는 60%예요.</span></span></code></pre>
+<p>핵심은 <code>while True</code> 루프예요. <code>stop_reason</code>이 <code>tool_use</code>이면 도구를 실행하고 결과를 메시지에 추가한 뒤 루프를 이어가요. <code>end_turn</code>이면 최종 답변을 반환해요.</p>
+<h2 id="step-2-multi-tool-에이전트">Step 2: Multi-tool 에이전트</h2>
+<p>Tool 하나로는 부족할 때, 여러 Tool을 조합할 수 있어요. 중요한 포인트가 하나 있어요. 하나의 LLM 응답에서 여러 Tool을 동시에 호출할 수 있어요. <code>for block in response.content</code>로 모든 Tool 호출을 한 번에 처리하는 게 그 이유예요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> anthropic</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> json</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> subprocess</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> anthropic.Anthropic()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">tools </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#9ECBFF">        "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"search_web"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"웹에서 정보를 검색한다"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "input_schema"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"object"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            "properties"</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">"query"</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8">}},</span></span>
+<span class="line"><span style="color:#9ECBFF">            "required"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"query"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#9ECBFF">        "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"run_python"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Python 코드를 실행하고 결과를 반환한다"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "input_schema"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"object"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            "properties"</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">"code"</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8">}},</span></span>
+<span class="line"><span style="color:#9ECBFF">            "required"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"code"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#9ECBFF">        "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"write_file"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"파일에 내용을 저장한다"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "input_schema"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"object"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            "properties"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                "filename"</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#9ECBFF">                "content"</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">            },</span></span>
+<span class="line"><span style="color:#9ECBFF">            "required"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"filename"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"content"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> execute_tool</span><span style="color:#E1E4E8">(name: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, inputs: </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">) -> </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> name </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> "search_web"</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D">        # 실제 구현에서는 Tavily, SerpAPI 등 사용</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">"'</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">inputs[</span><span style="color:#9ECBFF">'query'</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">' 검색 결과: ..."</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    elif</span><span style="color:#E1E4E8"> name </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> "run_python"</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">            result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> subprocess.run(</span></span>
+<span class="line"><span style="color:#E1E4E8">                [</span><span style="color:#9ECBFF">"python3"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"-c"</span><span style="color:#E1E4E8">, inputs[</span><span style="color:#9ECBFF">"code"</span><span style="color:#E1E4E8">]],</span></span>
+<span class="line"><span style="color:#FFAB70">                capture_output</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">text</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">timeout</span><span style="color:#F97583">=</span><span style="color:#79B8FF">10</span></span>
+<span class="line"><span style="color:#E1E4E8">            )</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#E1E4E8"> result.stdout </span><span style="color:#F97583">if</span><span style="color:#E1E4E8"> result.returncode </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> 0</span><span style="color:#F97583"> else</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">"오류: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">result.stderr</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#F97583">        except</span><span style="color:#E1E4E8"> subprocess.TimeoutExpired:</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#9ECBFF"> "실행 시간 초과 (10초)"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    elif</span><span style="color:#E1E4E8"> name </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> "write_file"</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        with</span><span style="color:#79B8FF"> open</span><span style="color:#E1E4E8">(inputs[</span><span style="color:#9ECBFF">"filename"</span><span style="color:#E1E4E8">], </span><span style="color:#9ECBFF">"w"</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">            f.write(inputs[</span><span style="color:#9ECBFF">"content"</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">inputs[</span><span style="color:#9ECBFF">'filename'</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> 저장 완료"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#9ECBFF"> "알 수 없는 Tool"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> run_agent</span><span style="color:#E1E4E8">(user_message: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, system: </span><span style="color:#79B8FF">str</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> ""</span><span style="color:#E1E4E8">) -> </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    messages </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [{</span><span style="color:#9ECBFF">"role"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"content"</span><span style="color:#E1E4E8">: user_message}]</span></span>
+<span class="line"><span style="color:#E1E4E8">    kwargs </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">        "model"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"claude-sonnet-4-6"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "max_tokens"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">4096</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "tools"</span><span style="color:#E1E4E8">: tools,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "messages"</span><span style="color:#E1E4E8">: messages</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> system:</span></span>
+<span class="line"><span style="color:#E1E4E8">        kwargs[</span><span style="color:#9ECBFF">"system"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> system</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    while</span><span style="color:#79B8FF"> True</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> client.messages.create(</span><span style="color:#F97583">**</span><span style="color:#E1E4E8">kwargs)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> response.stop_reason </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> "end_turn"</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#79B8FF"> next</span><span style="color:#E1E4E8">(b.text </span><span style="color:#F97583">for</span><span style="color:#E1E4E8"> b </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> response.content </span><span style="color:#F97583">if</span><span style="color:#79B8FF"> hasattr</span><span style="color:#E1E4E8">(b, </span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> response.stop_reason </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> "tool_use"</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D">            # 여러 Tool 호출을 한 번에 처리</span></span>
+<span class="line"><span style="color:#E1E4E8">            tool_results </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#F97583">            for</span><span style="color:#E1E4E8"> block </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> response.content:</span></span>
+<span class="line"><span style="color:#F97583">                if</span><span style="color:#E1E4E8"> block.type </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> "tool_use"</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">                    result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> execute_tool(block.name, block.input)</span></span>
+<span class="line"><span style="color:#E1E4E8">                    tool_results.append({</span></span>
+<span class="line"><span style="color:#9ECBFF">                        "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"tool_result"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                        "tool_use_id"</span><span style="color:#E1E4E8">: block.id,</span></span>
+<span class="line"><span style="color:#9ECBFF">                        "content"</span><span style="color:#E1E4E8">: result</span></span>
+<span class="line"><span style="color:#E1E4E8">                    })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">            messages.append({</span><span style="color:#9ECBFF">"role"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"assistant"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"content"</span><span style="color:#E1E4E8">: response.content})</span></span>
+<span class="line"><span style="color:#E1E4E8">            messages.append({</span><span style="color:#9ECBFF">"role"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"content"</span><span style="color:#E1E4E8">: tool_results})</span></span>
+<span class="line"><span style="color:#E1E4E8">            kwargs[</span><span style="color:#9ECBFF">"messages"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> messages</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> run_agent(</span></span>
+<span class="line"><span style="color:#9ECBFF">    "1부터 100까지 소수를 구하는 Python 코드 작성하고 실행한 뒤, 결과를 primes.txt에 저장해줘"</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(result)</span></span></code></pre>
+<h2 id="step-3-multi-agent-구조">Step 3: Multi-agent 구조</h2>
+<p>복잡한 태스크는 여러 에이전트로 나누는 게 효과적이에요. Orchestrator가 Sub-agent를 관리하는 패턴이에요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> anthropic</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> json</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> concurrent.futures </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> ThreadPoolExecutor, as_completed</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> anthropic.Anthropic()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> run_subagent</span><span style="color:#E1E4E8">(system: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, task: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">) -> </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    """독립 컨텍스트 윈도우를 가진 Sub-agent"""</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> client.messages.create(</span></span>
+<span class="line"><span style="color:#FFAB70">        model</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"claude-haiku-4-5-20251001"</span><span style="color:#E1E4E8">,  </span><span style="color:#6A737D"># 서브에이전트는 저렴한 모델</span></span>
+<span class="line"><span style="color:#FFAB70">        max_tokens</span><span style="color:#F97583">=</span><span style="color:#79B8FF">2048</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        system</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">system,</span></span>
+<span class="line"><span style="color:#FFAB70">        messages</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[{</span><span style="color:#9ECBFF">"role"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"content"</span><span style="color:#E1E4E8">: task}]</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> response.content[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].text</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> orchestrator</span><span style="color:#E1E4E8">(user_goal: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">) -> </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D">    # 1단계: 태스크를 병렬 Sub-task로 분해</span></span>
+<span class="line"><span style="color:#E1E4E8">    plan </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> client.messages.create(</span></span>
+<span class="line"><span style="color:#FFAB70">        model</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"claude-sonnet-4-6"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        max_tokens</span><span style="color:#F97583">=</span><span style="color:#79B8FF">1024</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        system</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"복잡한 태스크를 병렬 실행 가능한 독립 Sub-task로 분해해줘. JSON 배열로 반환 (각 항목: name/role/description)."</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        messages</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[{</span><span style="color:#9ECBFF">"role"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"content"</span><span style="color:#E1E4E8">: user_goal}]</span></span>
+<span class="line"><span style="color:#E1E4E8">    ).content[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].text</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    subtasks </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> json.loads(plan)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # 2단계: 병렬 실행</span></span>
+<span class="line"><span style="color:#E1E4E8">    results </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {}</span></span>
+<span class="line"><span style="color:#F97583">    with</span><span style="color:#E1E4E8"> ThreadPoolExecutor(</span><span style="color:#FFAB70">max_workers</span><span style="color:#F97583">=</span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> executor:</span></span>
+<span class="line"><span style="color:#E1E4E8">        futures </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">            executor.submit(</span></span>
+<span class="line"><span style="color:#E1E4E8">                run_subagent,</span></span>
+<span class="line"><span style="color:#F97583">                f</span><span style="color:#9ECBFF">"당신은 </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">t[</span><span style="color:#9ECBFF">'role'</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">이에요."</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                t[</span><span style="color:#9ECBFF">"description"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">            ): t[</span><span style="color:#9ECBFF">"name"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#F97583">            for</span><span style="color:#E1E4E8"> t </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> subtasks</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#F97583">        for</span><span style="color:#E1E4E8"> future </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> as_completed(futures):</span></span>
+<span class="line"><span style="color:#E1E4E8">            results[futures[future]] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> future.result()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # 3단계: 결과 통합</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> client.messages.create(</span></span>
+<span class="line"><span style="color:#FFAB70">        model</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"claude-sonnet-4-6"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        max_tokens</span><span style="color:#F97583">=</span><span style="color:#79B8FF">2048</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        system</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"여러 에이전트의 결과를 통합해 최종 보고서를 작성해요."</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        messages</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[{</span></span>
+<span class="line"><span style="color:#9ECBFF">            "role"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            "content"</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"목표: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">user_goal</span><span style="color:#79B8FF">}\n\n</span><span style="color:#9ECBFF">결과:</span><span style="color:#79B8FF">\n{</span><span style="color:#E1E4E8">json.dumps(results, </span><span style="color:#FFAB70">ensure_ascii</span><span style="color:#F97583">=</span><span style="color:#79B8FF">False</span><span style="color:#E1E4E8">)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#E1E4E8">        }]</span></span>
+<span class="line"><span style="color:#E1E4E8">    ).content[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].text</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(orchestrator(</span><span style="color:#9ECBFF">"AI 프레임워크 시장 동향 분석 후 2페이지 보고서 작성"</span><span style="color:#E1E4E8">))</span></span></code></pre>
+<p>Sub-agent에는 Haiku를, Orchestrator에는 Sonnet을 써요. Sonnet과 Haiku의 비용 차이는 약 15배인데, Sub-agent에 단순 작업을 위임하면 전체 비용을 크게 줄일 수 있어요.</p>
+<h2 id="흔한-실수-4가지">흔한 실수 4가지</h2>
+<p><strong>실수 1: 무한 루프</strong></p>
+<p>Tool이 항상 같은 결과를 반환하거나 에이전트가 루프를 탈출하지 못하는 경우가 있어요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># 나쁜 예</span></span>
+<span class="line"><span style="color:#F97583">while</span><span style="color:#79B8FF"> True</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> client.messages.create(</span><span style="color:#79B8FF">...</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 좋은 예</span></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> _ </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> range</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">15</span><span style="color:#E1E4E8">):  </span><span style="color:#6A737D"># 최대 반복 제한</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> client.messages.create(</span><span style="color:#79B8FF">...</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> response.stop_reason </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> "end_turn"</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        break</span></span>
+<span class="line"><span style="color:#F97583">else</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#9ECBFF"> "최대 반복 횟수 초과"</span></span></code></pre>
+<p><strong>실수 2: Tool 에러를 에이전트에게 숨김</strong></p>
+<p>Tool 실행이 실패했을 때 에이전트에 알리지 않으면 잘못된 정보로 계속 진행해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># 나쁜 예</span></span>
+<span class="line"><span style="color:#E1E4E8">result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> json.dumps(call_api(inputs))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 좋은 예: 에이전트가 오류를 인지하고 대안 탐색</span></span>
+<span class="line"><span style="color:#F97583">try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> json.dumps(call_api(inputs))</span></span>
+<span class="line"><span style="color:#F97583">except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#E1E4E8">    result </span><span style="color:#F97583">=</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">"오류 발생: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">e</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">. 다른 방법을 시도해주세요."</span></span></code></pre>
+<p><strong>실수 3: 컨텍스트 폭발</strong></p>
+<p>긴 대화에서 메시지가 쌓이면 컨텍스트 윈도우를 초과해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> compress_if_needed</span><span style="color:#E1E4E8">(messages, threshold</span><span style="color:#F97583">=</span><span style="color:#79B8FF">80000</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#79B8FF"> sum</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">len</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">(m)) </span><span style="color:#F97583">for</span><span style="color:#E1E4E8"> m </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> messages) </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> threshold:</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> messages</span></span>
+<span class="line"><span style="color:#E1E4E8">    recent </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> messages[</span><span style="color:#F97583">-</span><span style="color:#79B8FF">4</span><span style="color:#E1E4E8">:]</span></span>
+<span class="line"><span style="color:#E1E4E8">    summary </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> client.messages.create(</span></span>
+<span class="line"><span style="color:#FFAB70">        model</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"claude-haiku-4-5-20251001"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        max_tokens</span><span style="color:#F97583">=</span><span style="color:#79B8FF">300</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        messages</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[{</span><span style="color:#9ECBFF">"role"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"content"</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"3문장으로 요약: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">messages[:</span><span style="color:#F97583">-</span><span style="color:#79B8FF">4</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">}]</span></span>
+<span class="line"><span style="color:#E1E4E8">    ).content[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].text</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> [{</span><span style="color:#9ECBFF">"role"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"user"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"content"</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"[이전 요약]: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">summary</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">}] </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> recent</span></span></code></pre>
+<p><strong>실수 4: System prompt 없이 시작</strong></p>
+<p>Tool을 어떻게 써야 하는지, 어떤 형식으로 답해야 하는지 명확히 지정하지 않으면 에이전트 행동이 일관성 없어져요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#E1E4E8">system </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> """당신은 데이터 분석 에이전트예요.</span></span>
+<span class="line"><span style="color:#9ECBFF">- 항상 코드를 실행해서 결과를 확인하고 답해요</span></span>
+<span class="line"><span style="color:#9ECBFF">- 수치는 반드시 실제 계산 결과를 써요</span></span>
+<span class="line"><span style="color:#9ECBFF">- 가정으로 답하지 마요"""</span></span></code></pre>
+<h2 id="정리">정리</h2>
+<p>단순한 Tool 에이전트에서 시작해서 Multi-agent 구조까지 만들어봤어요. 핵심 패턴은 변하지 않아요: <strong>Tool 호출 → 결과 수집 → 다음 행동 결정 → 반복</strong>. 이 루프 위에 안정성 장치들을 붙여가면 프로덕션 에이전트가 돼요.</p>
+<p>다음 편에서는 이 에이전트를 실제 프로덕션 환경에 올리기 위해 필요한 것들 — Observability, 비용 관리, 안정성, 보안 — 을 다뤄볼게요.</p>  </div> </article> </main> <!-- 댓글 & 좋아요 (Giscus — GitHub Discussions 기반) --> <!-- 설정 방법: https://giscus.app 에서 tall190/liber 입력 후 REPO_ID, CATEGORY_ID 교체 --> <div class="comments-section" data-astro-cid-bvzihdzo> <h3 data-astro-cid-bvzihdzo>댓글</h3> <script>
+				(function() {
+					var isDark = document.documentElement.classList.contains('dark');
+					var s = document.createElement('script');
+					s.src = 'https://giscus.app/client.js';
+					s.setAttribute('data-repo', 'tall190/liber');
+					s.setAttribute('data-repo-id', 'R_kgDOSIJHDw');
+					s.setAttribute('data-category', 'Announcements');
+					s.setAttribute('data-category-id', 'DIC_kwDOSIJHD84C7Uy6');
+					s.setAttribute('data-mapping', 'pathname');
+					s.setAttribute('data-strict', '0');
+					s.setAttribute('data-reactions-enabled', '1');
+					s.setAttribute('data-emit-metadata', '0');
+					s.setAttribute('data-input-position', 'bottom');
+					s.setAttribute('data-theme', isDark ? 'dark' : 'light');
+					s.setAttribute('data-lang', 'ko');
+					s.setAttribute('crossorigin', 'anonymous');
+					s.async = true;
+					document.currentScript.parentElement.appendChild(s);
+				})();
+			</script> </div> <footer data-astro-cid-sz7xmlte>
+&copy; 2026 Liber. All rights reserved.
+</footer> </body></html>

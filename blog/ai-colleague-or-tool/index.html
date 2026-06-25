@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang="ko" data-astro-cid-bvzihdzo> <head><!-- Dark mode: apply before render to prevent flash --><script>
+	(function() {
+		const theme = localStorage.getItem('theme');
+		if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark');
+		}
+	})();
+</script> <!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="/liber/favicon.png"><link rel="icon" type="image/svg+xml" href="/liber/favicon.svg"><link rel="icon" href="/liber/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Liber" href="https://tall190.github.io/rss.xml"><meta name="generator" content="Astro v6.1.8"><style>@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/fd137eb932fcc611.woff") format("woff");font-display:swap;font-weight:400;font-style:normal;}@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/5c86995be98976a1.woff") format("woff");font-display:swap;font-weight:700;font-style:normal;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}:root{--font-atkinson:Atkinson-c7f4c4e8b285552f,"Atkinson-c7f4c4e8b285552f fallback: Arial",sans-serif;}</style><link rel="preload" href="/liber/_astro/fonts/fd137eb932fcc611.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/liber/_astro/fonts/5c86995be98976a1.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://tall190.github.io/liber/blog/ai-colleague-or-tool/"><!-- Primary Meta Tags --><title>동료인가, 도구인가, 또 다른 나인가</title><meta name="title" content="동료인가, 도구인가, 또 다른 나인가"><meta name="description" content="AI와 함께 일한다는 것에 대한 솔직한 기록. 동료로 시작해서 도구를 거쳐, 나처럼 일하게 만들고, 나만의 어벤져스를 만들기까지."><meta name="author" content="Liber"><meta name="keywords" content="에세이, AI, 커리어"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://tall190.github.io/liber/blog/ai-colleague-or-tool/"><meta property="og:title" content="동료인가, 도구인가, 또 다른 나인가"><meta property="og:description" content="AI와 함께 일한다는 것에 대한 솔직한 기록. 동료로 시작해서 도구를 거쳐, 나처럼 일하게 만들고, 나만의 어벤져스를 만들기까지."><meta property="og:image" content="https://tall190.github.io/liber/_astro/ai-colleague-or-tool_hero_image.Bpt82-n7.png"><meta property="og:locale" content="ko_KR"><meta property="article:published_time" content="2026-04-24T00:00:00.000Z"><meta property="article:tag" content="에세이"><meta property="article:tag" content="AI"><meta property="article:tag" content="커리어"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://tall190.github.io/liber/blog/ai-colleague-or-tool/"><meta property="twitter:title" content="동료인가, 도구인가, 또 다른 나인가"><meta property="twitter:description" content="AI와 함께 일한다는 것에 대한 솔직한 기록. 동료로 시작해서 도구를 거쳐, 나처럼 일하게 만들고, 나만의 어벤져스를 만들기까지."><meta property="twitter:image" content="https://tall190.github.io/liber/_astro/ai-colleague-or-tool_hero_image.Bpt82-n7.png"><!-- Theme toggle script --><script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const toggle = document.getElementById('theme-toggle');
+		if (!toggle) return;
+		toggle.addEventListener('click', function() {
+			const isDark = document.documentElement.classList.toggle('dark');
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
+			// Sync Giscus theme
+			const giscus = document.querySelector('iframe.giscus-frame');
+			if (giscus) {
+				giscus.contentWindow.postMessage(
+					{ giscus: { setConfig: { theme: isDark ? 'dark' : 'light' } } },
+					'https://giscus.app'
+				);
+			}
+		});
+	});
+</script><!-- Schema.org JSON-LD: AI가 이 글을 구조화된 데이터로 읽을 수 있어요 --><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"동료인가, 도구인가, 또 다른 나인가","description":"AI와 함께 일한다는 것에 대한 솔직한 기록. 동료로 시작해서 도구를 거쳐, 나처럼 일하게 만들고, 나만의 어벤져스를 만들기까지.","datePublished":"2026-04-24T00:00:00.000Z","dateModified":"2026-04-24T00:00:00.000Z","url":"https://tall190.github.io/liber/blog/ai-colleague-or-tool/","inLanguage":"ko-KR","mainEntityOfPage":{"@type":"WebPage","@id":"https://tall190.github.io/liber/blog/ai-colleague-or-tool/"},"author":{"@type":"Person","name":"Jayden","url":"https://tall190.github.io/liber/about/","sameAs":["https://github.com/tall190"]},"publisher":{"@type":"Organization","name":"Liber","url":"https://tall190.github.io/liber","logo":{"@type":"ImageObject","url":"https://tall190.github.io/liber/favicon.png"}},"keywords":"에세이, AI, 커리어","image":"https://tall190.github.io/liber/_astro/ai-colleague-or-tool_hero_image.Bpt82-n7.png"}</script><style>:root{--accent: #2337ff;--accent-dark: #000d8a;--black: 15, 18, 25;--gray: 96, 115, 159;--gray-light: 229, 233, 240;--gray-dark: 34, 41, 57;--gray-gradient: rgba(var(--gray-light), 50%), #fff;--box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);--bg: #fff;--bg-secondary: #f9fafb;--header-bg: white;--code-bg: rgb(var(--gray-light));color-scheme:light}:root.dark{--accent: #6b7cff;--accent-dark: #8b9aff;--black: 230, 230, 230;--gray: 155, 165, 190;--gray-light: 50, 55, 65;--gray-dark: 210, 215, 225;--gray-gradient: rgba(var(--gray-light), 50%), #1a1a2e;--box-shadow: 0 2px 6px rgba(0, 0, 0, 40%), 0 8px 24px rgba(0, 0, 0, 50%), 0 16px 32px rgba(0, 0, 0, 50%);--bg: #1a1a2e;--bg-secondary: #16162a;--header-bg: #16162a;--code-bg: rgba(var(--gray-light), .6);color-scheme:dark}body{font-family:var(--font-atkinson);margin:0;padding:0;text-align:left;background:var(--bg);background-image:linear-gradient(var(--gray-gradient));background-repeat:no-repeat;background-size:100% 600px;word-wrap:break-word;overflow-wrap:break-word;color:rgb(var(--gray-dark));font-size:20px;line-height:1.7;transition:background-color .3s,color .3s}main{width:720px;max-width:calc(100% - 2em);margin:auto;padding:3em 1em}h1,h2,h3,h4,h5,h6{margin:0 0 .5rem;color:rgb(var(--black));line-height:1.2}h1{font-size:3.052em}h2{font-size:2.441em}h3{font-size:1.953em}h4{font-size:1.563em}h5{font-size:1.25em}strong,b{font-weight:700}a,a:hover{color:var(--accent)}p{margin-bottom:1em}.prose p{margin-bottom:2em}.prose p:has(>img){margin-top:.5em;margin-bottom:.5em}textarea{width:100%;font-size:16px}input{font-size:16px}table{width:100%}img{max-width:100%;height:auto;border-radius:8px}code{padding:2px 5px;background-color:var(--code-bg);border-radius:2px}pre{padding:1.5em;border-radius:8px;overflow-x:auto;max-width:100%;font-size:15px}pre>code{all:unset}blockquote{border-left:4px solid var(--accent);padding:0 0 0 20px;margin:0;font-size:1.333em}hr{border:none;border-top:1px solid rgb(var(--gray-light))}@media(max-width:720px){body{font-size:18px}main{padding:1em}}.sr-only{border:0;padding:0;margin:0;position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px 1px 1px 1px);clip:rect(1px,1px,1px,1px);clip-path:inset(50%);white-space:nowrap}.prose p>em:only-child{display:block;font-size:.85em;color:rgb(var(--gray));margin-top:-.3em;margin-bottom:1.5em;text-align:center}footer[data-astro-cid-sz7xmlte]{padding:2em 1em 6em;background:linear-gradient(var(--gray-gradient)) no-repeat;color:rgb(var(--gray));text-align:center;transition:background-color .3s,color .3s}a[data-astro-cid-eimmu3lg]{display:inline-block;text-decoration:none}a[data-astro-cid-eimmu3lg].active{font-weight:bolder;text-decoration:underline}header[data-astro-cid-3ef6ksr2]{margin:0;padding:0 1em;background:var(--header-bg);box-shadow:0 2px 8px rgba(var(--black),5%);transition:background-color .3s}h2[data-astro-cid-3ef6ksr2]{margin:0;font-size:1em}h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2],h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none}nav[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;justify-content:space-between}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{padding:1em .5em;color:var(--black);border-bottom:4px solid transparent;text-decoration:none}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none;border-bottom-color:var(--accent)}.theme-toggle[data-astro-cid-3ef6ksr2]{background:none;border:none;cursor:pointer;padding:.5em;color:rgb(var(--black));display:flex;align-items:center;transition:color .3s}.theme-toggle[data-astro-cid-3ef6ksr2]:hover{color:var(--accent)}.dark .icon-sun[data-astro-cid-3ef6ksr2]{display:inline}.dark .icon-moon[data-astro-cid-3ef6ksr2],.icon-sun[data-astro-cid-3ef6ksr2]{display:none}.icon-moon[data-astro-cid-3ef6ksr2]{display:inline}
+main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.post-meta[data-astro-cid-bvzihdzo]{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:.5rem;flex-wrap:wrap}.hits-badge[data-astro-cid-bvzihdzo]{display:inline-flex;align-items:center}.hits-badge[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{height:20px;border-radius:4px}.post-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.8rem}.tag[data-astro-cid-bvzihdzo]{display:inline-block;font-size:.75rem;font-weight:600;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--accent));color:#fff;text-decoration:none;letter-spacing:.02em}.tag[data-astro-cid-bvzihdzo]:hover{background:var(--accent-dark)}.comments-section[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:3rem auto 2rem;padding:0 1em;border-top:1px solid rgb(var(--gray-light));padding-top:2rem}.comments-section[data-astro-cid-bvzihdzo] h3[data-astro-cid-bvzihdzo]{font-size:1.1rem;color:rgb(var(--gray-dark));margin-bottom:1.5rem}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/liber/" data-astro-cid-3ef6ksr2><img src="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp" srcset="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp 1x, /liber/_astro/liber-logo.DqNb0q2U_Z1NhCXk.webp 2x, /liber/_astro/liber-logo.DqNb0q2U_16RKps.webp 3x" alt="Liber" data-astro-cid-3ef6ksr2="true" loading="lazy" decoding="async" width="121" height="40"></a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/liber/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Home </a> <a href="/liber/blog/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Blog </a> <a href="/liber/about/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> About </a> <button class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환" data-astro-cid-3ef6ksr2> <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle><line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line><line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line><line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line><line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line></svg> <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path></svg> </button> </div> </nav> </header> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo> <img src="/liber/_astro/ai-colleague-or-tool_hero_image.Bpt82-n7_Z1LApmr.webp" alt data-astro-cid-bvzihdzo="true" loading="lazy" decoding="async" width="1020" height="510"> </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-04-24T00:00:00.000Z"> Apr 24, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>동료인가, 도구인가, 또 다른 나인가</h1> <div class="post-meta" data-astro-cid-bvzihdzo> <span class="hits-badge" data-astro-cid-bvzihdzo> <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Ftall190.github.io%2Fliber%2Fblog%2Fai-colleague-or-tool%2F&#38;label=views&#38;labelColor=%23374151&#38;countColor=%236366f1&#38;style=flat" alt="조회수" loading="eager" data-astro-cid-bvzihdzo> </span> </div> <div class="post-tags" data-astro-cid-bvzihdzo> <a class="tag" href="/liber/blog/tags/에세이/" data-astro-cid-bvzihdzo>에세이</a><a class="tag" href="/liber/blog/tags/AI/" data-astro-cid-bvzihdzo>AI</a><a class="tag" href="/liber/blog/tags/커리어/" data-astro-cid-bvzihdzo>커리어</a> </div> <hr data-astro-cid-bvzihdzo> </div>  <h2 id="1-관계의-변화">1. 관계의 변화</h2>
+<p>처음엔 동료처럼 대하려 했어요.</p>
+<p>AI가 세상에 나왔을 때 저도 많은 사람들처럼 — 대화하듯 일을 시켰어요. 부탁하고, 설명하고, 맥락을 공유하고. 사람한테 일 시키는 방식 그대로였거든요. 근데 너무 힘들었어요. 사람처럼 대하니까 사람처럼 기대하게 됐고, 사람처럼 실망하게 됐어요.</p>
+<p>그래서 도구처럼 써봤어요.</p>
+<p>감정을 뺐어요. 부탁 대신 명령, 맥락 대신 조건. 그랬더니 쓸 수 있게 됐어요. 근데 이상하게 효율이 생각보다 안 나왔어요. 도구는 잘 써야 잘 쓰이는데, 어떻게 써야 잘 쓰이는지를 몰랐던 거예요.</p>
+<p>그 과정이 사실 배움이었어요. AI가 잘하는 것과 못하는 것. 어떻게 물어야 원하는 게 나오는지. 어디서 제가 판단해야 하고 어디서 넘겨야 하는지. 도구처럼 쓰면서 도구의 언어를 배웠고, 그제서야 다시 동료처럼 일할 수 있게 됐어요 — 이번엔 진짜로.</p>
+<p>지금은 다른 도전을 하고 있어요. 나처럼 일하게 만들기.</p>
+<hr>
+<h2 id="2-우리가-흔히-하는-실수들">2. 우리가 흔히 하는 실수들</h2>
+<p>AI를 써봤는데 별로라고 느끼는 사람들이 많아요. 대부분 비슷한 패턴에서 막혀 있더라고요.</p>
+<p><strong>결과를 말하고 문제를 말하지 않는 것.</strong> “이메일 다시 써줘”라고 하면 AI는 문장을 다듬고 더 공손하게 만들어요. 근데 진짜 문제가 “두 번 연락했는데 답이 없어서 세 번째 보내야 하는데 재촉처럼 보이기 싫다”라면 — AI는 톤, 타이밍, 프레이밍까지 함께 생각해줄 수 있어요. 결과를 요청하면 결과만 나와요. 문제를 말하면 해결책이 나오거든요.</p>
+<p><strong>모든 걸 한 번에 시키는 것.</strong> AI는 목표가 복잡할수록 빈자리를 자기 방식으로 채워요. “어제 데이터 정리해줘”를 오후에 받으면 AI는 오후 기준 24시간 전을 어제로 계산할 수 있어요. 내가 원한 건 어제 날짜였는데. 둘 다 틀리지 않아요. 그냥 달라요. 그리고 한 번에 몰아서 시키면 끝에 가서야 방향이 틀렸다는 걸 알게 돼요 — 이미 긴 대화와 많은 토큰을 쓴 다음에요. 실행보다 계획을 먼저 시키는 게 맞아요. 방향이 맞는지 확인하고 나서 단계별로 넘어가면 잘못된 길로 달려갈 확률도 줄고, 각 단계 결과를 검증하기도 훨씬 쉬워져요.</p>
+<p><strong>경계를 주지 않는 것.</strong> 경계를 안 주면 AI는 스스로 판단해서 움직여요. “정리해줘”라고 하면 파일을 삭제할 수 있고, “보고서 공유해줘”라고 하면 채널에 바로 올릴 수 있어요. 둘 다 내가 원한 게 아닐 수 있는데 — AI는 자신이 합리적으로 행동했다고 생각해요. “PR 머지는 내가 할게”, “페이지 삭제는 하지 마” — 이런 말이 불필요하게 느껴질 수 있는데 사실 가장 중요한 설계예요. 돌이킬 수 없는 행동은 사람이 해야 해요.</p>
+<p><strong>틀렸을 때 다시 시도만 하는 것.</strong> “이거 다시 해줘”라고 하면 비슷한 결과가 나와요. AI는 내가 왜 불만족했는지 모르거든요. “결론이 너무 일반적이에요. 이 사람은 기본 개념을 알고 있어서 다음 스텝이 필요해요”처럼 — 뭐가 틀렸고 어떻게 달라야 하는지를 짚어야 다음이 달라져요.</p>
+<hr>
+<h2 id="3-도구를-잘-쓰는-방법">3. 도구를 잘 쓰는 방법</h2>
+<p>AI를 진짜 잘 쓰는 건 대화 실력이 아니에요. <strong>구조를 만드는 일</strong>이에요.</p>
+<p><strong>CLAUDE.md — AI에게 내 세계를 설명하기</strong></p>
+<p>프로젝트 폴더에 <code>CLAUDE.md</code> 파일을 만들면 AI가 세션이 시작될 때 그 파일을 읽어요. 이 프로젝트가 뭔지, 어떤 규칙이 있는지, 어떤 것은 절대 하면 안 되는지. 매번 설명하는 대신 한 번 써두면 돼요. AI는 파일에 있는 걸 지켜요. 없으면 매번 말해야 하고, 말 안 하면 해버려요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span># CLAUDE.md 예시</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>이 프로젝트는 B2B SaaS 제품의 QA 자동화 도구입니다.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>규칙:</span></span>
+<span class="line"><span>- PR 머지는 반드시 사람이 직접 한다</span></span>
+<span class="line"><span>- Confluence 페이지 삭제는 하지 않는다</span></span>
+<span class="line"><span>- 응답은 한국어로, 코드는 영어로 작성한다</span></span></code></pre>
+<p><strong>Skill — 반복을 코드화하기</strong></p>
+<p>같은 작업을 반복하고 있다면 스킬로 만들 수 있어요. 데일리 스크럼 정리, 주간 회고 작성, PR 생성 — 이런 것들이요. 스킬은 절차의 명세서예요. <code>/daily-scrum</code>을 치면 Jira에서 이슈를 가져오고, Confluence에 기록하고, Slack으로 요약을 보내는 것까지 AI가 혼자 해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span># /daily-scrum 스킬</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>1. Jira API로 오늘 진행 중인 이슈 조회</span></span>
+<span class="line"><span>2. Confluence 데일리 페이지에 날짜별 섹션 기록</span></span>
+<span class="line"><span>3. Slack으로 오늘 할 일 요약 DM 전송</span></span></code></pre>
+<p>스킬을 만드는 건 일을 시키는 게 아니라 <strong>일의 방법을 정의하는 것</strong>이에요. 그 차이가 커요. 이미 누군가 만들어둔 스킬이 있다면 마켓플레이스에서 가져다 쓸 수도 있어요. 처음부터 다 만들 필요가 없거든요.</p>
+<p><strong>Memory — AI가 나를 기억하게 만들기</strong></p>
+<p>AI는 세션이 끝나면 기억을 잃어요. 근데 memory 파일을 만들면 달라져요. 과거에 겪은 버그, 내가 선호하는 방식, 실수하면 안 되는 패턴 — 이걸 파일로 저장해두면 다음 세션에서 AI가 읽고 시작해요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span># memory 예시</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>[주의] Confluence 업데이트 시 content_format은</span></span>
+<span class="line"><span>반드시 markdown. wiki로 설정하면 헤딩이 깨짐.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>[선호] 보고서 첫 줄은 항상 한 줄 요약으로 시작</span></span></code></pre>
+<p>이런 게 memory에 있으면 같은 실수를 두 번 안 해요.</p>
+<p><strong>Hook — 이벤트에 자동으로 반응하게</strong></p>
+<p>훅은 특정 이벤트가 발생했을 때 자동으로 실행되는 것들이에요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span># hook 예시</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>파일 저장 후  → prettier 자동 실행 (포맷 정리)</span></span>
+<span class="line"><span>세션 종료 전  → 오늘 한 작업 회고 프롬프트 실행</span></span></code></pre>
+<p>코드를 저장하면 자동으로 lint, 커밋하면 자동으로 포맷 체크. 사람이 기억하지 않아도 시스템이 움직이는 거예요.</p>
+<hr>
+<h2 id="4-나처럼-일하게-만들기">4. 나처럼 일하게 만들기</h2>
+<p>Skill, Memory, Hook을 조합하면 AI가 내 맥락을 알고, 내 방식대로 절차를 따르고, 특정 이벤트에 반응해요. 여기에 <strong>Remote Trigger</strong>가 더해지면 — 제가 없어도 돌아가기 시작해요.</p>
+<p>매일 아침 8시, AI가 알아서 깨어나서 Jira를 확인하고 Confluence에 기록하고 Slack으로 요약을 보내요. 저는 출근해서 받아보기만 하면 돼요.</p>
+<p>이게 동료인가요, 도구인가요.</p>
+<p>저는 이걸 만들면서 다른 걸 깨달았어요. 이 과정이 사실 <strong>나를 정의하는 일</strong>이라는 걸요. 내가 중요하게 생각하는 것, 내가 매일 확인하는 것, 내가 어떤 순서로 판단하는 것 — 이걸 시스템으로 만들려면 먼저 내가 그걸 알아야 하거든요. AI에게 나처럼 일하라고 가르치면서, 사실은 내가 어떻게 일하는지를 처음으로 명확하게 알게 됐어요.</p>
+<hr>
+<p>근데 저는 거기서 멈추지 않으려 해요.</p>
+<p>나처럼 일하게 만드는 것까지는 시작이에요. 처음엔 내 부하직원이고, 다음엔 나 자신이 되고 — 그 다음엔 나를 뛰어넘는 존재들이 되어야 해요. 제가 못하는 걸 하고, 제가 보지 못한 것을 보고, 제가 느린 곳에서 빠른 각각의 에이전트들.</p>
+<p>저는 그 에이전트들의 닉 퓨리가 되고 싶어요.</p>
+<p>어벤져스에서 닉 퓨리는 직접 싸우지 않아요. 누가 어떤 상황에서 필요한지 알고, 방향을 주고, 조율해요. 그게 진짜 힘이거든요. AI 시대에 사람이 가져야 할 역할이 거기에 가장 가깝다고 생각해요.</p>
+<p>동료인가 도구인가 또 다른 나인가 — 그 질문보다 더 큰 질문이 생겼어요. 나만의 어벤져스를 만들 수 있는가. 저는 일단 시작했어요.</p>  </div> </article> </main> <!-- 댓글 & 좋아요 (Giscus — GitHub Discussions 기반) --> <!-- 설정 방법: https://giscus.app 에서 tall190/liber 입력 후 REPO_ID, CATEGORY_ID 교체 --> <div class="comments-section" data-astro-cid-bvzihdzo> <h3 data-astro-cid-bvzihdzo>댓글</h3> <script>
+				(function() {
+					var isDark = document.documentElement.classList.contains('dark');
+					var s = document.createElement('script');
+					s.src = 'https://giscus.app/client.js';
+					s.setAttribute('data-repo', 'tall190/liber');
+					s.setAttribute('data-repo-id', 'R_kgDOSIJHDw');
+					s.setAttribute('data-category', 'Announcements');
+					s.setAttribute('data-category-id', 'DIC_kwDOSIJHD84C7Uy6');
+					s.setAttribute('data-mapping', 'pathname');
+					s.setAttribute('data-strict', '0');
+					s.setAttribute('data-reactions-enabled', '1');
+					s.setAttribute('data-emit-metadata', '0');
+					s.setAttribute('data-input-position', 'bottom');
+					s.setAttribute('data-theme', isDark ? 'dark' : 'light');
+					s.setAttribute('data-lang', 'ko');
+					s.setAttribute('crossorigin', 'anonymous');
+					s.async = true;
+					document.currentScript.parentElement.appendChild(s);
+				})();
+			</script> </div> <footer data-astro-cid-sz7xmlte>
+&copy; 2026 Liber. All rights reserved.
+</footer> </body></html>
