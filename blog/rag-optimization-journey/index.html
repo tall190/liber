@@ -1,0 +1,342 @@
+<!DOCTYPE html><html lang="ko" data-astro-cid-bvzihdzo> <head><!-- Dark mode: apply before render to prevent flash --><script>
+	(function() {
+		const theme = localStorage.getItem('theme');
+		if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark');
+		}
+	})();
+</script> <!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="/liber/favicon.png"><link rel="icon" type="image/svg+xml" href="/liber/favicon.svg"><link rel="icon" href="/liber/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Liber" href="https://tall190.github.io/rss.xml"><meta name="generator" content="Astro v6.1.8"><style>@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/d6a5daef4389bbc9.woff") format("woff");font-display:swap;font-weight:400;font-style:normal;}@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/3f2532cc25b9aaa8.woff") format("woff");font-display:swap;font-weight:700;font-style:normal;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}:root{--font-atkinson:Atkinson-c7f4c4e8b285552f,"Atkinson-c7f4c4e8b285552f fallback: Arial",sans-serif;}</style><link rel="preload" href="/liber/_astro/fonts/d6a5daef4389bbc9.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/liber/_astro/fonts/3f2532cc25b9aaa8.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://tall190.github.io/liber/blog/rag-optimization-journey/"><!-- Primary Meta Tags --><title>개인 지식베이스 RAG, Hit@5 70%에서 90%까지 — 260원으로 끝낸 최적화 기록</title><meta name="title" content="개인 지식베이스 RAG, Hit@5 70%에서 90%까지 — 260원으로 끝낸 최적화 기록"><meta name="description" content="개인 지식베이스 RAG 검색 정확도를 Hit@5 70%에서 90%까지 끌어올린 기록. Re-ranking, HyDE, Contextual Retrieval, 컬렉션 분리까지 단계별 수치로 비교했어요."><meta name="author" content="Liber"><meta name="keywords" content="Vector DB, RAG, Qdrant, Embedding, AI-Ready"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://tall190.github.io/liber/blog/rag-optimization-journey/"><meta property="og:title" content="개인 지식베이스 RAG, Hit@5 70%에서 90%까지 — 260원으로 끝낸 최적화 기록"><meta property="og:description" content="개인 지식베이스 RAG 검색 정확도를 Hit@5 70%에서 90%까지 끌어올린 기록. Re-ranking, HyDE, Contextual Retrieval, 컬렉션 분리까지 단계별 수치로 비교했어요."><meta property="og:image" content="https://tall190.github.io/liber/_astro/rag-optimization-journey_hero_image.BjMQSjNp.png"><meta property="og:locale" content="ko_KR"><meta property="article:published_time" content="2026-09-17T00:00:00.000Z"><meta property="article:tag" content="Vector DB"><meta property="article:tag" content="RAG"><meta property="article:tag" content="Qdrant"><meta property="article:tag" content="Embedding"><meta property="article:tag" content="AI-Ready"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://tall190.github.io/liber/blog/rag-optimization-journey/"><meta property="twitter:title" content="개인 지식베이스 RAG, Hit@5 70%에서 90%까지 — 260원으로 끝낸 최적화 기록"><meta property="twitter:description" content="개인 지식베이스 RAG 검색 정확도를 Hit@5 70%에서 90%까지 끌어올린 기록. Re-ranking, HyDE, Contextual Retrieval, 컬렉션 분리까지 단계별 수치로 비교했어요."><meta property="twitter:image" content="https://tall190.github.io/liber/_astro/rag-optimization-journey_hero_image.BjMQSjNp.png"><!-- Theme toggle script --><script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const toggle = document.getElementById('theme-toggle');
+		if (!toggle) return;
+		toggle.addEventListener('click', function() {
+			const isDark = document.documentElement.classList.toggle('dark');
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
+			// Sync Giscus theme
+			const giscus = document.querySelector('iframe.giscus-frame');
+			if (giscus) {
+				giscus.contentWindow.postMessage(
+					{ giscus: { setConfig: { theme: isDark ? 'dark' : 'light' } } },
+					'https://giscus.app'
+				);
+			}
+		});
+	});
+</script><!-- Schema.org JSON-LD: AI가 이 글을 구조화된 데이터로 읽을 수 있어요 --><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"개인 지식베이스 RAG, Hit@5 70%에서 90%까지 — 260원으로 끝낸 최적화 기록","description":"개인 지식베이스 RAG 검색 정확도를 Hit@5 70%에서 90%까지 끌어올린 기록. Re-ranking, HyDE, Contextual Retrieval, 컬렉션 분리까지 단계별 수치로 비교했어요.","datePublished":"2026-09-17T00:00:00.000Z","dateModified":"2026-09-17T00:00:00.000Z","url":"https://tall190.github.io/liber/blog/rag-optimization-journey/","inLanguage":"ko-KR","mainEntityOfPage":{"@type":"WebPage","@id":"https://tall190.github.io/liber/blog/rag-optimization-journey/"},"author":{"@type":"Organization","name":"Liber","url":"https://tall190.github.io/liber"},"publisher":{"@type":"Organization","name":"Liber","url":"https://tall190.github.io/liber"},"keywords":"Vector DB, RAG, Qdrant, Embedding, AI-Ready","image":"https://tall190.github.io/liber/_astro/rag-optimization-journey_hero_image.BjMQSjNp.png"}</script><style>:root{--accent: #2337ff;--accent-dark: #000d8a;--black: 15, 18, 25;--gray: 96, 115, 159;--gray-light: 229, 233, 240;--gray-dark: 34, 41, 57;--gray-gradient: rgba(var(--gray-light), 50%), #fff;--box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);--bg: #fff;--bg-secondary: #f9fafb;--header-bg: white;--code-bg: rgb(var(--gray-light));color-scheme:light}:root.dark{--accent: #6b7cff;--accent-dark: #8b9aff;--black: 230, 230, 230;--gray: 155, 165, 190;--gray-light: 50, 55, 65;--gray-dark: 210, 215, 225;--gray-gradient: rgba(var(--gray-light), 50%), #1a1a2e;--box-shadow: 0 2px 6px rgba(0, 0, 0, 40%), 0 8px 24px rgba(0, 0, 0, 50%), 0 16px 32px rgba(0, 0, 0, 50%);--bg: #1a1a2e;--bg-secondary: #16162a;--header-bg: #16162a;--code-bg: rgba(var(--gray-light), .6);color-scheme:dark}body{font-family:var(--font-atkinson);margin:0;padding:0;text-align:left;background:var(--bg);background-image:linear-gradient(var(--gray-gradient));background-repeat:no-repeat;background-size:100% 600px;word-wrap:break-word;overflow-wrap:break-word;color:rgb(var(--gray-dark));font-size:20px;line-height:1.7;transition:background-color .3s,color .3s}main{width:720px;max-width:calc(100% - 2em);margin:auto;padding:3em 1em}h1,h2,h3,h4,h5,h6{margin:0 0 .5rem;color:rgb(var(--black));line-height:1.2}h1{font-size:3.052em}h2{font-size:2.441em}h3{font-size:1.953em}h4{font-size:1.563em}h5{font-size:1.25em}strong,b{font-weight:700}a,a:hover{color:var(--accent)}p{margin-bottom:1em}.prose p{margin-bottom:2em}.prose p:has(>img){margin-top:.5em;margin-bottom:.5em}textarea{width:100%;font-size:16px}input{font-size:16px}table{width:100%}img{max-width:100%;height:auto;border-radius:8px}code{padding:2px 5px;background-color:var(--code-bg);border-radius:2px}pre{padding:1.5em;border-radius:8px;overflow-x:auto;max-width:100%;font-size:15px}pre>code{all:unset}blockquote{border-left:4px solid var(--accent);padding:0 0 0 20px;margin:0;font-size:1.333em}hr{border:none;border-top:1px solid rgb(var(--gray-light))}@media(max-width:720px){body{font-size:18px}main{padding:1em}}.sr-only{border:0;padding:0;margin:0;position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px 1px 1px 1px);clip:rect(1px,1px,1px,1px);clip-path:inset(50%);white-space:nowrap}.prose p>em:only-child{display:block;font-size:.85em;color:rgb(var(--gray));margin-top:-.3em;margin-bottom:1.5em;text-align:center}footer[data-astro-cid-sz7xmlte]{padding:2em 1em 6em;background:linear-gradient(var(--gray-gradient)) no-repeat;color:rgb(var(--gray));text-align:center;transition:background-color .3s,color .3s}a[data-astro-cid-eimmu3lg]{display:inline-block;text-decoration:none}a[data-astro-cid-eimmu3lg].active{font-weight:bolder;text-decoration:underline}header[data-astro-cid-3ef6ksr2]{margin:0;padding:0 1em;background:var(--header-bg);box-shadow:0 2px 8px rgba(var(--black),5%);transition:background-color .3s}h2[data-astro-cid-3ef6ksr2]{margin:0;font-size:1em}h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2],h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none}nav[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;justify-content:space-between}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{padding:1em .5em;color:var(--black);border-bottom:4px solid transparent;text-decoration:none}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none;border-bottom-color:var(--accent)}.theme-toggle[data-astro-cid-3ef6ksr2]{background:none;border:none;cursor:pointer;padding:.5em;color:rgb(var(--black));display:flex;align-items:center;transition:color .3s}.theme-toggle[data-astro-cid-3ef6ksr2]:hover{color:var(--accent)}.dark .icon-sun[data-astro-cid-3ef6ksr2]{display:inline}.dark .icon-moon[data-astro-cid-3ef6ksr2],.icon-sun[data-astro-cid-3ef6ksr2]{display:none}.icon-moon[data-astro-cid-3ef6ksr2]{display:inline}
+main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.post-meta[data-astro-cid-bvzihdzo]{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:.5rem;flex-wrap:wrap}.hits-badge[data-astro-cid-bvzihdzo]{display:inline-flex;align-items:center}.hits-badge[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{height:20px;border-radius:4px}.post-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.8rem}.tag[data-astro-cid-bvzihdzo]{display:inline-block;font-size:.75rem;font-weight:600;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--accent));color:#fff;text-decoration:none;letter-spacing:.02em}.tag[data-astro-cid-bvzihdzo]:hover{background:var(--accent-dark)}.comments-section[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:3rem auto 2rem;padding:0 1em;border-top:1px solid rgb(var(--gray-light));padding-top:2rem}.comments-section[data-astro-cid-bvzihdzo] h3[data-astro-cid-bvzihdzo]{font-size:1.1rem;color:rgb(var(--gray-dark));margin-bottom:1.5rem}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/liber/" data-astro-cid-3ef6ksr2><img src="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp" srcset="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp 1x, /liber/_astro/liber-logo.DqNb0q2U_Z1NhCXk.webp 2x, /liber/_astro/liber-logo.DqNb0q2U_16RKps.webp 3x" alt="Liber" data-astro-cid-3ef6ksr2="true" loading="lazy" decoding="async" width="121" height="40"></a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/liber/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Home </a> <a href="/liber/blog/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Blog </a> <a href="/liber/about/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> About </a> <button class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환" data-astro-cid-3ef6ksr2> <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle><line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line><line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line><line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line><line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line></svg> <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path></svg> </button> </div> </nav> </header> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo> <img src="/liber/_astro/rag-optimization-journey_hero_image.BjMQSjNp_Z3vdd1.webp" alt data-astro-cid-bvzihdzo="true" loading="lazy" decoding="async" width="1020" height="510"> </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-09-17T00:00:00.000Z"> Sep 17, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>개인 지식베이스 RAG, Hit@5 70%에서 90%까지 — 260원으로 끝낸 최적화 기록</h1> <div class="post-meta" data-astro-cid-bvzihdzo> <span class="hits-badge" data-astro-cid-bvzihdzo> <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Ftall190.github.io%2Fliber%2Fblog%2Frag-optimization-journey%2F&#38;label=views&#38;labelColor=%23374151&#38;countColor=%236366f1&#38;style=flat" alt="조회수" loading="eager" data-astro-cid-bvzihdzo> </span> </div> <div class="post-tags" data-astro-cid-bvzihdzo> <a class="tag" href="/liber/blog/tags/Vector DB/" data-astro-cid-bvzihdzo>Vector DB</a><a class="tag" href="/liber/blog/tags/RAG/" data-astro-cid-bvzihdzo>RAG</a><a class="tag" href="/liber/blog/tags/Qdrant/" data-astro-cid-bvzihdzo>Qdrant</a><a class="tag" href="/liber/blog/tags/Embedding/" data-astro-cid-bvzihdzo>Embedding</a><a class="tag" href="/liber/blog/tags/AI-Ready/" data-astro-cid-bvzihdzo>AI-Ready</a> </div> <hr data-astro-cid-bvzihdzo> </div>  <p>지난 벡터 DB 4부작에서 임베딩이 뭔지, 청킹이 왜 중요한지, DB는 뭘 골라야 하는지 다뤘어요. 이론은 다 정리했는데, 정작 제 개인 지식베이스에 적용해보니 문제가 생기더라고요.</p>
+<p>회사 업무 노하우, 기술 패턴을 모아둔 마크다운 파일이 500개가 넘어요. Qdrant에 벡터 인덱싱하고, MCP 서버로 Claude Code 세션에서 검색하는 구조예요. 근데 “이거 분명 적어뒀는데?” 싶은 걸 자꾸 못 찾더라고요. 검색 결과가 엉뚱한 문서를 가져오거나, 정작 원하는 파일이 상위 5개 안에 없는 경우가 많았어요.</p>
+<p>이 글은 그 RAG 검색 정확도를 Hit@5 70%에서 90%까지 올린 과정이에요. 각 단계에서 뭘 했고, 얼마나 효과가 있었는지 수치로 보여드릴게요.</p>
+<hr>
+<h2 id="처음-구조--그럴듯한데-확인을-안-하고-있었어요">처음 구조 — 그럴듯한데 확인을 안 하고 있었어요</h2>
+<p>시작 구조는 이랬어요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>마크다운 문서 500+개</span></span>
+<span class="line"><span>    ↓ 섹션 기반 청킹 (## 경계)</span></span>
+<span class="line"><span>    ↓ BGE-M3 임베딩</span></span>
+<span class="line"><span>    ↓ Qdrant 벡터 DB</span></span>
+<span class="line"><span>    ↓ Hybrid 검색 (Dense + Keyword RRF)</span></span></code></pre>
+<p>나쁘지 않은 구조예요. BGE-M3은 한영 혼합에 강하고, Hybrid 검색은 의미 검색과 키워드 검색의 장점을 합쳐요. 여기까지는 교과서대로 잘 했어요.</p>
+<p>근데 진짜 문제는 따로 있었어요. **“잘 되고 있는지 모른다”**는 거예요. 검색 결과를 보면 “대충 맞는 것 같은데?” 수준이지, 정확히 원하는 문서가 나왔는지 체계적으로 확인한 적이 없었거든요. 개선을 해도 좋아진 건지 나빠진 건지 판단할 방법이 없는 상태였어요.</p>
+<p>이게 RAG 운영에서 제일 흔한 실수예요. <strong>평가 없이 파이프라인부터 늘리는 것.</strong> 그래서 뭘 고치기 전에 먼저 측정 체계부터 만들기로 했어요.</p>
+<h2 id="step-0-평가-체계부터-만들기">Step 0. 평가 체계부터 만들기</h2>
+<p>모든 개선에 앞서 ground truth 데이터셋을 만들었어요. 30개의 질문-정답 쌍이에요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#E1E4E8">- </span><span style="color:#85E89D">query</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"기획 리뷰 판정 기준이 뭐야?"</span></span>
+<span class="line"><span style="color:#85E89D">  expected_files</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#9ECBFF">"knowledge/qa/planning-review-pattern.md"</span></span>
+<span class="line"><span style="color:#85E89D">  difficulty</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">easy</span></span>
+<span class="line"><span style="color:#85E89D">  category</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">qa</span></span></code></pre>
+<p>두 가지 지표로 측정했어요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>지표</th><th>의미</th></tr></thead><tbody><tr><td><strong>Hit@5</strong></td><td>상위 5개 결과 안에 정답이 포함된 비율</td></tr><tr><td><strong>MRR</strong></td><td>정답이 몇 번째에 나왔는지의 평균 역순위 (1위=1.0, 2위=0.5)</td></tr></tbody></table>
+<p>첫 측정 결과는 <strong>Hit@5 70%, MRR 0.428</strong>이었어요. 10개 중 3개는 원하는 문서를 못 찾고 있었다는 뜻이에요. 이제 개선할 기준선이 생겼어요 — 이걸 만드는 데 1시간이 안 걸렸는데, 이게 없었으면 아래 모든 개선이 그냥 “감”으로 한 게 됐을 거예요.</p>
+<h2 id="step-1-cross-encoder-re-ranking--가장-가성비-높은-개선">Step 1. Cross-Encoder Re-ranking — 가장 가성비 높은 개선</h2>
+<p>RAG에서 가성비 최고의 개선이 뭐냐고 물으면 저는 Re-ranker라고 답할 거예요.</p>
+<p><strong>Before</strong>: Bi-encoder(BGE-M3)로 query와 document를 각각 임베딩한 뒤 코사인 유사도로 비교해요. 빠르지만 query-document 쌍을 직접 비교하는 것보다 정밀도가 떨어져요.</p>
+<p><strong>After</strong>: Top-20까지 넉넉히 후보를 가져온 다음, Cross-Encoder로 재정렬해서 Top-5만 남겨요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> sentence_transformers </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> CrossEncoder</span></span>
+<span class="line"><span style="color:#E1E4E8">reranker </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> CrossEncoder(</span><span style="color:#9ECBFF">"BAAI/bge-reranker-v2-m3"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">pairs </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [(query, candidate.text) </span><span style="color:#F97583">for</span><span style="color:#E1E4E8"> candidate </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> top_20]</span></span>
+<span class="line"><span style="color:#E1E4E8">scores </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> reranker.predict(pairs)</span></span></code></pre>
+<p><code>sentence-transformers</code>에 포함돼 있어서 별도 설치도 필요 없었어요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th></th><th>Hit@5</th><th>MRR</th></tr></thead><tbody><tr><td>Before</td><td>70.0%</td><td>0.428</td></tr><tr><td><strong>+Re-ranker</strong></td><td><strong>80.0%</strong></td><td><strong>0.536</strong></td></tr></tbody></table>
+<p>+10%p, 구현 시간 30분, 추가 비용 0원이에요. medium 난이도만 놓고 보면 82%에서 100%로 뛰었어요. 이거 안 하고 계시면 지금 바로 넣으시면 돼요.</p>
+<h2 id="step-2-hyde--source-가중치--질문과-문서의-임베딩-갭-줄이기">Step 2. HyDE + Source 가중치 — 질문과 문서의 임베딩 갭 줄이기</h2>
+<p>사용자 질문은 “~어떻게 해?” 같은 질문형이에요. 근데 문서는 “~방법은 다음과 같다” 같은 서술형이거든요. 이 둘의 임베딩 거리가 생각보다 멀어요.</p>
+<p><strong>HyDE</strong>는 질문을 가상 답변으로 바꿔서 임베딩하는 기법이에요. 원래는 LLM으로 가상 답변을 생성하지만, 저는 비용과 latency를 생각해서 규칙 기반으로 구현했어요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> hyde_transform</span><span style="color:#E1E4E8">(query):</span></span>
+<span class="line"><span style="color:#6A737D">    # "어떻게 해?" → "방법과 절차는 다음과 같다."</span></span>
+<span class="line"><span style="color:#E1E4E8">    doc </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> re.sub(</span><span style="color:#F97583">r</span><span style="color:#9ECBFF">"</span><span style="color:#DBEDFF">어떻게</span><span style="color:#79B8FF">\s</span><span style="color:#F97583">*</span><span style="color:#79B8FF">(</span><span style="color:#DBEDFF">해</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">하면</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">돼</span><span style="color:#79B8FF">)\s</span><span style="color:#F97583">*</span><span style="color:#79B8FF">[?]</span><span style="color:#F97583">?</span><span style="color:#79B8FF">$</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                 "방법과 절차는 다음과 같다."</span><span style="color:#E1E4E8">, query)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> doc</span></span></code></pre>
+<p>LLM 호출 없이 latency 0으로 구현한 거라 정교하진 않은데, hard 난이도에서 효과가 있었어요.</p>
+<p>여기에 <strong>Source 가중치</strong>도 더했어요. 제 지식베이스엔 직접 작성한 문서와 외부에서 가져온 문서가 섞여 있는데, 직접 작성한 쪽이 더 가치가 높잖아요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#79B8FF">SOURCE_BONUS</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">    "knowledge/"</span><span style="color:#E1E4E8">:  </span><span style="color:#79B8FF">0.10</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "profiles/"</span><span style="color:#E1E4E8">:   </span><span style="color:#79B8FF">0.15</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "agents/"</span><span style="color:#E1E4E8">:     </span><span style="color:#79B8FF">0.12</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "external/"</span><span style="color:#E1E4E8">:  </span><span style="color:#F97583">-</span><span style="color:#79B8FF">0.10</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th></th><th>Hit@5</th><th>MRR</th></tr></thead><tbody><tr><td>+Re-ranker</td><td>80.0%</td><td>0.536</td></tr><tr><td><strong>+HyDE + Source</strong></td><td><strong>83.3%</strong></td><td><strong>0.581</strong></td></tr></tbody></table>
+<p>hard 난이도가 25%에서 50%로 올라갔어요. 질문이 조금 간접적이어도 답을 찾기 시작한 거예요.</p>
+<h2 id="step-3-contextual-retrieval--가장-근본적인-개선">Step 3. Contextual Retrieval — 가장 근본적인 개선</h2>
+<p>여기가 진짜 핵심이에요.</p>
+<p>기존 청킹의 문제를 하나 보여드릴게요. “실행 모드: sequential / parallel / group_parallel”이라는 청크가 있다고 해봐요. 이 텍스트만 보면 이게 무슨 플랫폼의 어떤 기능인지 알 수가 없어요. 임베딩도 마찬가지고요.</p>
+<p><strong>Contextual Retrieval</strong>은 각 청크에 문서 맥락을 붙여서 임베딩하는 기법이에요. Anthropic이 2024년에 발표한 방법인데, Contextual Embeddings와 Contextual BM25를 함께 쓰면 top-20 청크 기준 retrieval 실패율이 5.7%→2.9%로, 49% 줄어든다고 해요. Reranking까지 결합하면 67%까지 줄어든다고 하는데, 이 프로젝트도 이미 Step 1에서 Re-ranker를 적용해둔 상태라 비슷한 조합이에요. 저는 이 중 context prefix 부착 아이디어만 가져와 간소화해서 구현했어요. (<a href="https://www.anthropic.com/engineering/contextual-retrieval">Anthropic, Contextual Retrieval</a>)</p>
+<p><strong>Before (규칙 기반, 비용 0)</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> build_context_prefix</span><span style="color:#E1E4E8">(file_path, title, layer, tags):</span></span>
+<span class="line"><span style="color:#E1E4E8">    domain </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> path_to_domain(file_path)  </span><span style="color:#6A737D"># "knowledge/qa/" → "QA 방법론"</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">"[문서: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">title</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">] [도메인: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">domain</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">] [레이어: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">layer</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">] [태그: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">tags</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">]"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">embedding_text </span><span style="color:#F97583">=</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">context_prefix</span><span style="color:#79B8FF">}\n{</span><span style="color:#E1E4E8">chunk_text</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">"</span></span></code></pre>
+<p>이것만으로도 효과가 컸어요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th></th><th>Hit@5</th><th>MRR</th></tr></thead><tbody><tr><td>+HyDE + Source</td><td>83.3%</td><td>0.581</td></tr><tr><td><strong>+규칙 기반 Contextual</strong></td><td><strong>86.7%</strong></td><td><strong>0.609</strong></td></tr></tbody></table>
+<p>특히 개인 프로필 검색이 0%에서 100%로 해결됐어요. “Jayden 커리어”를 검색하면 프로필 파일을 못 찾던 게, prefix에 “[도메인: 개인 프로필]“이 붙으면서 바로 찾게 된 거예요.</p>
+<p><strong>After (LLM 기반, 260원)</strong></p>
+<p>규칙 기반이 이미 좋았지만, LLM으로 더 풍부한 맥락을 생성할 수 있어요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#E1E4E8">prompt </span><span style="color:#F97583">=</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">"""다음은 '</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">title</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">' 문서의 한 청크입니다.</span></span>
+<span class="line"><span style="color:#9ECBFF">이 청크가 문서 전체에서 어떤 맥락에 해당하는지 1~2문장으로 요약하세요.</span></span>
+<span class="line"><span style="color:#9ECBFF">검색 시 이 청크를 찾을 수 있도록 핵심 키워드를 포함하세요."""</span></span></code></pre>
+<p>Gemini 2.0 Flash로 5,520개 청크를 10스레드 병렬 처리했는데, 약 100분 걸렸고 비용은 <strong>260원</strong>이었어요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th></th><th>Hit@5</th><th>MRR</th></tr></thead><tbody><tr><td>+규칙 기반 Contextual</td><td>86.7%</td><td>0.609</td></tr><tr><td><strong>+LLM Contextual</strong></td><td><strong>90.0%</strong></td><td><strong>0.638</strong></td></tr></tbody></table>
+<p>hard 난이도가 25%에서 75%로, engineering 카테고리는 43%에서 86%로 올라갔어요. 규칙 기반이 큰 몫을 했고, LLM은 그 위에 추가로 몇 %p를 더 얹어준 거예요.</p>
+<h2 id="step-4-컬렉션-분리--경쟁하면-안-되는-문서-격리하기">Step 4. 컬렉션 분리 — 경쟁하면 안 되는 문서 격리하기</h2>
+<p>마지막 문제가 하나 남아 있었어요. 직접 증류한 문서와 외부에서 가져온 원본 문서가 같은 벡터 DB 컬렉션에 섞여 있었거든요.</p>
+<p>“기획 리뷰 판정 기준”을 검색하면 이런 일이 벌어졌어요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>1위: 외부 원본 페이지 (텍스트가 길어서 임베딩 매칭에 유리)</span></span>
+<span class="line"><span>2위: 외부 원본 페이지 (비슷한 내용)</span></span>
+<span class="line"><span>3위: 내 증류 문서 (← 이게 정답인데 3위)</span></span></code></pre>
+<p>외부 원본이 더 길고 상세해서 임베딩 유사도에서 이기는 거예요. source 가중치로 -0.10 패널티를 줬는데도 부족했어요.</p>
+<p>해결책은 <strong>컬렉션 물리적 분리</strong>였어요.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>synapse (내 지식)     ← 기본 검색 대상. 5,770 포인트</span></span>
+<span class="line"><span>confluence (외부 원본) ← 필요할 때만 검색. 604 포인트</span></span></code></pre>
+<p>MCP 검색 도구에 <code>source</code> 파라미터를 추가해서 “내 지식만”, “외부만”, “둘 다” 중에 고를 수 있게 했어요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th></th><th>Hit@5</th><th>MRR</th></tr></thead><tbody><tr><td>+LLM Contextual</td><td>90.0%</td><td>0.638</td></tr><tr><td><strong>+컬렉션 분리</strong></td><td><strong>90.0%</strong></td><td><strong>0.651</strong></td></tr></tbody></table>
+<p>Hit@5는 그대로인데 QA 카테고리 MRR이 0.594에서 0.738로 뛰었어요. 정답이 3위에서 1~2위로 올라왔다는 뜻이에요.</p>
+<hr>
+<h2 id="전체-결과">전체 결과</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>단계</th><th>Hit@5</th><th>MRR</th><th>비용</th></tr></thead><tbody><tr><td>Baseline (Hybrid 검색만)</td><td>70%</td><td>0.428</td><td>-</td></tr><tr><td>+Re-ranker</td><td>80%</td><td>0.536</td><td>0원</td></tr><tr><td>+HyDE + Source 가중치</td><td>83.3%</td><td>0.581</td><td>0원</td></tr><tr><td>+Contextual Retrieval (규칙)</td><td>86.7%</td><td>0.609</td><td>0원</td></tr><tr><td>+Contextual Retrieval (LLM)</td><td>90%</td><td>0.638</td><td>260원</td></tr><tr><td>+컬렉션 분리</td><td>90%</td><td>0.651</td><td>0원</td></tr></tbody></table>
+<p>30개 질문 중 미스가 9개에서 3개로 줄었어요. 난이도별로 보면 차이가 더 뚜렷해요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>난이도</th><th>Before</th><th>After</th></tr></thead><tbody><tr><td>easy</td><td>67%</td><td>93%</td></tr><tr><td>medium</td><td>82%</td><td>91%</td></tr><tr><td><strong>hard</strong></td><td><strong>25%</strong></td><td><strong>75%</strong></td></tr></tbody></table>
+<p>간접적으로 물어봐도 찾을 수 있게 됐다는 게 제일 큰 변화예요.</p>
+<h2 id="돌아보며--rag에서-진짜-중요한-건">돌아보며 — RAG에서 진짜 중요한 건</h2>
+<p><strong>측정 먼저예요.</strong> 평가 데이터셋 30개 만드는 데 1시간이 안 걸렸는데, 이게 없었으면 Re-ranker가 진짜 효과가 있는지, Contextual Retrieval이 정말 나은지 전혀 판단할 수 없었을 거예요.</p>
+<p><strong>Re-ranker는 지금 당장 넣으세요.</strong> 구현 30분, 비용 0원, 효과 +10%p. <code>sentence-transformers</code>의 <code>CrossEncoder</code> 한 줄이면 돼요.</p>
+<p><strong>Contextual Retrieval은 규칙 기반만으로도 충분히 효과적이에요.</strong> LLM 없이 파일 경로, 제목, 메타데이터만 조합해도 Hit@5가 83%에서 87%로 올라갔거든요. identity 검색이 0%에서 100%로 해결된 것도 규칙 기반의 공이에요. LLM은 그 위에 몇 %p를 더 올려준 정도예요. 이건 저만의 경험이 아니에요 — 외부 벤치마크에서도 HyDE 같은 쿼리 확장 기법은 효과가 들쭉날쭉한데 contextual retrieval은 꾸준히 개선폭을 보여준다는 결과가 나와요. 제 데이터에서 HyDE는 +3.3%p였고 Contextual Retrieval은 +6.7%p였던 것과 같은 패턴이에요.</p>
+<p><strong>양보다 질, 분리가 답이에요.</strong> 500개 문서를 하나의 컬렉션에 넣고 “많으면 좋겠지” 했던 게 틀렸어요. 성격이 다른 문서가 같은 공간에서 경쟁하면 정작 중요한 문서가 밀려나거든요. 직접 작성한 지식과 외부 원본을 분리한 게 MRR을 가장 크게 올린 개선이었어요.</p>
+<p><strong>결국 RAG는 IR 문제예요.</strong> RAG의 R은 Retrieval이잖아요. LLM이 아무리 똑똑해도 잘못된 문서를 가져오면 답변도 틀려요. 임베딩 모델 선택, 청킹 전략, re-ranking, contextual enrichment — 전부 검색 정확도를 올리기 위한 수단일 뿐이에요.</p>
+<hr>
+<h2 id="다음-단계">다음 단계</h2>
+<p>평가 데이터셋을 30개에서 100개로 늘릴 계획이에요. 실제 업무 중에 “못 찾겠다” 싶은 순간마다 1줄씩 추가하려고요. 주 1회 eval을 돌려서 RAG 건강도를 추적하고, 아직 남은 미스 3개는 유사 문서가 너무 많은 영역이라 chunk overlap이나 parent-child retrieval로 접근해볼 생각이에요.</p>
+<p>검색이 90%를 넘으면 체감이 달라져요. “찾아보니 없더라”가 아니라 “찾아보니 있더라”가 기본이 되거든요. 그러면 지식을 쌓는 동기도 생기고, 자연스럽게 선순환이 시작돼요.</p>
+<p>여러분 지식베이스는 지금 Hit@5가 몇 %인가요? 측정부터 한번 해보시는 걸 추천드려요.</p>  </div> </article> </main> <!-- 댓글 & 좋아요 (Giscus — GitHub Discussions 기반) --> <!-- 설정 방법: https://giscus.app 에서 tall190/liber 입력 후 REPO_ID, CATEGORY_ID 교체 --> <div class="comments-section" data-astro-cid-bvzihdzo> <h3 data-astro-cid-bvzihdzo>댓글</h3> <script>
+				(function() {
+					var isDark = document.documentElement.classList.contains('dark');
+					var s = document.createElement('script');
+					s.src = 'https://giscus.app/client.js';
+					s.setAttribute('data-repo', 'tall190/liber');
+					s.setAttribute('data-repo-id', 'R_kgDOSIJHDw');
+					s.setAttribute('data-category', 'Announcements');
+					s.setAttribute('data-category-id', 'DIC_kwDOSIJHD84C7Uy6');
+					s.setAttribute('data-mapping', 'pathname');
+					s.setAttribute('data-strict', '0');
+					s.setAttribute('data-reactions-enabled', '1');
+					s.setAttribute('data-emit-metadata', '0');
+					s.setAttribute('data-input-position', 'bottom');
+					s.setAttribute('data-theme', isDark ? 'dark' : 'light');
+					s.setAttribute('data-lang', 'ko');
+					s.setAttribute('crossorigin', 'anonymous');
+					s.async = true;
+					document.currentScript.parentElement.appendChild(s);
+				})();
+			</script> </div> <footer data-astro-cid-sz7xmlte>
+&copy; 2026 Liber. All rights reserved.
+</footer> </body></html>
