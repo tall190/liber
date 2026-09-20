@@ -68,12 +68,12 @@ main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.he
 <p>레벨이 높다고 좋은 게 아니에요. 팀 규모, 서비스 복잡도, 사용량에 따라 어디서 멈추는 게 맞는지가 달라요. 지금 어떤 문제를 겪고 있는지가 더 중요한 기준이에요.</p>
 <h2 id="l1-prompt-engineering--기초이자-영원한-숙제">L1: Prompt Engineering — 기초이자 영원한 숙제</h2>
 <p>Prompt Engineering은 LLM에게 원하는 결과를 일관성 있게 뽑아내는 방법이에요. “잘 물어보는 것”처럼 들리지만, 실제로는 구조적인 기법들이 있어요.</p>
-<p>가장 기본은 <strong>Zero-shot</strong>이에요. 별도 예시 없이 직접 요청하는 방식이라 빠르고 간단해요. 특정 형식이 필요한 경우라면 <strong>Few-shot</strong>이 효과적이에요. 원하는 출력 형식의 예시를 2-3개 보여주면, 모델이 그 패턴을 따라가요. 복잡한 추론이 필요할 땐 **Chain of Thought(CoT)**가 정확도를 올려줘요. “단계별로 생각해봐”라고 유도하는 방식이죠. 그리고 역할이나 맥락을 고정하고 싶을 땐 <strong>System Prompt</strong>를 써서 에이전트의 페르소나를 설정해요.</p>
+<p>가장 기본은 <strong>Zero-shot</strong>이에요. 별도 예시 없이 직접 요청하는 방식이라 빠르고 간단해요. 특정 형식이 필요한 경우라면 <strong>Few-shot</strong>이 효과적이에요. 원하는 출력 형식의 예시를 2-3개 보여주면, 모델이 그 패턴을 따라가요. 복잡한 추론이 필요할 땐 <strong>Chain of Thought(CoT)</strong>가 정확도를 올려줘요. “단계별로 생각해봐”라고 유도하는 방식이죠. 그리고 역할이나 맥락을 고정하고 싶을 땐 <strong>System Prompt</strong>를 써서 에이전트의 페르소나를 설정해요.</p>
 <p><strong>이 레벨에서 가장 큰 실수는 프롬프트를 코드처럼 관리하지 않는 거예요.</strong> 슬랙에 공유하거나 Notion에 적어두는 방식으로 관리하면, 모델이 업데이트될 때마다 결과가 달라지는데 왜 달라졌는지 추적이 안 돼요. 프롬프트는 코드예요. 버전 관리가 필요하고, 변경 이력이 남아야 하고, 테스트 케이스가 있어야 해요.</p>
 <p>CoT를 모든 곳에 쓰는 것도 흔한 실수예요. Chain of Thought는 복잡한 추론에 효과적이지만 토큰을 2-4배 더 써요. <a href="https://arxiv.org/pdf/2404.01077">Chain of Draft 연구</a>에 따르면 CoT와 동일한 정확도를 7.6% 토큰만으로 달성할 수 있어요. 단순 분류나 요약 작업에 CoT를 쓰면 비용만 올라가요.</p>
 <p>같은 프롬프트로 10번 돌렸을 때 결과가 일관적이고, 프롬프트에 버전이 붙어 있으면 L1을 충분히 활용하고 있는 거예요. AI가 외부 데이터나 시스템과 연결돼야 하는 순간, L2가 필요해져요.</p>
 <h2 id="l2-tool-use--mcp--ai에게-손발을-붙이다">L2: Tool Use &#x26; MCP — AI에게 손발을 붙이다</h2>
-<p>LLM 단독으로는 할 수 없는 일들이 있어요. 실시간 데이터 조회, 파일 읽기/쓰기, 외부 API 호출, 코드 실행 같은 것들이죠. 이 능력을 붙여주는 게 Tool Use이고, 그 연결 방식을 표준화한 프로토콜이 **MCP(Model Context Protocol)**예요.</p>
+<p>LLM 단독으로는 할 수 없는 일들이 있어요. 실시간 데이터 조회, 파일 읽기/쓰기, 외부 API 호출, 코드 실행 같은 것들이죠. 이 능력을 붙여주는 게 Tool Use이고, 그 연결 방식을 표준화한 프로토콜이 <strong>MCP(Model Context Protocol)</strong>예요.</p>
 <p>Anthropic이 공개한 MCP는 AI 에이전트와 외부 도구 사이의 USB 인터페이스 같은 거예요. MCP 서버 하나를 붙이면 에이전트가 그 서버가 노출하는 함수(Tool), 데이터(Resource), 프롬프트 템플릿(Prompt)에 접근할 수 있어요. Slack 메시지 보내기, DB 조회, 파일 관리 같은 것들이 모두 MCP Tool로 노출될 수 있어요.</p>
 <blockquote>
 <p><a href="https://developers.redhat.com/articles/2026/05/25/mcp-servers-vs-skills-choosing-right-context-your-ai">Red Hat의 2026년 분석</a>이 MCP를 잘 표현해요. “MCP는 에이전트의 감각 기관이에요. 외부 세계와 연결하는 인터페이스죠.”</p>
@@ -98,7 +98,7 @@ main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.he
 <h2 id="l5-ai-ops--프로덕션에서-살아남기">L5: AI Ops — 프로덕션에서 살아남기</h2>
 <p>L5는 AI를 “운영”하는 영역이에요. 배포 후에도 에이전트가 잘 작동하는지, 비용은 어떻게 통제하는지, 문제가 생겼을 때 어떻게 감지하는지를 다뤄요.</p>
 <h3 id="모델-드리프트-ai가-조용히-나빠지는-현상">모델 드리프트: AI가 조용히 나빠지는 현상</h3>
-<p>**모델 드리프트(Model Drift)**는 배포 시점에는 잘 작동하던 AI가 시간이 지나면서 점점 결과가 나빠지는 현상이에요. 갑자기 망가지는 게 아니라 서서히 품질이 떨어지기 때문에 눈치채기 어려워요.</p>
+<p><strong>모델 드리프트(Model Drift)</strong>는 배포 시점에는 잘 작동하던 AI가 시간이 지나면서 점점 결과가 나빠지는 현상이에요. 갑자기 망가지는 게 아니라 서서히 품질이 떨어지기 때문에 눈치채기 어려워요.</p>
 <p>원인은 크게 두 가지로 나뉘어요. <strong>데이터 드리프트</strong>는 사용자 입력 패턴이 바뀌는 경우예요. 처음엔 “배송 언제 와요?”류의 단순 문의가 많았는데, 서비스가 성장하면서 “해외 직구 반품 프로세스 설명해줘”처럼 복잡한 문의가 늘어나면 같은 모델이 다르게 동작해요. <strong>컨셉 드리프트</strong>는 세상이 바뀌는 경우예요. 작년 규정으로 학습한 모델이 올해 바뀐 법령을 모르거나, 경쟁사가 출시한 신제품을 모르는 식이에요.</p>
 <p><a href="https://orq.ai/blog/model-vs-data-drift">Orq.ai의 2026년 가이드</a>에 따르면 드리프트 감지에는 통계적 거리 측정(KL Divergence, PSI, KS Test)이 효과적이에요. 근데 LLM에서는 정량 지표보다 <strong>사용자 행동 신호</strong>가 먼저 나타나는 경우가 많아요.</p>
 <p>드리프트가 시작될 때 나타나는 초기 신호들이에요.</p>
