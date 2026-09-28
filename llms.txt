@@ -5,6 +5,7 @@
 
 ## 블로그 글
 
+- [내 AI 옆에 전담 팀원을 두는 법 — Claude Agent 활용 가이드](https://tall190.github.io/liber/blog/claude-agent-guide/): Claude Code의 서브에이전트를 만들고, 팀 전체와 공유하고, Hook·Workflow·Routine으로 자동화하고, 리서치에 병렬로 활용하는 법을 정리했어요.
 - [개인 지식베이스 RAG, Hit@5 70%에서 90%까지 — 260원으로 끝낸 최적화 기록](https://tall190.github.io/liber/blog/rag-optimization-journey/): 개인 지식베이스 RAG 검색 정확도를 Hit@5 70%에서 90%까지 끌어올린 기록. Re-ranking, HyDE, Contextual Retrieval, 컬렉션 분리까지 단계별 수치로 비교했어요.
 - [Claude의 손발을 설계하는 법 — MCP로 모든 것을 연결하다](https://tall190.github.io/liber/blog/claude-mcp-guide/): MCP(Model Context Protocol)는 AI와 외부 세계를 연결하는 표준 프로토콜이에요. Tools·Resources·Prompts의 차이, 서버 직접 만들기, Skill과의 역할 구분, 보안 주의사항까지 — 연결의 원리를 설계하는 법.
 - [내가 만든 AI를 세상에 — Plugin으로 배포하고 마켓에 올리기](https://tall190.github.io/liber/blog/claude-plugin-guide/): Plugin은 Skill + MCP + Hooks를 묶어 팀과 세상에 배포하는 단위예요. Skill, MCP와의 관계, 마켓플레이스 구조, 팀 전용 배포까지 — AI 기능을 제품으로 만드는 법.
