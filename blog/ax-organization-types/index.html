@@ -1,0 +1,538 @@
+<!DOCTYPE html><html lang="ko" data-astro-cid-bvzihdzo> <head><!-- Dark mode: apply before render to prevent flash --><script>
+	(function() {
+		const theme = localStorage.getItem('theme');
+		if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark');
+		}
+	})();
+</script> <!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="/liber/favicon.png"><link rel="icon" type="image/svg+xml" href="/liber/favicon.svg"><link rel="icon" href="/liber/favicon.ico"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Liber" href="https://tall190.github.io/rss.xml"><meta name="generator" content="Astro v6.1.8"><style>@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/d6a5daef4389bbc9.woff") format("woff");font-display:swap;font-weight:400;font-style:normal;}@font-face{font-family:Atkinson-c7f4c4e8b285552f;src:url("/liber/_astro/fonts/3f2532cc25b9aaa8.woff") format("woff");font-display:swap;font-weight:700;font-style:normal;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}@font-face{font-family:"Atkinson-c7f4c4e8b285552f fallback: Arial";src:local("Arial");font-display:swap;font-weight:700;font-style:normal;size-adjust:99.3717%;ascent-override:80.1033%;descent-override:25.2587%;line-gap-override:0%;}:root{--font-atkinson:Atkinson-c7f4c4e8b285552f,"Atkinson-c7f4c4e8b285552f fallback: Arial",sans-serif;}</style><link rel="preload" href="/liber/_astro/fonts/d6a5daef4389bbc9.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/liber/_astro/fonts/3f2532cc25b9aaa8.woff" as="font" type="font/woff" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://tall190.github.io/liber/blog/ax-organization-types/"><!-- Primary Meta Tags --><title>AI를 잘 쓰는 조직, AX가 되는 조직, 둘 다 안 되는 조직 — 우리 회사는 어디에 있을까</title><meta name="title" content="AI를 잘 쓰는 조직, AX가 되는 조직, 둘 다 안 되는 조직 — 우리 회사는 어디에 있을까"><meta name="description" content="AI를 잘 쓰는 조직과 AX가 잘 되는 조직은 달라요. McKinsey·Microsoft·BCG·IBM의 2025~2026 조사 수치와 삼성전자·KB금융·카카오·Klarna 등 국내외 성공·실패 사례로 세 유형을 정리하고, 우리 회사의 위치를 판별하는 자가진단과 유형별 90일 실행안으로 마무리했어요."><meta name="author" content="Liber"><meta name="keywords" content="AI, AX, 조직, 보안, 실무, 에세이"><!-- Open Graph / Facebook --><meta property="og:type" content="article"><meta property="og:url" content="https://tall190.github.io/liber/blog/ax-organization-types/"><meta property="og:title" content="AI를 잘 쓰는 조직, AX가 되는 조직, 둘 다 안 되는 조직 — 우리 회사는 어디에 있을까"><meta property="og:description" content="AI를 잘 쓰는 조직과 AX가 잘 되는 조직은 달라요. McKinsey·Microsoft·BCG·IBM의 2025~2026 조사 수치와 삼성전자·KB금융·카카오·Klarna 등 국내외 성공·실패 사례로 세 유형을 정리하고, 우리 회사의 위치를 판별하는 자가진단과 유형별 90일 실행안으로 마무리했어요."><meta property="og:image" content="https://tall190.github.io/liber/_astro/ax-organization-types_hero_image.CKLTIy69.png"><meta property="og:locale" content="ko_KR"><meta property="article:published_time" content="2026-09-30T00:00:00.000Z"><meta property="article:tag" content="AI"><meta property="article:tag" content="AX"><meta property="article:tag" content="조직"><meta property="article:tag" content="보안"><meta property="article:tag" content="실무"><meta property="article:tag" content="에세이"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://tall190.github.io/liber/blog/ax-organization-types/"><meta property="twitter:title" content="AI를 잘 쓰는 조직, AX가 되는 조직, 둘 다 안 되는 조직 — 우리 회사는 어디에 있을까"><meta property="twitter:description" content="AI를 잘 쓰는 조직과 AX가 잘 되는 조직은 달라요. McKinsey·Microsoft·BCG·IBM의 2025~2026 조사 수치와 삼성전자·KB금융·카카오·Klarna 등 국내외 성공·실패 사례로 세 유형을 정리하고, 우리 회사의 위치를 판별하는 자가진단과 유형별 90일 실행안으로 마무리했어요."><meta property="twitter:image" content="https://tall190.github.io/liber/_astro/ax-organization-types_hero_image.CKLTIy69.png"><!-- Theme toggle script --><script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const toggle = document.getElementById('theme-toggle');
+		if (!toggle) return;
+		toggle.addEventListener('click', function() {
+			const isDark = document.documentElement.classList.toggle('dark');
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
+			// Sync Giscus theme
+			const giscus = document.querySelector('iframe.giscus-frame');
+			if (giscus) {
+				giscus.contentWindow.postMessage(
+					{ giscus: { setConfig: { theme: isDark ? 'dark' : 'light' } } },
+					'https://giscus.app'
+				);
+			}
+		});
+	});
+</script><!-- Schema.org JSON-LD: AI가 이 글을 구조화된 데이터로 읽을 수 있어요 --><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"AI를 잘 쓰는 조직, AX가 되는 조직, 둘 다 안 되는 조직 — 우리 회사는 어디에 있을까","description":"AI를 잘 쓰는 조직과 AX가 잘 되는 조직은 달라요. McKinsey·Microsoft·BCG·IBM의 2025~2026 조사 수치와 삼성전자·KB금융·카카오·Klarna 등 국내외 성공·실패 사례로 세 유형을 정리하고, 우리 회사의 위치를 판별하는 자가진단과 유형별 90일 실행안으로 마무리했어요.","datePublished":"2026-09-30T00:00:00.000Z","dateModified":"2026-09-30T00:00:00.000Z","url":"https://tall190.github.io/liber/blog/ax-organization-types/","inLanguage":"ko-KR","mainEntityOfPage":{"@type":"WebPage","@id":"https://tall190.github.io/liber/blog/ax-organization-types/"},"author":{"@type":"Organization","name":"Liber","url":"https://tall190.github.io/liber"},"publisher":{"@type":"Organization","name":"Liber","url":"https://tall190.github.io/liber"},"keywords":"AI, AX, 조직, 보안, 실무, 에세이","image":"https://tall190.github.io/liber/_astro/ax-organization-types_hero_image.CKLTIy69.png"}</script><style>:root{--accent: #2337ff;--accent-dark: #000d8a;--black: 15, 18, 25;--gray: 96, 115, 159;--gray-light: 229, 233, 240;--gray-dark: 34, 41, 57;--gray-gradient: rgba(var(--gray-light), 50%), #fff;--box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);--bg: #fff;--bg-secondary: #f9fafb;--header-bg: white;--code-bg: rgb(var(--gray-light));color-scheme:light}:root.dark{--accent: #6b7cff;--accent-dark: #8b9aff;--black: 230, 230, 230;--gray: 155, 165, 190;--gray-light: 50, 55, 65;--gray-dark: 210, 215, 225;--gray-gradient: rgba(var(--gray-light), 50%), #1a1a2e;--box-shadow: 0 2px 6px rgba(0, 0, 0, 40%), 0 8px 24px rgba(0, 0, 0, 50%), 0 16px 32px rgba(0, 0, 0, 50%);--bg: #1a1a2e;--bg-secondary: #16162a;--header-bg: #16162a;--code-bg: rgba(var(--gray-light), .6);color-scheme:dark}body{font-family:var(--font-atkinson);margin:0;padding:0;text-align:left;background:var(--bg);background-image:linear-gradient(var(--gray-gradient));background-repeat:no-repeat;background-size:100% 600px;word-wrap:break-word;overflow-wrap:break-word;color:rgb(var(--gray-dark));font-size:20px;line-height:1.7;transition:background-color .3s,color .3s}main{width:720px;max-width:calc(100% - 2em);margin:auto;padding:3em 1em}h1,h2,h3,h4,h5,h6{margin:0 0 .5rem;color:rgb(var(--black));line-height:1.2}h1{font-size:3.052em}h2{font-size:2.441em}h3{font-size:1.953em}h4{font-size:1.563em}h5{font-size:1.25em}strong,b{font-weight:700}a,a:hover{color:var(--accent)}p{margin-bottom:1em}.prose p{margin-bottom:2em}.prose p:has(>img){margin-top:.5em;margin-bottom:.5em}textarea{width:100%;font-size:16px}input{font-size:16px}table{width:100%}img{max-width:100%;height:auto;border-radius:8px}code{padding:2px 5px;background-color:var(--code-bg);border-radius:2px}pre{padding:1.5em;border-radius:8px;overflow-x:auto;max-width:100%;font-size:15px}pre>code{all:unset}blockquote{border-left:4px solid var(--accent);padding:0 0 0 20px;margin:0;font-size:1.333em}hr{border:none;border-top:1px solid rgb(var(--gray-light))}@media(max-width:720px){body{font-size:18px}main{padding:1em}}.sr-only{border:0;padding:0;margin:0;position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px 1px 1px 1px);clip:rect(1px,1px,1px,1px);clip-path:inset(50%);white-space:nowrap}.prose p>em:only-child{display:block;font-size:.85em;color:rgb(var(--gray));margin-top:-.3em;margin-bottom:1.5em;text-align:center}footer[data-astro-cid-sz7xmlte]{padding:2em 1em 6em;background:linear-gradient(var(--gray-gradient)) no-repeat;color:rgb(var(--gray));text-align:center;transition:background-color .3s,color .3s}a[data-astro-cid-eimmu3lg]{display:inline-block;text-decoration:none}a[data-astro-cid-eimmu3lg].active{font-weight:bolder;text-decoration:underline}header[data-astro-cid-3ef6ksr2]{margin:0;padding:0 1em;background:var(--header-bg);box-shadow:0 2px 8px rgba(var(--black),5%);transition:background-color .3s}h2[data-astro-cid-3ef6ksr2]{margin:0;font-size:1em}h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2],h2[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none}nav[data-astro-cid-3ef6ksr2]{display:flex;align-items:center;justify-content:space-between}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{padding:1em .5em;color:var(--black);border-bottom:4px solid transparent;text-decoration:none}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2].active{text-decoration:none;border-bottom-color:var(--accent)}.theme-toggle[data-astro-cid-3ef6ksr2]{background:none;border:none;cursor:pointer;padding:.5em;color:rgb(var(--black));display:flex;align-items:center;transition:color .3s}.theme-toggle[data-astro-cid-3ef6ksr2]:hover{color:var(--accent)}.dark .icon-sun[data-astro-cid-3ef6ksr2]{display:inline}.dark .icon-moon[data-astro-cid-3ef6ksr2],.icon-sun[data-astro-cid-3ef6ksr2]{display:none}.icon-moon[data-astro-cid-3ef6ksr2]{display:inline}
+main[data-astro-cid-bvzihdzo]{width:calc(100% - 2em);max-width:100%;margin:0}.hero-image[data-astro-cid-bvzihdzo]{width:100%}.hero-image[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{display:block;margin:0 auto;border-radius:12px;box-shadow:var(--box-shadow)}.prose[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:auto;padding:1em;color:rgb(var(--gray-dark))}.title[data-astro-cid-bvzihdzo]{margin-bottom:1em;padding:1em 0;text-align:center;line-height:1}.title[data-astro-cid-bvzihdzo] h1[data-astro-cid-bvzihdzo]{margin:0 0 .5em}.date[data-astro-cid-bvzihdzo]{margin-bottom:.5em;color:rgb(var(--gray))}.last-updated-on[data-astro-cid-bvzihdzo]{font-style:italic}.post-meta[data-astro-cid-bvzihdzo]{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:.5rem;flex-wrap:wrap}.hits-badge[data-astro-cid-bvzihdzo]{display:inline-flex;align-items:center}.hits-badge[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{height:20px;border-radius:4px}.post-tags[data-astro-cid-bvzihdzo]{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.8rem}.tag[data-astro-cid-bvzihdzo]{display:inline-block;font-size:.75rem;font-weight:600;padding:.2rem .6rem;border-radius:999px;background:rgb(var(--accent));color:#fff;text-decoration:none;letter-spacing:.02em}.tag[data-astro-cid-bvzihdzo]:hover{background:var(--accent-dark)}.comments-section[data-astro-cid-bvzihdzo]{width:720px;max-width:calc(100% - 2em);margin:3rem auto 2rem;padding:0 1em;border-top:1px solid rgb(var(--gray-light));padding-top:2rem}.comments-section[data-astro-cid-bvzihdzo] h3[data-astro-cid-bvzihdzo]{font-size:1.1rem;color:rgb(var(--gray-dark));margin-bottom:1.5rem}
+</style></head> <body data-astro-cid-bvzihdzo> <header data-astro-cid-3ef6ksr2> <nav data-astro-cid-3ef6ksr2> <h2 data-astro-cid-3ef6ksr2><a href="/liber/" data-astro-cid-3ef6ksr2><img src="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp" srcset="/liber/_astro/liber-logo.DqNb0q2U_16Qeh6.webp 1x, /liber/_astro/liber-logo.DqNb0q2U_Z1NhCXk.webp 2x, /liber/_astro/liber-logo.DqNb0q2U_16RKps.webp 3x" alt="Liber" data-astro-cid-3ef6ksr2="true" loading="lazy" decoding="async" width="121" height="40"></a></h2> <div class="internal-links" data-astro-cid-3ef6ksr2> <a href="/liber/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Home </a> <a href="/liber/blog/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> Blog </a> <a href="/liber/about/" data-astro-cid-3ef6ksr2="true" data-astro-cid-eimmu3lg> About </a> <button class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환" data-astro-cid-3ef6ksr2> <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="5" data-astro-cid-3ef6ksr2></circle><line x1="12" y1="1" x2="12" y2="3" data-astro-cid-3ef6ksr2></line><line x1="12" y1="21" x2="12" y2="23" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" data-astro-cid-3ef6ksr2></line><line x1="1" y1="12" x2="3" y2="12" data-astro-cid-3ef6ksr2></line><line x1="21" y1="12" x2="23" y2="12" data-astro-cid-3ef6ksr2></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" data-astro-cid-3ef6ksr2></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" data-astro-cid-3ef6ksr2></line></svg> <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-3ef6ksr2></path></svg> </button> </div> </nav> </header> <main data-astro-cid-bvzihdzo> <article data-astro-cid-bvzihdzo> <div class="hero-image" data-astro-cid-bvzihdzo> <img src="/liber/_astro/ax-organization-types_hero_image.CKLTIy69_2sMzl3.webp" alt data-astro-cid-bvzihdzo="true" loading="lazy" decoding="async" width="1020" height="510"> </div> <div class="prose" data-astro-cid-bvzihdzo> <div class="title" data-astro-cid-bvzihdzo> <div class="date" data-astro-cid-bvzihdzo> <time datetime="2026-09-30T00:00:00.000Z"> Sep 30, 2026 </time>  </div> <h1 data-astro-cid-bvzihdzo>AI를 잘 쓰는 조직, AX가 되는 조직, 둘 다 안 되는 조직 — 우리 회사는 어디에 있을까</h1> <div class="post-meta" data-astro-cid-bvzihdzo> <span class="hits-badge" data-astro-cid-bvzihdzo> <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Ftall190.github.io%2Fliber%2Fblog%2Fax-organization-types%2F&#38;label=views&#38;labelColor=%23374151&#38;countColor=%236366f1&#38;style=flat" alt="조회수" loading="eager" data-astro-cid-bvzihdzo> </span> </div> <div class="post-tags" data-astro-cid-bvzihdzo> <a class="tag" href="/liber/blog/tags/AI/" data-astro-cid-bvzihdzo>AI</a><a class="tag" href="/liber/blog/tags/AX/" data-astro-cid-bvzihdzo>AX</a><a class="tag" href="/liber/blog/tags/조직/" data-astro-cid-bvzihdzo>조직</a><a class="tag" href="/liber/blog/tags/보안/" data-astro-cid-bvzihdzo>보안</a><a class="tag" href="/liber/blog/tags/실무/" data-astro-cid-bvzihdzo>실무</a><a class="tag" href="/liber/blog/tags/에세이/" data-astro-cid-bvzihdzo>에세이</a> </div> <hr data-astro-cid-bvzihdzo> </div>  <style>
+.viz{--v-ink:rgb(var(--black));--v-ink2:rgb(var(--gray));--v-line:rgba(var(--gray),.25);--v-card:var(--bg-secondary);--v-s1:#2a78d6;--v-s2:#eb6834;--v-s3:#1baf7a;--v-other:#a9a8a3;margin:2em 0;padding:1.1em 1.2em 1em;border:1px solid var(--v-line);border-radius:12px;background:var(--v-card);font-size:.92em;line-height:1.45;word-break:keep-all;overflow-wrap:anywhere}
+:root.dark .viz{--v-s1:#3987e5;--v-s2:#d95926;--v-s3:#199e70;--v-other:#5f5f6e}
+.viz-title{display:block;font-weight:700;color:var(--v-ink);margin-bottom:.2em}
+.viz-sub{display:block;color:var(--v-ink2);font-size:.9em;margin-bottom:1em}
+.viz-src{display:block;margin-top:.9em;color:var(--v-ink2);font-size:.82em}
+.viz-src a{color:var(--v-ink2)}
+.viz-row{display:grid;grid-template-columns:minmax(90px,34%) 1fr 3.6em;align-items:center;gap:.6em;margin:.45em 0}
+.viz-lab{color:var(--v-ink);font-size:.92em}
+.viz-track{height:14px;border-radius:0 4px 4px 0;background:transparent;position:relative}
+.viz-bar{height:100%;border-radius:0 4px 4px 0;background:var(--v-s1)}
+.viz-bar.o{background:var(--v-other)}
+.viz-val{color:var(--v-ink);font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+.viz-grp{margin:.2em 0 .9em}
+.viz-grp>b{display:block;color:var(--v-ink);font-size:.9em;margin-bottom:.1em}
+.viz-legend{display:flex;flex-wrap:wrap;gap:1em;color:var(--v-ink2);font-size:.85em;margin-bottom:.6em}
+.viz-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:.35em;vertical-align:-1px}
+.viz-stack{display:flex;gap:2px;height:40px;margin:.4em 0 .5em}
+.viz-stack div{border-radius:4px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.9em}
+.viz-stackkey{display:grid;grid-template-columns:10fr 20fr 70fr;gap:2px;color:var(--v-ink2);font-size:.8em;line-height:1.3}
+.viz-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.7em}
+.viz-tile{border:1px solid var(--v-line);border-radius:10px;padding:.8em .9em;background:var(--bg)}
+.viz-num{display:block;font-size:1.9em;font-weight:700;color:var(--v-ink);line-height:1.1;font-variant-numeric:tabular-nums}
+.viz-num small{font-size:.5em;font-weight:700}
+.viz-cap{display:block;color:var(--v-ink2);font-size:.85em;margin-top:.35em}
+.viz-flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.7em;counter-reset:s;list-style:none;padding:0;margin:0}
+.viz-flow li{position:relative;border:1px solid var(--v-line);border-left:4px solid var(--v-s2);border-radius:8px;padding:.7em .8em;background:var(--bg);margin:0}
+.viz-flow li b{display:block;color:var(--v-ink)}
+.viz-flow li span{display:block;color:var(--v-ink2);font-size:.85em;margin-top:.25em}
+.viz-flow li em{display:block;font-style:normal;color:var(--v-ink);font-size:.85em;margin-top:.45em;padding-top:.45em;border-top:1px dashed var(--v-line)}
+.viz-tl{list-style:none;padding:0;margin:0;border-left:2px solid var(--v-line);margin-left:.4em}
+.viz-tl li{position:relative;padding:0 0 .9em 1.1em;margin:0}
+.viz-tl li::before{content:"";position:absolute;left:-7px;top:.35em;width:12px;height:12px;border-radius:50%;background:var(--v-s1);box-shadow:0 0 0 2px var(--v-card)}
+.viz-tl li.x::before{background:var(--v-s2)}
+.viz-tl b{color:var(--v-ink)}
+.viz-tl span{display:block;color:var(--v-ink2);font-size:.9em}
+.prose table{width:100%;border-collapse:collapse;font-size:.8em;line-height:1.5;word-break:keep-all;overflow-wrap:break-word;margin:1.4em 0 2em;border-top:2px solid rgba(var(--gray),.45)}
+.prose th,.prose td{padding:.6em .7em;text-align:left;vertical-align:top;border-bottom:1px solid rgba(var(--gray),.22)}
+.prose th{font-size:.92em;color:rgb(var(--gray-dark));background:var(--bg-secondary);white-space:nowrap}
+.prose td:first-child{white-space:nowrap;font-weight:600;color:rgb(var(--black))}
+@media (max-width:720px){.prose table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:.78em}.prose td,.prose th{min-width:9em}.prose td:first-child{white-space:normal;min-width:7em}}
+.viz-note{margin:1.6em 0 2em;padding:.9em 1.1em;border-left:4px solid var(--v-s1,#2a78d6);border-radius:0 10px 10px 0;background:var(--bg-secondary);font-size:.9em;line-height:1.6;word-break:keep-all;color:rgb(var(--black))}
+.viz-note b{display:block;margin-bottom:.3em}
+:root.dark .viz-note{border-left-color:#3987e5}
+</style>
+<p>“우리 팀은 AI 다 써요.” 요즘 어느 조직에 가도 이 말을 들어요. 근데 1년 전과 비교해서 팀이 일하는 방식이 뭐가 달라졌냐고 물으면 대답이 막히더라고요. 보고서는 AI로 더 빨리 쓰는데 결재는 여전히 세 단계를 거치고, 회의록은 AI가 정리하는데 회의 수는 줄지 않았어요.</p>
+<p>AX 기술지원 기획을 하면서 여러 팀을 만나보니, 조직마다 AI와의 거리가 제각각이었어요. 개인은 AI를 잘 쓰는데 조직은 그대로인 곳, AI 사용량은 평범한데 업무 흐름 자체가 바뀐 곳, 그리고 도입은 했는데 어느새 흐지부지된 곳이요. 흥미로운 건 이 차이가 AI를 얼마나 잘 아느냐에서 생기지 않는다는 점이었어요. 대부분 조직이 AI를 받아들일 준비가 됐느냐에서 갈렸어요.</p>
+<p>이 글에서는 조직을 세 가지로 나눠서 봐요. <strong>AI를 잘 쓰는 조직</strong>, <strong>AX가 잘 되는 조직</strong>, 그리고 <strong>둘 다 잘 안 되는 조직</strong>이에요. 2025~2026년 조사 수치와 국내외 기업의 성공·실패 사례를 유형마다 같이 보고, 마지막에 우리 회사가 어디에 있는지 판별하는 자가진단과 유형별 90일 실행안으로 마무리할게요.</p>
+<h2 id="왜-지금-이-구분이-중요한가요">왜 지금 이 구분이 중요한가요</h2>
+<p>2026년, 기업들은 AI 투자를 크게 늘리고 있어요. BCG가 2026년 1월 16개 시장의 경영진 2,360명(CEO 640명 포함)을 조사한 AI Radar 2026에서, 기업들은 올해 AI 지출을 두 배로 늘려 매출의 약 1.7%까지 쓰겠다고 답했어요. 94%는 당장 수익이 안 나도 투자를 계속하겠다고 했고요.</p>
+<p>돈은 더 쓰는데 성과는 따라오고 있을까요? McKinsey가 2026년 5~6월 1,719명에게 물은 결과는 이래요.</p>
+<figure class="viz" aria-label="McKinsey 2026: 개인 80%가 생산성 향상, 조직 37%만 EBIT 기여">
+<span class="viz-title">개인은 80%가 효과를 보는데, 조직 성과로 이어진 건 37%</span>
+<span class="viz-sub">같은 조사 응답자(1,719명) 기준</span>
+<div class="viz-row" title="80% — AI가 내 생산성을 높였다"><span class="viz-lab">AI가 <b>내</b> 생산성을 높였다</span><div class="viz-track"><div class="viz-bar o" style="width:80%"></div></div><span class="viz-val">80%</span></div>
+<div class="viz-row" title="37% — AI가 조직의 영업이익(EBIT)에 긍정적으로 기여했다"><span class="viz-lab">AI가 <b>조직</b> 영업이익에 기여했다</span><div class="viz-track"><div class="viz-bar" style="width:37%"></div></div><span class="viz-val">37%</span></div>
+<span class="viz-sub" style="margin:.8em 0 0">→ 조직 기여 37%는 2025년과 거의 같은 수준이에요. AI를 확산하는 조직은 늘었는데 성과는 제자리였어요.</span>
+<span class="viz-src">출처: <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai">McKinsey, The state of AI in 2026: On the road to ROI</a> (2026.8.25 발행, 97개국 1,719명, 2026.5.4~6.8 조사) · <a href="https://www.techtimes.com/articles/325590/20260826/record-ai-spending-cant-move-earnings-needle-94-enterprises-mckinsey-finds.htm">Tech Times 보도 (2026.8.26)</a> — 원문 PDF는 서버 응답이 없어 McKinsey 공식 페이지 요약과 복수 보도로 교차 확인했어요</span>
+</figure>
+<p>개인의 생산성은 올랐는데 회사의 성과는 그대로예요. 이 간극이 이 글의 출발점이에요.</p>
+<p>그리고 이 간극은 기업 간 격차로 번지고 있어요. BCG가 2025년 전 세계 1,250여 개 기업을 분석한 보고서를 보면, AI로 대규모 가치를 내는 ‘future-built’ 기업은 5%뿐이었어요. 60%는 상당한 투자에도 매출·비용 효과를 거의 못 봤고요.</p>
+<figure class="viz" aria-label="BCG 2025: future-built 5%, scaler 35%, 가치 미달 60% 및 성과 배수">
+<span class="viz-title">AI 가치 격차: 5%가 앞서가고, 60%는 제자리</span>
+<div class="viz-stack">
+<div style="flex:5;background:var(--v-s1)" title="future-built 5%">5%</div>
+<div style="flex:35;background:var(--v-s3)" title="확산 중(scaler) 35%">35%</div>
+<div style="flex:60;background:var(--v-other);color:var(--v-ink)" title="실질 가치 없음 60%">60%</div>
+</div>
+<div class="viz-stackkey" style="grid-template-columns:5fr 35fr 60fr"><span></span><span>확산 중 — 일부 성과</span><span>실질적 가치 없음 (stagnating·emerging)</span></div>
+<span class="viz-sub" style="margin:1em 0 .6em">future-built 5%가 60% 대비 거둔 성과</span>
+<div class="viz-tiles">
+<div class="viz-tile"><span class="viz-num">1.7<small>배</small></span><span class="viz-cap">매출 성장률</span></div>
+<div class="viz-tile"><span class="viz-num">1.6<small>배</small></span><span class="viz-cap">EBIT 마진</span></div>
+<div class="viz-tile"><span class="viz-num">3.6<small>배</small></span><span class="viz-cap">3년 주주수익률(TSR)</span></div>
+<div class="viz-tile"><span class="viz-num">2.7<small>배</small></span><span class="viz-cap">투하자본수익률(ROIC)</span></div>
+</div>
+<span class="viz-src">출처: <a href="https://media-publications.bcg.com/The-Widening-AI-Value-Gap-Sept-2025.pdf">BCG, The Widening AI Value Gap (2025.9, PDF)</a> — 1,250개사 조사. 성과 배수는 future-built 대 stagnating·emerging 기업 비교</span>
+</figure>
+<p>그래서 “우리도 AI 쓰고 있어요”로는 부족해요. AI를 쓰는 것과 AI로 일하는 방식을 바꾸는 것은 다른 일이고, 그 차이가 이제 매출과 주가로 나타나고 있거든요.</p>
+<h2 id="ai-활용과-ax는-다른-이야기예요">AI 활용과 AX는 다른 이야기예요</h2>
+<p>두 단어를 먼저 구분할게요. 둘을 섞어 쓰면 “AI 많이 쓰니까 AX도 되고 있다”는 착각이 생기거든요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>구분</th><th>AI 활용</th><th>AX (AI Transformation)</th></tr></thead><tbody><tr><td>단위</td><td>개인</td><td>팀·조직</td></tr><tr><td>바뀌는 것</td><td>작업 속도</td><td>업무 흐름·역할·의사결정 구조</td></tr><tr><td>필요한 것</td><td>계정 하나</td><td>보안·데이터·프로세스·측정·교육</td></tr><tr><td>성과가 쌓이는 곳</td><td>개인의 시간</td><td>조직의 매출·비용·품질</td></tr><tr><td>멈추는 지점</td><td>잘 쓰는 사람이 떠나면 끝</td><td>사람이 바뀌어도 흐름이 남음</td></tr></tbody></table>
+<p>AI 활용은 개인의 시간을 아껴줘요. 근데 아낀 시간이 조직의 성과로 바뀌려면 누군가 그 시간이 어디로 갈지 설계해야 해요. 업무 단계를 줄이든, 더 가치 있는 일에 쓰든요. 그 설계가 AX예요.</p>
+<p>그래서 조직의 위치를 가르는 첫 질문은 “AI를 얼마나 쓰냐”가 아니에요. “AI 때문에 없어지거나 바뀐 업무 단계가 있냐”예요. 이 질문을 들고 세 유형을 하나씩 볼게요.</p>
+<h2 id="유형-1-ai를-잘-쓰는-조직">유형 1: AI를 잘 쓰는 조직</h2>
+<p>이 조직은 겉으로 보면 제일 앞서 있어요. 구성원 대부분이 AI를 쓰고, “AI 잘 쓰는 사람”이 팀마다 있고, 프롬프트 공유 채널도 활발하죠.</p>
+<p><strong>특징</strong></p>
+<ul>
+<li>구성원 개인의 AI 사용률이 높아요</li>
+<li>AI 사용이 문화나 기대치로 자리 잡았어요</li>
+<li>대신 업무 흐름은 기존 그대로이고, 성과는 개인기에 기대요</li>
+</ul>
+<h3 id="왜-개인의-속도가-조직의-성과로-안-바뀔까요">왜 개인의 속도가 조직의 성과로 안 바뀔까요</h3>
+<p>Microsoft가 2026년 2~4월 10개국 지식노동자 20,000명을 조사한 2026 Work Trend Index에 답이 있어요. AI가 실제로 만드는 효과를 무엇이 좌우하는지 분석했더니, 조직 요인(문화·관리자 지원·인재 운영)이 67%, 개인 요인(마인드셋·행동)이 32%였어요.</p>
+<figure class="viz" aria-label="Microsoft 2026 Work Trend Index: AI 효과를 좌우하는 요인, 조직 67% 대 개인 32%">
+<span class="viz-title">AI 효과를 좌우하는 건 개인보다 조직이에요</span>
+<span class="viz-sub">AI가 만드는 실제 효과에 대한 요인별 기여도</span>
+<div class="viz-row" title="조직 요인 67%"><span class="viz-lab">조직 요인<br><small>문화·관리자 지원·인재 운영</small></span><div class="viz-track"><div class="viz-bar" style="width:67%"></div></div><span class="viz-val">67%</span></div>
+<div class="viz-row" title="개인 요인 32%"><span class="viz-lab">개인 요인<br><small>마인드셋·행동</small></span><div class="viz-track"><div class="viz-bar o" style="width:32%"></div></div><span class="viz-val">32%</span></div>
+<span class="viz-src">출처: <a href="https://www.microsoft.com/en-us/worklab/work-trend-index/agents-human-agency-and-the-opportunity-for-every-organization">Microsoft, 2026 Work Trend Index</a> (10개국 20,000명, 2026.2.18~4.7 조사, 2026.5 발표)</span>
+</figure>
+<p>같은 조사는 AI 사용자의 약 10%를 ‘Blocked Agency’로 분류했어요. 개인의 준비도는 높은데 조직이 그 역량을 받쳐줄 시스템을 갖추지 못한 사람들이에요. 그리고 리더십이 AI에 대해 명확하고 일관되게 정렬돼 있다고 답한 AI 사용자는 4명 중 1명뿐이었어요.</p>
+<p>제가 현장에서 제일 많이 만난 사람들이 바로 이 ‘Blocked Agency’였어요. AI를 누구보다 잘 쓰는데, 회사 시스템에 연결할 수 없어서 결과물을 손으로 옮겨 적는 사람들이요.</p>
+<h3 id="성공-사례-shopify--ai-사용을-기본값으로">성공 사례: Shopify — AI 사용을 ‘기본값’으로</h3>
+<p>유형 1로 올라서는 가장 빠른 길은 리더의 명확한 기대치예요. 2025년 4월 Shopify CEO 토비 뤼트케는 사내 메모를 공개하며 “반사적인 AI 사용은 이제 Shopify의 기본 기대치(Reflexive AI usage is now a baseline expectation)“라고 선언했어요. 인력이나 자원을 더 요청하려면 먼저 AI로는 안 되는 이유를 보여야 하고, AI 활용을 성과·동료 평가에도 반영하겠다고 했어요.</p>
+<p>이 메모가 공개되자 여러 기업이 비슷한 메모를 연달아 내놨어요. “AI부터 써본다”는 습관을 조직 전체에 심는 방식의 원형이 된 셈이죠.</p>
+<h3 id="한계-사례-workslop--많이-쓰는데-일은-늘어나는-역설">한계 사례: ‘Workslop’ — 많이 쓰는데 일은 늘어나는 역설</h3>
+<p>사용량만 늘고 구조가 안 바뀌면 이런 일이 생겨요. 2025년 9월 BetterUp Labs와 스탠퍼드 소셜미디어랩은 HBR에 “workslop”이라는 개념을 발표했어요. 그럴듯해 보이지만 일을 실제로 진전시키지 못하는 AI 결과물이에요.</p>
+<figure class="viz" aria-label="Workslop 조사: 약 40%가 받아봄, 건당 약 2시간, 42%가 신뢰 하락">
+<span class="viz-title">AI 결과물의 뒷감당은 다음 사람에게 넘어가요</span>
+<span class="viz-sub">미국 정규직 직장인 대상 조사</span>
+<div class="viz-tiles">
+<div class="viz-tile"><span class="viz-num">약 40<small>%</small></span><span class="viz-cap">최근 한 달 사이 workslop을 받아본 사람</span></div>
+<div class="viz-tile"><span class="viz-num">약 2<small>시간</small></span><span class="viz-cap">workslop 한 건을 처리하는 데 드는 시간</span></div>
+<div class="viz-tile"><span class="viz-num">42<small>%</small></span><span class="viz-cap">받은 뒤 보낸 동료를 덜 신뢰하게 된 사람</span></div>
+</div>
+<span class="viz-src">출처: <a href="https://hbr.org/2025/09/ai-generated-workslop-is-destroying-productivity">HBR, AI-Generated "Workslop" Is Destroying Productivity (2025.9)</a> · <a href="https://www.betterup.com/blog/hidden-costs-workslop">BetterUp, The hidden costs of workslop</a> — 발표 매체에 따라 40~41%, 1시간 51~56분으로 표기가 조금 달라 반올림했어요</span>
+</figure>
+<p>AI가 한 사람의 작업은 빠르게 했는데, 검토와 수정 부담은 다음 사람에게 넘어간 거예요. 품질 기준과 검토 흐름이 없는 상태에서 사용량만 늘면, 조직 전체로는 오히려 일이 늘어날 수 있어요.</p>
+<div class="viz-note"><b>유형 1이 흔히 하는 착각</b>"사용률이 높으면 AX도 되고 있다." 사용률은 출발선이에요. McKinsey 조사에서 개인 80%가 효과를 봤지만 조직 성과로 이어진 건 37%였던 것처럼, 사용률과 성과 사이에는 조직이 설계해야 할 빈칸이 있어요.</div>
+<p>그래서 유형 1은 출발점으로는 좋지만 머무를 곳은 아니에요. 개인의 속도를 팀의 구조로 바꾸는 단계가 필요하거든요.</p>
+<h2 id="유형-2-ax가-잘-되는-조직">유형 2: AX가 잘 되는 조직</h2>
+<p>이 조직은 AI 사용량이 꼭 제일 많지는 않아요. 대신 업무 하나를 골라 처음부터 다시 설계하고, 그걸 받쳐줄 환경을 조직이 먼저 만들어요.</p>
+<p>BCG는 이걸 10-20-70 원칙으로 설명해요. AI로 앞서가는 조직은 노력의 10%를 알고리즘에, 20%를 데이터·기술에, 70%를 사람·프로세스·문화 전환에 쓴다는 거예요.</p>
+<figure class="viz" aria-label="BCG 10-20-70 원칙: 알고리즘 10%, 데이터·기술 20%, 사람·프로세스·문화 70%">
+<span class="viz-title">AI 성과를 내는 조직이 노력을 쓰는 곳</span>
+<div class="viz-stack">
+<div style="flex:10;background:var(--v-s1)" title="알고리즘 10%">10%</div>
+<div style="flex:20;background:var(--v-s2)" title="데이터·기술 20%">20%</div>
+<div style="flex:70;background:var(--v-s3)" title="사람·프로세스·문화 전환 70%">70%</div>
+</div>
+<div class="viz-stackkey"><span>알고리즘</span><span>데이터·기술</span><span>사람·프로세스·문화 전환</span></div>
+<span class="viz-src">출처: <a href="https://www.bcg.com/publications/2025/closing-the-ai-impact-gap">BCG AI Radar 2025 — From Potential to Profit: Closing the AI Impact Gap</a></span>
+</figure>
+<p>모델 고르는 시간보다 일하는 방식을 바꾸는 시간이 7배 많은 거죠. McKinsey 조사에서도 AI로 성과를 내는 상위 6% ‘고성과 조직’과 나머지의 차이는 모델이 아니라 일하는 방식에서 벌어졌어요.</p>
+<figure class="viz" aria-label="McKinsey 2025: 업무 흐름 근본 재설계 고성과 55% 대 기타 20%, AI 확산 단계 75% 대 33%">
+<span class="viz-title">고성과 조직은 업무 흐름부터 다시 그려요</span>
+<div class="viz-legend"><span><i style="background:var(--v-s1)"></i>AI 고성과 조직 (6%)</span><span><i style="background:var(--v-other)"></i>나머지 조직</span></div>
+<div class="viz-grp"><b>업무 흐름을 근본적으로 재설계했다</b>
+<div class="viz-row" title="고성과 조직 55%"><span class="viz-lab">고성과</span><div class="viz-track"><div class="viz-bar" style="width:55%"></div></div><span class="viz-val">55%</span></div>
+<div class="viz-row" title="나머지 20%"><span class="viz-lab">나머지</span><div class="viz-track"><div class="viz-bar o" style="width:20%"></div></div><span class="viz-val">20%</span></div></div>
+<div class="viz-grp"><b>AI를 전사로 확산(scaling)하는 단계에 있다</b>
+<div class="viz-row" title="고성과 조직 75%"><span class="viz-lab">고성과</span><div class="viz-track"><div class="viz-bar" style="width:75%"></div></div><span class="viz-val">75%</span></div>
+<div class="viz-row" title="나머지 33%"><span class="viz-lab">나머지</span><div class="viz-track"><div class="viz-bar o" style="width:33%"></div></div><span class="viz-val">33%</span></div></div>
+<span class="viz-src">출처: <a href="https://www.mckinsey.com/~/media/mckinsey/business%20functions/quantumblack/our%20insights/the%20state%20of%20ai/november%202025/the-state-of-ai-2025-agents-innovation_cmyk-v1.pdf">McKinsey, The state of AI in 2025 (PDF)</a> (1,993명, 2025.11 발행). 고성과 조직 = AI가 EBIT의 5% 이상에 기여하고 상당한 가치를 봤다고 답한 조직</span>
+</figure>
+<p>그리고 넓게 벌이지 않고 좁게 파요. BCG AI Radar 2025(경영진 1,800여 명)에서 앞서가는 기업이 집중하는 AI 사용 사례는 평균 3.5개, 나머지 기업은 6.1개였어요. 그러면서도 앞서가는 기업은 2.1배 높은 ROI를 기대했어요.</p>
+<figure class="viz" aria-label="BCG AI Radar 2025: 집중 사용 사례 수, 앞서가는 기업 3.5개, 기타 6.1개">
+<span class="viz-title">적게 고르고 깊게 파요 — 집중하는 AI 사용 사례 수(평균)</span>
+<div class="viz-row" title="앞서가는 기업 평균 3.5개"><span class="viz-lab">앞서가는 기업</span><div class="viz-track"><div class="viz-bar" style="width:57%"></div></div><span class="viz-val">3.5개</span></div>
+<div class="viz-row" title="나머지 기업 평균 6.1개"><span class="viz-lab">나머지 기업</span><div class="viz-track"><div class="viz-bar o" style="width:100%"></div></div><span class="viz-val">6.1개</span></div>
+<span class="viz-src">출처: <a href="https://www.bcg.com/publications/2025/closing-the-ai-impact-gap">BCG AI Radar 2025 — From Potential to Profit: Closing the AI Impact Gap</a> (경영진 1,800여 명)</span>
+</figure>
+<p>조사와 사례를 종합하면, AX가 되는 조직은 다섯 가지를 같이 움직여요. 하나라도 빠지면 나머지가 제 효과를 못 내더라고요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>요소</th><th>하는 일</th><th>빠지면</th></tr></thead><tbody><tr><td><strong>1. 보안·데이터 환경</strong></td><td>통제된 공식 AI 경로, 내부 데이터 지식화, 시스템 연동</td><td>개인은 복붙 챗봇에 머묾</td></tr><tr><td><strong>2. 업무 프로세스 재설계</strong></td><td>AI 전제로 업무 단계·결재·역할을 다시 그림</td><td>한 구간만 빨라지고 전체는 그대로</td></tr><tr><td><strong>3. 목적에 맞춘 설계·개발</strong></td><td>”AI로 뭐 할까”가 아니라 “이 업무의 이 병목”을 겨냥</td><td>파일럿만 늘고 운영은 0건</td></tr><tr><td><strong>4. 성과 측정</strong></td><td>도입 전 기준선을 잡고 같은 지표로 비교</td><td>”좋아졌대요”만 남음</td></tr><tr><td><strong>5. 교육·지원</strong></td><td>도구 사용법이 아니라 “내 일이 어떻게 바뀌는지”를 교육</td><td>현업이 AI를 피함</td></tr></tbody></table>
+<p>이 다섯 가지가 실제로 어떻게 움직이는지, 2026년 국내 사례부터 볼게요.</p>
+<h3 id="성공-사례-1-삼성전자-dx부문--검증-기간-15일을-2일로">성공 사례 1: 삼성전자 DX부문 — 검증 기간 15일을 2일로</h3>
+<p>삼성전자 DX부문은 상암 데이터센터에 고성능 컴퓨팅(HPC) 서버 517대를 구축하고 디지털 트윈 기반 가상 검증 체계를 도입했어요. 그 결과 통상 보름(15일) 걸리던 TV 낙하 시험 검증 기간이 이틀로 줄었어요.</p>
+<figure class="viz" aria-label="삼성전자 DX부문 TV 낙하 시험 검증 기간: 15일에서 2일">
+<span class="viz-title">TV 낙하 시험 검증 기간</span>
+<div class="viz-row" title="기존 15일"><span class="viz-lab">기존 (실물 시험)</span><div class="viz-track"><div class="viz-bar o" style="width:100%"></div></div><span class="viz-val">15일</span></div>
+<div class="viz-row" title="디지털 트윈 가상 검증 2일"><span class="viz-lab">디지털 트윈 가상 검증</span><div class="viz-track"><div class="viz-bar" style="width:13.3%"></div></div><span class="viz-val">2일</span></div>
+<span class="viz-src">출처: <a href="https://www.mt.co.kr/industry/2026/07/14/2026071414230588223">머니투데이 (2026.7.14)</a></span>
+</figure>
+<p>이 사례가 AX인 이유는 AI가 사람의 작업을 빠르게 한 게 아니라, 시험이라는 업무 단계의 방식 자체를 바꿨기 때문이에요. 실물을 떨어뜨리는 단계가 가상 검증으로 대체됐고, 그걸 위해 인프라(1번)와 업무 흐름(2번)을 같이 바꿨어요.</p>
+<h3 id="성공-사례-2-kb금융--전사-ai-플랫폼에서-업무별-에이전트로">성공 사례 2: KB금융 — 전사 AI 플랫폼에서 업무별 에이전트로</h3>
+<p>KB금융은 2025년 금융권 최초로 그룹 공동 생성형 AI 플랫폼 ‘KB Gen AI 포털’을 구축했어요. 그리고 2026년 안에 그룹 주요 59개 업무영역에 300여 개의 AI 에이전트를 도입하는 작업을 추진 중이에요. 영업 현장, 고객 응대, 업무 지원처럼 활용도가 높은 영역부터 우선 들어가고 있고, 멀티에이전트와 AI 보안을 강화한 ‘KB GenAI 플랫폼 2.0’도 착수했어요.</p>
+<figure class="viz" aria-label="KB금융 AI 에이전트 도입 목표: 59개 업무영역, 300여 개 에이전트">
+<span class="viz-title">KB금융의 AI 전환 설계</span>
+<div class="viz-tiles">
+<div class="viz-tile"><span class="viz-num">59<small>개</small></span><span class="viz-cap">AI 에이전트를 도입할 그룹 주요 업무영역</span></div>
+<div class="viz-tile"><span class="viz-num">300<small>여 개</small></span><span class="viz-cap">2026년 내 도입 목표 AI 에이전트</span></div>
+<div class="viz-tile"><span class="viz-num">1<small>개</small></span><span class="viz-cap">그룹 공동 생성형 AI 플랫폼 (KB Gen AI 포털, 2025)</span></div>
+</div>
+<span class="viz-src">출처: <a href="https://www.asiatoday.co.kr/kn/view.php?key=20260529010008641">아시아투데이 (2026.5.28)</a> — 59개 영역·300여 개는 달성 실적이 아닌 2026년 추진 목표예요</span>
+</figure>
+<p>눈여겨볼 건 순서예요. 계열사마다 따로 AI를 들이지 않고 공동 플랫폼(1번 보안·데이터 환경)을 먼저 깔았고, 그 위에 업무영역을 골라 에이전트를 붙이고 있어요(3번 목적 맞춤 설계). 아직 목표 단계라 성과는 지켜봐야 하지만, AX의 뼈대를 어떤 순서로 세우는지 보여주는 사례예요.</p>
+<h3 id="성공-사례-3-moderna--조직-구조까지-다시-그리다">성공 사례 3: Moderna — 조직 구조까지 다시 그리다</h3>
+<p>해외에서는 Moderna가 한 단계 더 나아갔어요. ChatGPT Enterprise를 전사에 도입하고 직원이 직접 업무용 GPT를 만들게 했더니, 두 달 만에 맞춤 GPT가 750개가 됐고 법무팀은 사용률 100%에 도달했어요.</p>
+<p>그리고 2025년 5월 Moderna는 HR과 IT 조직을 합치고, 인사 책임자였던 트레이시 프랭클린을 ‘Chief People and Digital Technology Officer’로 세웠어요. 사람과 AI가 각각 어떤 일을 맡을지를 한 조직에서 설계하겠다는 거예요. 도구 도입에서 멈추지 않고 역할과 조직(2번·5번)까지 바꾼 사례예요.</p>
+<h3 id="업무-흐름이-바뀐다는-건-이런-거예요">업무 흐름이 바뀐다는 건 이런 거예요</h3>
+<p><strong>Before</strong>: 담당자가 데이터 추출 → 엑셀 가공 → 보고서 작성 → 팀장 검토 → 발송
+<strong>After</strong>: AI가 내부 데이터에서 추출·가공·초안까지 → 담당자는 해석과 코멘트만 → 검토 기준은 체크리스트로 자동화</p>
+<p>→ AI가 한 단계를 빠르게 한 게 아니라, 사람이 맡는 단계 자체가 바뀌었어요. 그리고 이 After는 내부 데이터 연결 없이는 불가능해요.</p>
+<div class="viz-note"><b>유형 2를 향할 때 흔히 하는 착각</b>"좋은 AI 도구로 바꾸면 AX가 된다." 삼성전자는 서버와 가상 검증 체계를, KB금융은 공동 플랫폼을, Moderna는 조직 구조를 먼저 바꿨어요. 도구는 마지막에 얹혀요. 10-20-70에서 도구 선택은 10%예요.</div>
+<p>그래서 유형 2 조직은 사람이 바뀌어도 성과가 유지돼요. AI 활용이 개인의 습관이 아니라 팀의 구조에 들어가 있거든요.</p>
+<hr>
+<h2 id="유형-3-ai도-ax도-잘-안-되는-조직">유형 3: AI도 AX도 잘 안 되는 조직</h2>
+<p>이 조직은 AI에 관심이 없어서 멈춘 게 아닌 경우가 많아요. 오히려 도입은 했는데 되돌렸거나, 조용히 흐지부지된 경우가 더 흔해요.</p>
+<p>그리고 에이전트 시대에는 이 위험이 더 커져요. Gartner는 2025년 6월, agentic AI 프로젝트의 40% 이상이 2027년 말까지 취소될 거라고 예측했어요. 이유로 든 게 늘어나는 비용, 불명확한 비즈니스 가치, 부족한 위험 통제였어요. 현재 에이전트 프로젝트 대부분이 “과대 기대에 이끌린 초기 실험이고, 잘못 적용되는 경우가 많다”는 진단도 덧붙였고요.</p>
+<p>실제 사례를 보면 멈추는 방식은 네 가지로 나뉘어요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>실패 패턴</th><th>근거 사례</th><th>빠진 요소</th></tr></thead><tbody><tr><td>① 막기만 하는 보안</td><td>삼성전자 차단 (2023), 섀도 AI 확산 (IBM 2025 조사)</td><td>1. 보안·데이터 환경</td></tr><tr><td>② 속도만 재는 측정</td><td>Klarna (2024~2025), Commonwealth Bank (2025)</td><td>4. 성과 측정</td></tr><tr><td>③ 쓰임새와 어긋난 형태</td><td>카카오 ‘카나나’ 독립 앱 (2025~2026)</td><td>3. 목적 맞춤 설계</td></tr><tr><td>④ 설명 없는 선언</td><td>Duolingo (2025)</td><td>5. 교육·지원</td></tr></tbody></table>
+<h3 id="패턴--막기만-하는-보안--개인의-노력이-멈추는-곳">패턴 ①: 막기만 하는 보안 — 개인의 노력이 멈추는 곳</h3>
+<p>현장에서 제일 자주 본 패턴이에요. 개인은 AI를 잘 쓰려고 애쓰는데, 보안 정책이 AI를 막고 있으면 벽이 연쇄로 나타나요.</p>
+<figure class="viz" aria-label="보안 차단이 만드는 네 단계의 벽">
+<span class="viz-title">보안 차단 하나가 만드는 연쇄</span>
+<ol class="viz-flow">
+<li><b>① 입력이 막혀요</b><span>사내 문서·데이터 업로드 금지</span><em>AI 결과물을 사내 양식에 다시 옮겨 적어요 (이중 작업)</em></li>
+<li><b>② 지식이 막혀요</b><span>내부 데이터를 지식화·검색할 수 없음</span><em>우리 회사 맥락 없는 일반론만 나와요 (품질 한계)</em></li>
+<li><b>③ 연결이 막혀요</b><span>파일 시스템·업무 시스템 연동 불가</span><em>복붙으로만 쓰는 챗봇에 머물러요 (자동화 불가)</em></li>
+<li><b>④ 범위가 좁아져요</b><span>쓸 수 있는 업무가 "초안 쓰기"뿐</span><em>"AI 별거 없네"로 끝나요 (확산 중단)</em></li>
+</ol>
+</figure>
+<p>AI는 신이 아니에요. 데이터도 안 주고, 파일 시스템에도 못 붙이고, 업로드도 막아두면 할 수 있는 일은 일반론을 말하는 것뿐이에요.</p>
+<p>여기서 보안팀의 입장도 공정하게 봐야 해요. 사내 데이터를 외부 AI에 그대로 넣는 건 실제로 위험하거든요. 2023년 삼성전자에서 엔지니어가 소스코드를 ChatGPT에 넣은 일이 알려진 뒤 사내 생성형 AI 사용을 금지한 것도, 그 시점에는 합리적인 판단이었어요.</p>
+<p>문제는 막는 것만으로는 보안이 지켜지지 않는다는 거예요. IBM이 600개 조직을 조사한 2025 데이터 유출 비용 보고서가 이걸 숫자로 보여줘요.</p>
+<figure class="viz" aria-label="IBM 2025 데이터 유출 비용 보고서: AI 거버넌스 정책 없음 63%, AI 접근 통제 부재 97%, 섀도 AI로 유출 비용 67만 달러 증가">
+<span class="viz-title">막기만 하면, 보이지 않는 곳에서 더 위험해져요</span>
+<div class="viz-tiles">
+<div class="viz-tile"><span class="viz-num">63<small>%</small></span><span class="viz-cap">AI 거버넌스 정책이 없는 조직 (600개 중)</span></div>
+<div class="viz-tile"><span class="viz-num">97<small>%</small></span><span class="viz-cap">AI 관련 보안 사고를 겪은 조직 중, 적절한 AI 접근 통제가 없었던 곳</span></div>
+<div class="viz-tile"><span class="viz-num">+67<small>만 달러</small></span><span class="viz-cap">섀도 AI(승인 안 된 AI) 사용이 많을 때 늘어난 평균 유출 비용</span></div>
+</div>
+<span class="viz-src">출처: <a href="https://www.ibm.com/think/x-force/2025-cost-of-a-data-breach-navigating-ai">IBM, 2025 Cost of a Data Breach Report — AI 편</a> (Ponemon Institute 조사, 600개 조직)</span>
+</figure>
+<p>직원들은 이미 AI를 쓰고 있어요. 공식 경로가 없으면 개인 계정과 개인 기기로 옮겨갈 뿐이에요. 그러면 보안팀은 무엇이 어디로 나가는지조차 볼 수 없게 돼요. 막기만 하는 보안이 오히려 위험을 키우는 거예요.</p>
+<h3 id="패턴--속도만-재는-측정">패턴 ②: 속도만 재는 측정</h3>
+<p><strong>Klarna</strong>는 2024년 2월 AI 상담 도입 첫 달 성과를 발표했어요. 한 달에 230만 건을 처리해 정규직 상담원 700명 몫을 했고, 해결 시간은 11분에서 2분 미만으로 줄었다고요.</p>
+<figure class="viz" aria-label="Klarna AI 상담: 해결 시간 11분에서 2분 미만, 이후 사람 상담원 재채용">
+<span class="viz-title">Klarna: 속도는 빨라졌는데</span>
+<div class="viz-row" title="도입 전 평균 해결 시간 11분"><span class="viz-lab">도입 전 해결 시간</span><div class="viz-track"><div class="viz-bar o" style="width:100%"></div></div><span class="viz-val">11분</span></div>
+<div class="viz-row" title="AI 도입 후 2분 미만"><span class="viz-lab">AI 도입 후</span><div class="viz-track"><div class="viz-bar" style="width:18%"></div></div><span class="viz-val">&#x3C;2분</span></div>
+<span class="viz-sub" style="margin:.8em 0 0">→ 그리고 1년여 뒤, 사람 상담원을 다시 채용하기 시작했어요</span>
+<span class="viz-src">출처: <a href="https://www.klarna.com/international/press/klarna-ai-assistant-handles-two-thirds-of-customer-service-chats-in-its-first-month/">Klarna 보도자료 (2024.2.27)</a> · <a href="https://www.forbes.com/sites/quickerbettertech/2025/05/18/business-tech-news-klarna-reverses-on-ai-says-customers-like-talking-to-people/">Forbes, Bloomberg 인터뷰 인용 (2025.5)</a></span>
+</figure>
+<p>그런데 2025년 5월, CEO 세바스티안 시에미아트코프스키는 Bloomberg 인터뷰에서 비용이 평가 기준에서 너무 큰 비중을 차지했고 그 결과 품질이 낮아졌다는 취지로 말했어요. 그리고 사람 상담원을 다시 채용하기 시작했죠.</p>
+<p><strong>Commonwealth Bank</strong>(호주)는 2025년 7월 AI 음성봇을 도입하며 상담직 45명 감원을 발표했어요. 봇이 콜을 줄여줄 거라는 판단이었죠. 실제로는 콜이 늘어서 초과근무와 팀장 투입까지 벌어졌고, 8월에 은행은 “모든 사업적 고려를 충분히 하지 못했다”며 사과하고 감원을 철회했어요.</p>
+<p>두 사례 모두 AI가 무능해서 멈춘 게 아니에요. 처리 속도는 쟀지만 고객 경험과 실제 업무량은 제대로 안 쟀던 거예요.</p>
+<h3 id="패턴--쓰임새와-어긋난-형태">패턴 ③: 쓰임새와 어긋난 형태</h3>
+<p>이건 사내 AX가 아니라 AI 서비스 사례지만, AI를 어떤 형태로 사람들에게 건네느냐가 얼마나 중요한지 잘 보여줘요. 카카오는 2025년 5월 AI 메이트 앱 ‘카나나’를 출시했는데, 독립 앱은 사용자를 충분히 모으지 못하고 2026년 10월 서비스를 종료하기로 했어요. 네이버도 AI 챗봇 ‘클로바X’ 서비스를 종료했어요.</p>
+<figure class="viz" aria-label="카카오 카나나 앱 월간활성사용자수: 출시 직후 69,631명에서 10,488명으로 약 85% 감소">
+<span class="viz-title">카나나 앱 월간활성사용자수(MAU)</span>
+<div class="viz-row" title="2025년 5월 출시 직후 69,631명"><span class="viz-lab">출시 직후 (2025.5)</span><div class="viz-track"><div class="viz-bar o" style="width:100%"></div></div><span class="viz-val">6.96만</span></div>
+<div class="viz-row" title="2026년 8월 10,488명"><span class="viz-lab">종료 결정 무렵 (2026.8)</span><div class="viz-track"><div class="viz-bar" style="width:15%"></div></div><span class="viz-val">1.05만</span></div>
+<span class="viz-sub" style="margin:.8em 0 0">→ 약 85% 감소. 카카오톡 안의 AI 기능('카나나 인 카카오톡')은 계속 운영해요</span>
+<span class="viz-src">출처: <a href="https://biz.heraldcorp.com/article/10882404">헤럴드경제 (2026.9)</a>, 모바일인덱스 집계 인용</span>
+</figure>
+<p>두 회사 모두 AI 기술을 포기한 게 아니에요. 카카오는 카카오톡 안의 AI 기능은 이어가고, 확보한 기술과 사용자 피드백을 카카오톡 AI 서비스에 활용하겠다고 밝혔어요. 제 해석으로는, 독립된 AI 앱이라는 형태가 사용자의 실제 쓰임새와 맞지 않았고 그래서 이미 쓰는 서비스 안으로 AI를 옮긴 거예요. 사내 AX에서도 똑같아요. 별도의 AI 도구를 하나 더 만드는 것보다, 사람들이 이미 일하는 흐름 안에 AI를 넣는 쪽이 살아남아요.</p>
+<h3 id="패턴--설명-없는-선언">패턴 ④: 설명 없는 선언</h3>
+<p><strong>Duolingo</strong>는 2025년 4월 CEO 루이스 폰 안의 메모로 “AI-first”를 선언했어요. AI로 할 수 있는 일은 점차 계약직에 맡기지 않겠다는 내용이었어요. 이 메모는 일자리와 품질 우려로 거센 반발을 불렀어요. 결국 CEO는 8월 인터뷰에서 “제 책임이에요. 충분한 맥락을 주지 못했어요”라며 스스로 부족함을 인정했죠.</p>
+<p>Shopify와 Duolingo의 메모는 방향이 비슷했어요. 차이는 구성원과 사용자가 “그래서 내 일은 어떻게 되는지”에 대한 답을 들었느냐였어요.</p>
+<div class="viz-note"><b>유형 3이 흔히 하는 착각</b>"AI가 아직 부족해서 안 된다." 위 사례 중 AI 성능 자체가 원인이었던 곳은 거의 없어요. 막힌 데이터, 잘못된 측정, 흐린 목적, 빠진 설명이 원인이었어요. 모두 조직이 고칠 수 있는 것들이에요.</div>
+<h2 id="벽은-넘을-수-있어요--보안의-방향이-바뀌고-있어요">벽은 넘을 수 있어요 — 보안의 방향이 바뀌고 있어요</h2>
+<p>유형 3은 고정된 상태가 아니에요. 같은 조직이 방향을 바꾸면 유형 2로 넘어가요. 2023년에 AI를 막았던 삼성전자의 이후 이야기가 그 예예요.</p>
+<figure class="viz" aria-label="삼성전자 생성형 AI 정책 변화 타임라인 2023년부터 2026년">
+<span class="viz-title">삼성전자: 차단에서 조건부 개방까지 3년</span>
+<ol class="viz-tl">
+<li class="x"><b>2023년 5월 — 차단</b><span>소스코드 유출 이후 주요 사업부에서 외부 생성형 AI 사용 금지. 사내 AI 도구 개발 방침 발표</span></li>
+<li><b>2023년 11~12월 — 사내 도구</b><span>자체 생성형 AI '삼성 가우스' 공개. 반도체(DS) 부문이 12월 18일부터 사업부별로 순차 도입</span></li>
+<li><b>2026년 4~5월 — 검증</b><span>임직원 2,500명 대상 PoC로 외부 AI 서비스 비교·선정</span></li>
+<li><b>2026년 6월 — 조건부 개방</b><span>DX 부문에 ChatGPT·Gemini·Claude 도입. 보안 교육 이수자에게만 권한 부여</span></li>
+<li><b>2026년 7월 — 업무 재설계</b><span>디지털 트윈 가상 검증으로 TV 낙하 시험 검증 기간 15일 → 2일</span></li>
+</ol>
+<span class="viz-src">출처: <a href="https://www.cnbc.com/2023/05/02/samsung-bans-use-of-ai-like-chatgpt-for-staff-after-misuse-of-chatbot.html">CNBC (2023.5)</a> · <a href="https://www.etnews.com/20231218000389">전자신문 (2023.12)</a> · <a href="https://www.financialpost.co.kr/news/articleView.html?idxno=260440">파이낸셜포스트 (2026)</a> · <a href="https://www.koreatimes.co.kr/business/tech-science/20260611/samsung-electronics-to-introduce-chatgpt-gemini-claude-in-operations">Korea Times (2026.6)</a> · <a href="https://www.mt.co.kr/industry/2026/07/14/2026071414230588223">머니투데이 (2026.7)</a></span>
+</figure>
+<p>차단 → 통제된 사내 도구 → 조건부 외부 도구 개방 → 업무 재설계. 보안을 포기한 게 아니라, 보안의 목표를 “막는 것”에서 “안전하게 쓰게 하는 것”으로 바꾼 거예요.</p>
+<p>이 변화는 한 기업의 선택에 그치지 않아요. 보안 규제가 엄격하기로 꼽히는 국내 금융권과 공공 부문의 규제 자체가 같은 방향으로 움직이고 있어요.</p>
+<figure class="viz" aria-label="국내 망분리 규제 개선 타임라인 2024년부터 2026년">
+<span class="viz-title">한국의 보안 규제: '물리적 차단'에서 '등급별 통제'로</span>
+<ol class="viz-tl">
+<li><b>2024년 8월 — 금융권 로드맵</b><span>금융위원회 「금융분야 망분리 개선 로드맵」 발표. 금융회사의 생성형 AI 활용 허용 방향 제시</span></li>
+<li><b>2024년 11월 — 첫 지정</b><span>생성형 AI를 활용한 9개 금융회사의 10개 서비스를 혁신금융서비스로 첫 지정</span></li>
+<li><b>2026년 1월 — SaaS 상시화</b><span>32개 금융회사·85건의 SaaS 혁신금융서비스 운영 경험을 바탕으로, 보안 평가를 거친 SaaS는 별도 심사 없이 내부 업무망에서 쓰도록 규정 개정 추진 (개인정보 미처리, 반기별 이행 평가 조건)</span></li>
+<li><b>2026년 5월 — 공공 N2SF</b><span>국가정보원 「국가 사이버보안 기본 지침」 시행. 망분리 조항을 없애고 데이터를 기밀(C)·민감(S)·공개(O)로 나눠 차등 통제. 동시에 정보화 예산의 15% 이상을 보안 예산으로 의무화</span></li>
+</ol>
+<span class="viz-src">출처: <a href="https://www.fsc.go.kr/no010101/82885">금융위원회 (2024.8.13)</a> · <a href="https://www.fsc.go.kr/no010101/83554">금융위원회 (2024.11.27)</a> · <a href="https://www.fsc.go.kr/no010101/86080">금융위원회 (2026.1.19)</a> · <a href="https://www.boannews.com/news/articleView.html?idxno=143227">보안뉴스 (N2SF 지침 시행)</a></span>
+</figure>
+<p>마지막 줄이 핵심이에요. 공공 부문은 망분리를 없애면서 보안 예산은 오히려 의무화했어요. 보안을 풀자는 게 아니라 보안의 방식을 바꾸자는 거예요. 모든 데이터를 똑같이 막는 대신, 중요한 데이터는 더 강하게 지키고 공개해도 되는 데이터는 AI가 쓸 수 있게 열어두는 방식이에요.</p>
+<p>우리 회사 보안팀과 이야기할 때도 이 프레임이 도움이 돼요. “AI 허용해주세요”가 아니라 “데이터를 등급별로 나누고, 등급마다 쓸 수 있는 AI와 조건을 정해주세요”라고 요청하는 거죠. 보안팀이 받아들일 수 있는 언어이고, 실제로 규제가 가는 방향이기도 해요.</p>
+<hr>
+<h2 id="우리-회사는-어디에-있을까">우리 회사는 어디에 있을까</h2>
+<p>이제 우리 회사를 볼 차례예요. 질문 8개를 세 묶음으로 나눴어요. “예”인 것만 세어보세요.</p>
+<p><strong>A. 개인 활용 — 유형 1의 조건</strong></p>
+<ol>
+<li>구성원 절반 이상이 업무에 AI를 주 1회 이상 쓰나요?</li>
+<li>업무 데이터를 넣어도 되는 <strong>공식 AI 도구</strong>가 있나요?</li>
+</ol>
+<p><strong>B. 조직 환경 — 벽이 있는가</strong></p>
+<ol start="3">
+<li>AI가 사내 문서·데이터·시스템에 <strong>연결</strong>돼 있나요?</li>
+<li>보안 정책이 “금지 목록”이 아니라 “<strong>이 조건이면 써도 된다</strong>”를 알려주나요?</li>
+</ol>
+<p><strong>C. 전환 — 유형 2의 조건</strong></p>
+<ol start="5">
+<li>AI 때문에 <strong>없어지거나 바뀐 업무 단계</strong>가 하나라도 있나요?</li>
+<li>AI 적용 전후를 <strong>같은 기준으로 비교한 수치</strong>가 있나요?</li>
+<li>진행 중인 AI 과제가 <strong>5개 이하</strong>로 좁혀져 있나요?</li>
+<li>현업이 “AI가 내 일을 어떻게 바꾸는지” <strong>교육을 받은 적</strong>이 있나요?</li>
+</ol>
+<figure class="viz" aria-label="자가진단 판정 흐름">
+<span class="viz-title">위 칸부터 차례로, 처음 해당하는 칸이 우리 회사예요</span>
+<ol class="viz-flow">
+<li><b>① 유형 2 — AX가 되는 조직</b><span>B 2개 + C 3개 이상</span><em>바꾼 흐름을 다음 업무로 넓히고 사내에 공유하기</em></li>
+<li><b>② 유형 1 → 2 전환 중</b><span>B 2개 (C는 2개 이하)</span><em>업무 하나를 골라 전후를 재며 흐름 재설계하기</em></li>
+<li><b>③ 유형 1 — 벽 앞에 선 조직</b><span>A 2개 (B는 1개 이하)</span><em>보안을 "허용 조건" 중심으로 바꾸고 내부 데이터 연결하기</em></li>
+<li><b>④ 유형 3 — 출발 전</b><span>위 어디에도 해당하지 않음</span><em>공식 AI 도구와 사용 조건부터 열기</em></li>
+</ol>
+<span class="viz-src">판정 구간은 이 글에서 소개한 조사·사례를 바탕으로 필자가 정한 기준이에요. 공인된 진단 도구가 아니니 대화의 출발점으로 써주세요.</span>
+</figure>
+<p>B가 비어 있는데 C가 3개 이상 나왔다면, 몇몇 팀이 개인의 노력으로 흐름을 바꿔낸 경우예요. 대단한 성과지만 조직 전체로 넓히려면 결국 B부터 채워야 해요. A는 개인의 몫이지만, B와 C는 조직이 먼저 답해야 할 몫이거든요.</p>
+<h2 id="유형별-90일-실행안">유형별 90일 실행안</h2>
+<p>진단만 하고 끝나면 아쉬우니까, 유형별로 90일 안에 할 수 있는 일을 정리해볼게요. 앞의 사례들이 실제로 밟은 순서를 기준으로 제가 제안하는 안이에요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>지금 위치</th><th>첫 30일</th><th>60일까지</th><th>90일까지</th></tr></thead><tbody><tr><td><strong>유형 3 — 출발 전</strong></td><td>현업이 이미 쓰는 AI 도구와 용도 파악 (섀도 AI 실태)</td><td>공식 AI 도구 1개 지정, 쓸 수 있는 데이터 범위를 문서로 공지</td><td>보안 교육 이수자부터 사용 권한 부여 (삼성전자 방식)</td></tr><tr><td><strong>유형 1 — 벽 앞</strong></td><td>보안팀과 데이터 등급 기준 합의 (공개·내부·기밀)</td><td>공개·내부 등급 문서를 AI가 검색하도록 연결</td><td>가장 자주 반복되는 문서 업무 1개를 연결된 AI로 전환</td></tr><tr><td><strong>유형 1 → 2 전환 중</strong></td><td>과제를 5개 이하로 정리, 업무 1개 선정</td><td>선정 업무의 도입 전 기준선 측정 (시간·품질·오류)</td><td>업무 흐름 재설계 후 같은 지표로 비교, 결과 공유</td></tr><tr><td><strong>유형 2 — AX 진행</strong></td><td>성과가 난 흐름을 템플릿·체크리스트로 정리</td><td>인접 업무 2~3개로 확장</td><td>역할 변화에 맞춘 교육과 평가 기준 반영</td></tr></tbody></table>
+<p>모든 칸에 공통으로 들어가는 게 있어요. 측정이에요. Klarna와 Commonwealth Bank가 보여준 것처럼, 무엇을 재는지가 AX의 방향을 정하거든요. 속도만 재면 속도만 좋아지고, 품질과 고객 경험을 같이 재야 일하는 방식이 제대로 바뀌어요.</p>
+<h2 id="마치며">마치며</h2>
+<p>AI를 잘 쓰는 개인은 이미 많아요. Microsoft 조사가 보여줬듯 AI 효과의 3분의 2는 조직이 좌우하는데, 많은 조직이 아직 그 3분의 2를 개인의 노력에 맡겨두고 있어요.</p>
+<p>기존의 틀은 그대로 두고 AI라는 도구만 넣으면 한계가 분명해요. 데이터를 주지 않으면 AI는 일반론만 말하고, 업무 흐름을 바꾸지 않으면 아낀 시간은 흩어지고, 측정하지 않으면 무엇이 좋아졌는지 아무도 모르게 돼요.</p>
+<p>반대로 방향을 바꾼 조직은 빠르게 달라져요. 삼성전자는 3년 만에 차단에서 업무 재설계까지 갔고, KB금융은 공동 플랫폼 위에 업무별 에이전트를 올리고 있어요. 국내 보안 규제도 ‘물리적 차단’에서 ‘등급별 통제’로 방향을 틀었어요. 이제 남은 건 각 조직의 선택이에요.</p>
+<p>자가진단 결과, 여러분 회사는 어디에 있었나요? 그리고 다음 칸으로 가려면 무엇부터 바꿔야 할까요?</p>
+<p><strong>관련 글</strong></p>
+<ul>
+<li><a href="/liber/blog/ai-maturity-map">AI 도입 성숙도 맵</a> — 개인·기술 관점의 단계</li>
+<li><a href="/liber/blog/ootb-ocmp-agent-era">OOTB + OCMP + Agent: AI 에이전트를 실제 서비스에 바로 쓰는 법</a></li>
+<li><a href="/liber/blog/ai-colleague-or-tool">동료인가, 도구인가, 또 다른 나인가</a></li>
+</ul>
+<p><strong>참고 자료</strong></p>
+<p>조사·통계</p>
+<ul>
+<li><a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai">McKinsey, The state of AI in 2026: On the road to ROI (2026.8)</a></li>
+<li><a href="https://www.techtimes.com/articles/325590/20260826/record-ai-spending-cant-move-earnings-needle-94-enterprises-mckinsey-finds.htm">Tech Times, Record AI Spending Can’t Move Earnings Needle, McKinsey Finds (2026.8)</a></li>
+<li><a href="https://www.mckinsey.com/~/media/mckinsey/business%20functions/quantumblack/our%20insights/the%20state%20of%20ai/november%202025/the-state-of-ai-2025-agents-innovation_cmyk-v1.pdf">McKinsey, The state of AI in 2025: Agents, innovation, and transformation (2025.11, PDF)</a></li>
+<li><a href="https://www.microsoft.com/en-us/worklab/work-trend-index/agents-human-agency-and-the-opportunity-for-every-organization">Microsoft, 2026 Work Trend Index (2026.5)</a></li>
+<li><a href="https://www.bcg.com/press/15january2026-as-ai-investments-surge-ceos-take-lead">BCG, AI Radar 2026 보도자료 (2026.1.15)</a></li>
+<li><a href="https://media-publications.bcg.com/The-Widening-AI-Value-Gap-Sept-2025.pdf">BCG, The Widening AI Value Gap (2025.9, PDF)</a></li>
+<li><a href="https://www.bcg.com/publications/2025/closing-the-ai-impact-gap">BCG AI Radar 2025 — From Potential to Profit: Closing the AI Impact Gap (2025.1)</a></li>
+<li><a href="https://www.ibm.com/think/x-force/2025-cost-of-a-data-breach-navigating-ai">IBM, 2025 Cost of a Data Breach Report — AI 편</a></li>
+<li><a href="https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027">Gartner, Over 40% of Agentic AI Projects Will Be Canceled by End of 2027 (2025.6)</a></li>
+<li><a href="https://hbr.org/2025/09/ai-generated-workslop-is-destroying-productivity">HBR, AI-Generated “Workslop” Is Destroying Productivity (2025.9)</a></li>
+<li><a href="https://www.betterup.com/blog/hidden-costs-workslop">BetterUp, The hidden costs of workslop</a></li>
+</ul>
+<p>기업 사례</p>
+<ul>
+<li><a href="https://www.mt.co.kr/industry/2026/07/14/2026071414230588223">머니투데이, 삼성전자 DX부문 AX 사례 (2026.7.14)</a></li>
+<li><a href="https://www.asiatoday.co.kr/kn/view.php?key=20260529010008641">아시아투데이, KB금융 AI 에이전트 도입 (2026.5.28)</a></li>
+<li><a href="https://biz.heraldcorp.com/article/10882404">헤럴드경제, 클로바X·카나나 서비스 종료 (2026.9)</a></li>
+<li><a href="https://x.com/tobi/status/1909251946235437514">Tobi Lütke, Reflexive AI usage is now a baseline expectation at Shopify (2025.4)</a></li>
+<li><a href="https://openai.com/index/moderna/">OpenAI, Moderna 사례</a></li>
+<li><a href="https://www.unleash.ai/artificial-intelligence/interview/why-moderna-merged-hr-and-it-to-better-architect-the-flow-of-work">UNLEASH, Why Moderna merged HR and IT — Tracey Franklin 인터뷰 (2025)</a></li>
+<li><a href="https://www.klarna.com/international/press/klarna-ai-assistant-handles-two-thirds-of-customer-service-chats-in-its-first-month/">Klarna, AI assistant handles two-thirds of customer service chats in its first month (2024.2)</a></li>
+<li><a href="https://www.forbes.com/sites/quickerbettertech/2025/05/18/business-tech-news-klarna-reverses-on-ai-says-customers-like-talking-to-people/">Forbes, Klarna Reverses On AI, Says Customers Like Talking To People (2025.5)</a></li>
+<li><a href="https://www.abc.net.au/news/2025-08-21/cba-backtracks-on-ai-job-cuts-as-chatbot-lifts-call-volumes/105679492">ABC News, CBA backtracks on AI job cuts (2025.8)</a></li>
+<li><a href="https://www.linkedin.com/posts/luis-von-ahn-duolingo_one-of-the-most-important-things-leaders-activity-7331386411670982658-jpfX">Luis von Ahn, Duolingo AI-first 메모 (2025.4, LinkedIn)</a></li>
+<li><a href="https://fortune.com/2025/08/18/duolingo-ceo-admits-controversial-ai-memo-did-not-give-enough-context-insists-company-never-laid-off-full-time-employees">Fortune, Duolingo CEO admits AI memo did not give enough context (2025.8)</a></li>
+<li><a href="https://www.cnbc.com/2023/05/02/samsung-bans-use-of-ai-like-chatgpt-for-staff-after-misuse-of-chatbot.html">CNBC, Samsung bans use of AI like ChatGPT for employees (2023.5)</a></li>
+<li><a href="https://www.etnews.com/20231218000389">전자신문, 삼성전자 사내 업무 지원 생성형 AI 도입 (2023.12)</a></li>
+<li><a href="https://www.financialpost.co.kr/news/articleView.html?idxno=260440">파이낸셜포스트, 삼성전자 사내 업무에 생성형 AI 도입… 2023년 금지 이후 3년 만 (2026)</a></li>
+<li><a href="https://www.koreatimes.co.kr/business/tech-science/20260611/samsung-electronics-to-introduce-chatgpt-gemini-claude-in-operations">Korea Times, Samsung Electronics to introduce ChatGPT, Gemini, Claude in operations (2026.6)</a></li>
+</ul>
+<p>정책</p>
+<ul>
+<li><a href="https://www.fsc.go.kr/no010101/82885">금융위원회, 금융분야 망분리 개선 로드맵 발표 (2024.8.13)</a></li>
+<li><a href="https://www.fsc.go.kr/no010101/83554">금융위원회, 생성형 AI 혁신금융서비스 첫 지정 (2024.11.27)</a></li>
+<li><a href="https://www.fsc.go.kr/no010101/86080">금융위원회, SaaS 망분리 규제 개선 (2026.1.19)</a></li>
+<li><a href="https://www.boannews.com/news/articleView.html?idxno=143227">보안뉴스, N2SF 보안 정책 제도화… 국가사이버보안 기본지침 시행</a></li>
+</ul>  </div> </article> </main> <!-- 댓글 & 좋아요 (Giscus — GitHub Discussions 기반) --> <!-- 설정 방법: https://giscus.app 에서 tall190/liber 입력 후 REPO_ID, CATEGORY_ID 교체 --> <div class="comments-section" data-astro-cid-bvzihdzo> <h3 data-astro-cid-bvzihdzo>댓글</h3> <script>
+				(function() {
+					var isDark = document.documentElement.classList.contains('dark');
+					var s = document.createElement('script');
+					s.src = 'https://giscus.app/client.js';
+					s.setAttribute('data-repo', 'tall190/liber');
+					s.setAttribute('data-repo-id', 'R_kgDOSIJHDw');
+					s.setAttribute('data-category', 'Announcements');
+					s.setAttribute('data-category-id', 'DIC_kwDOSIJHD84C7Uy6');
+					s.setAttribute('data-mapping', 'pathname');
+					s.setAttribute('data-strict', '0');
+					s.setAttribute('data-reactions-enabled', '1');
+					s.setAttribute('data-emit-metadata', '0');
+					s.setAttribute('data-input-position', 'bottom');
+					s.setAttribute('data-theme', isDark ? 'dark' : 'light');
+					s.setAttribute('data-lang', 'ko');
+					s.setAttribute('crossorigin', 'anonymous');
+					s.async = true;
+					document.currentScript.parentElement.appendChild(s);
+				})();
+			</script> </div> <footer data-astro-cid-sz7xmlte>
+&copy; 2026 Liber. All rights reserved.
+</footer> </body></html>
